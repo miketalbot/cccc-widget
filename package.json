@@ -1,5 +1,5 @@
 {
-  "name": "cccc-widget",
+  "name": "cccc-widget-2rip4",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -34,5 +34,7 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "keywords": [],
+  "description": ""
 }
