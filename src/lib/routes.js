@@ -13,8 +13,8 @@ export function Route({ path, children }) {
 }
 
 export function register(path, call) {
-    if (typeof children === "function") {
-        return add({ path, call })
+    if (typeof call === "function" || call._init) {
+        return add({ path: path.split("/"), call })
     } else if (typeof call === "object" && call) {
         return add({
             path: path.split("/"),
@@ -51,6 +51,7 @@ export function useLocation() {
 const headings = ["h1", "h2", "h3", "h4", "h5", "h6", "h7"]
 
 export function Router({ path: initialPath, fallback = <Fallback /> }) {
+    console.log("Draw")
     const { pathname } = useLocation()
     const path = initialPath || pathname
     const parts = path.split("/")
