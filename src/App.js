@@ -4,6 +4,8 @@ import { CssBaseline } from "@material-ui/core"
 import { Suspense, lazy } from "react"
 import { User } from "./lib/useUser"
 import { createTheme, ThemeProvider } from "@material-ui/core"
+import { Dialogs } from "./lib/useDialog"
+import { SnackBars } from "./lib/notifications"
 
 const theme = createTheme({
     overrides: {
@@ -24,7 +26,7 @@ const theme = createTheme({
             paper: "#fff"
         },
         primary: {
-            main: "#444",
+            main: "#ae0b2b",
             contrastText: "#fff"
         }
     }
@@ -46,6 +48,8 @@ function App() {
                 <CssBaseline />
                 <Suspense fallback={<div>Loading...</div>}>
                     <Router />
+                    <Dialogs />
+                    <SnackBars />
                 </Suspense>
             </ThemeProvider>
         </User>

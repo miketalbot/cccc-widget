@@ -51,7 +51,6 @@ export function useLocation() {
 const headings = ["h1", "h2", "h3", "h4", "h5", "h6", "h7"]
 
 export function Router({ path: initialPath, fallback = <Fallback /> }) {
-    console.log("Draw")
     const { pathname } = useLocation()
     const path = initialPath || pathname
     const parts = path.split("/")

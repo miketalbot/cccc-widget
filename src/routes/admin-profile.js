@@ -7,6 +7,9 @@ import {
     CardContent,
     CardHeader,
     Container,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     FormControl,
     InputAdornment,
     InputLabel,
@@ -22,6 +25,10 @@ import { ImageUploadButton } from "../lib/uploadButton"
 import { MdFileUpload } from "@react-icons/all-files/md/MdFileUpload"
 import firebase from "firebase/app"
 import { useRefresh } from "../lib/useRefresh"
+import { useDialog } from "../lib/useDialog"
+import { showNotification } from "../lib/notifications"
+import { Interface } from "./parts/signin"
+import { useEvent } from "../lib/useEvent"
 
 const storage = firebase.storage()
 
@@ -33,7 +40,8 @@ export default function Profile() {
     const dirty =
         displayName !== (user.displayName || "") ||
         photoURL !== (user.photoURL || "")
-
+    const changePassword = useDialog(ChangePassword)
+    const signIn = useDialog(SignIn)
     return (
         <Administration>
             <Container>
@@ -90,6 +98,9 @@ export default function Profile() {
                             </FormControl>
                         </CardContent>
                         <CardActions>
+                            <Button onClick={handlePassword} color="primary">
+                                Change Password
+                            </Button>
                             <Box flex={1} />
 
                             <Button
@@ -107,6 +118,28 @@ export default function Profile() {
         </Administration>
     )
 
+    async function handlePassword() {
+        const newPassword = await changePassword()
+        if (newPassword) {
+            try {
+                console.log(newPassword)
+                await user.updatePassword(newPassword)
+                showNotification("Password Changed")
+            } catch (e) {
+                showNotification(e.message, { severity: "error" })
+                if (e.code === "auth/requires-recent-login") {
+                    await signIn()
+                    showNotification("Go ahead and change your password")
+                }
+                console.log(JSON.stringify(e))
+                // showNotification("You must sign in again", {
+                //     severity: "warning"
+                // })
+                // await signIn()
+            }
+        }
+    }
+
     async function upload(data) {
         const ref = storage.ref("profilepics").child(`${user.uid}`)
         await ref.put(data)
@@ -123,4 +156,46 @@ export default function Profile() {
         }
         raise("user-updated")
     }
+}
+
+function SignIn({ cancel }) {
+    useEvent("signed-in", cancel)
+    return (
+        <>
+            <DialogTitle>Sign In</DialogTitle>
+            <DialogContent>
+                <Interface />
+            </DialogContent>
+        </>
+    )
+}
+
+function ChangePassword({ ok, cancel }) {
+    const [password, setPassword] = useState("")
+    return (
+        <>
+            <DialogTitle>Change Password</DialogTitle>
+            <DialogContent>
+                <TextField
+                    fullWidth
+                    value={password}
+                    onChange={setFromEvent(setPassword)}
+                    label="New Password"
+                    InputProps={{ type: "password" }}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={() => ok(password)}
+                    color="primary"
+                    variant="contained"
+                >
+                    Change
+                </Button>
+                <Button onClick={cancel} color="secondary">
+                    Cancel
+                </Button>
+            </DialogActions>
+        </>
+    )
 }

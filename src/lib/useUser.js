@@ -58,6 +58,7 @@ export function useUser({ shouldBeCreator } = {}) {
     return myUser
         ? {
               updateProfile: myUser.updateProfile.bind(myUser),
+              updatePassword: myUser.updatePassword.bind(myUser),
               email: myUser.email,
               uid: myUser.uid,
               displayName: myUser.displayName,
