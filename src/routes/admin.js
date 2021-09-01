@@ -8,7 +8,8 @@ import {
     useTheme
 } from "@material-ui/core"
 import { Administration } from "./Administration"
-import { MdPerson } from "@react-icons/all-files/md/MdPerson"
+import { MdPerson } from "react-icons/md"
+import { FaRegNewspaper } from "react-icons/fa"
 import "./admin-profile"
 import { navigate } from "../lib/routes"
 
@@ -29,6 +30,13 @@ export default function AdminPage() {
                     >
                         Configure Your Profile
                     </Panel>
+                    <Panel
+                        title="Articles"
+                        icon={<FaRegNewspaper />}
+                        onClick={() => navigate("/admin/articles")}
+                    >
+                        Manage Your Articles
+                    </Panel>
                 </Box>
             </Container>
         </Administration>
@@ -45,7 +53,7 @@ function Panel({ icon, children, title, onClick = () => {} }) {
     const theme = useTheme()
     const classes = useStyles()
     return (
-        <Box width={1 / 3} clone>
+        <Box width={1 / 3} m={1} minWidth={250} clone>
             <Card
                 onClick={onClick}
                 role="button"

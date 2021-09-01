@@ -40,6 +40,10 @@ register(
     "/admin/profile",
     lazy(() => import("./routes/admin-profile"))
 )
+register(
+    "/admin/articles",
+    lazy(() => import("./routes/admin-articles"))
+)
 
 function App() {
     return (
@@ -47,7 +51,7 @@ function App() {
             <ThemeProvider theme={theme}>
                 <CssBaseline />
                 <Suspense fallback={<div>Loading...</div>}>
-                    <Router />
+                    <Router component={<main />} />
                     <Dialogs />
                     <SnackBars />
                 </Suspense>

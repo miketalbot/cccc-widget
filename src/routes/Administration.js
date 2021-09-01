@@ -1,7 +1,6 @@
 import {
     AppBar,
     Box,
-    Button,
     IconButton,
     makeStyles,
     Toolbar,
@@ -10,7 +9,9 @@ import {
 import { navigate } from "../lib/routes"
 import { User } from "../lib/useUser"
 import { SignInScreen } from "./parts/signin"
-import { MdHome } from "@react-icons/all-files/md/MdHome"
+import { MdPerson } from "react-icons/md"
+import { MdHome } from "react-icons/md"
+import { FaRegNewspaper } from "react-icons/fa"
 
 const useStyles = makeStyles({
     appBar: {
@@ -26,10 +27,11 @@ export function Administration({ children }) {
             <AppBar className={classes.appBar} position="static">
                 <Toolbar variant="dense">
                     <Typography variant="h6" component="h1">
-                        <strong>4C</strong> Widget Administration
+                        <strong>4C</strong> Widget
                     </Typography>
                     <Box ml={2}>
                         <IconButton
+                            aria-label="Home"
                             color="inherit"
                             onClick={() => navigate("/admin")}
                         >
@@ -37,12 +39,22 @@ export function Administration({ children }) {
                         </IconButton>
                     </Box>
                     <Box mr={1}>
-                        <Button
+                        <IconButton
+                            aria-label="Profile"
                             color="inherit"
                             onClick={() => navigate("/admin/profile")}
                         >
-                            Profile
-                        </Button>
+                            <MdPerson />
+                        </IconButton>
+                    </Box>
+                    <Box mr={1}>
+                        <IconButton
+                            aria-label="Articles"
+                            color="inherit"
+                            onClick={() => navigate("/admin/articles")}
+                        >
+                            <FaRegNewspaper />
+                        </IconButton>
                     </Box>
                 </Toolbar>
             </AppBar>

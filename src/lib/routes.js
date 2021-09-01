@@ -50,7 +50,11 @@ export function useLocation() {
 
 const headings = ["h1", "h2", "h3", "h4", "h5", "h6", "h7"]
 
-export function Router({ path: initialPath, fallback = <Fallback /> }) {
+export function Router({
+    path: initialPath,
+    fallback = <Fallback />,
+    component = <section />
+}) {
     const { pathname } = useLocation()
     const path = initialPath || pathname
     const parts = path.split("/")
@@ -63,9 +67,9 @@ export function Router({ path: initialPath, fallback = <Fallback /> }) {
     if (!route) return <fallback.type {...fallback.props} path={path} />
     const params = route.path.reduce(mergeParams, { path })
     return (
-        <section ref={setFocus}>
+        <component.type {...component.props} ref={setFocus}>
             <route.call {...params} />
-        </section>
+        </component.type>
     )
 
     function setFocus(target) {
