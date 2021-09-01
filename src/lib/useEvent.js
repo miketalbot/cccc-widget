@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react"
+import { useCallback, useLayoutEffect, useMemo } from "react"
 import { debounce } from "./debounce"
 
 export function useEvent(eventName, handler) {

@@ -4,7 +4,7 @@ import { useState } from "react"
 import { raise } from "./raise"
 import { useEvent } from "./useEvent"
 
-export function showNotification(message, alertProps) {
+export function showNotification(message, alertProps = { severity: "info" }) {
     raise("show-notification", message, alertProps)
 }
 

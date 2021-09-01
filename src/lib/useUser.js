@@ -1,8 +1,11 @@
 import firebase from "firebase/app"
 import { createContext, useContext, useEffect } from "react"
+import useAsync from "./useAsync"
 import { useCurrentState } from "./useCurrentState"
 import { useEvent } from "./useEvent"
 import { useRefresh } from "./useRefresh"
+import { db } from "./firebase"
+import { showNotification } from "./notifications"
 
 const auth = firebase.auth()
 
@@ -54,11 +57,40 @@ export function useUser({ shouldBeCreator } = {}) {
         }
     }, [user, shouldBeCreator, startup, context])
 
+    const additional = useAsync(
+        async function () {
+            if (!user) return {}
+            const profile = await db
+                .collection("userprofiles")
+                .doc(user.uid)
+                .get()
+            if (profile.exists) {
+                return profile.data()
+            }
+            return {}
+        },
+        {},
+        user?.uid
+    )
+
     const myUser = user?.isAnonymous && shouldBeCreator ? null : user
     return myUser
         ? {
+              ...additional,
               updateProfile: myUser.updateProfile.bind(myUser),
               updatePassword: myUser.updatePassword.bind(myUser),
+              saveAdditional: async (data) => {
+                  Object.assign(additional, data)
+                  try {
+                      await db
+                          .collection("userprofiles")
+                          .doc(user.uid)
+                          .set(additional, { merge: true })
+                  } catch (e) {
+                      showNotification(e.message, { severity: "error" })
+                  }
+                  return additional
+              },
               email: myUser.email,
               uid: myUser.uid,
               displayName: myUser.displayName,

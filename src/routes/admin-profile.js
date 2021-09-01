@@ -13,6 +13,7 @@ import {
     FormControl,
     InputAdornment,
     InputLabel,
+    makeStyles,
     TextField
 } from "@material-ui/core"
 import { useState } from "react"
@@ -29,17 +30,29 @@ import { useDialog } from "../lib/useDialog"
 import { showNotification } from "../lib/notifications"
 import { Interface } from "./parts/signin"
 import { useEvent } from "../lib/useEvent"
+import HTMLEditor from "../lib/HtmlEditor"
+import NotchedOutline from "@material-ui/core/OutlinedInput/NotchedOutline"
 
 const storage = firebase.storage()
 
+const useStyles = makeStyles({
+    avatar: {
+        width: 100,
+        height: 100
+    }
+})
+
 export default function Profile() {
+    const classes = useStyles()
     const user = useUserContext()
     const refresh = useRefresh()
+    const [description, setDescription] = useState(user.description || "")
     const [displayName, setDisplayName] = useState(user.displayName || "")
     const [photoURL, setPhotoURL] = useState(user.photoURL || "")
     const dirty =
         displayName !== (user.displayName || "") ||
-        photoURL !== (user.photoURL || "")
+        photoURL !== (user.photoURL || "") ||
+        description !== (user.description || "")
     const changePassword = useDialog(ChangePassword)
     const signIn = useDialog(SignIn)
     return (
@@ -50,6 +63,7 @@ export default function Profile() {
                         <CardHeader component="h2" title="Edit Your Profile" />
                         <CardContent>
                             <TextField
+                                variant="outlined"
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
@@ -65,6 +79,7 @@ export default function Profile() {
                         </CardContent>
                         <CardContent>
                             <TextField
+                                variant="outlined"
                                 fullWidth
                                 value={displayName}
                                 onChange={setFromEvent(setDisplayName)}
@@ -72,16 +87,33 @@ export default function Profile() {
                             />
                         </CardContent>
                         <CardContent>
-                            <FormControl>
+                            <HTMLEditor
+                                value={description}
+                                onChange={setDescription}
+                                label="Description"
+                            />
+                        </CardContent>
+                        <CardContent>
+                            <FormControl variant="outlined" fullWidth>
+                                <Box borderRadius={4} width={1}>
+                                    <NotchedOutline
+                                        notched={true}
+                                        labelWidth={50}
+                                    />
+                                </Box>
                                 <InputLabel
+                                    variant="outlined"
                                     shrink={true}
                                     htmlFor="avatar-input"
                                 >
                                     Avatar
                                 </InputLabel>
-                                <Box display="flex" mt={3} alignItems="center">
-                                    <Box mr={2}>
-                                        <Avatar src={photoURL} />
+                                <Box display="flex" p={2} alignItems="center">
+                                    <Box mr={2} flex={1}>
+                                        <Avatar
+                                            className={classes.avatar}
+                                            src={photoURL}
+                                        />
                                     </Box>
                                     <Box>
                                         <ImageUploadButton
@@ -97,8 +129,13 @@ export default function Profile() {
                                 </Box>
                             </FormControl>
                         </CardContent>
+
                         <CardActions>
-                            <Button onClick={handlePassword} color="primary">
+                            <Button
+                                variant="outlined"
+                                onClick={handlePassword}
+                                color="primary"
+                            >
                                 Change Password
                             </Button>
                             <Box flex={1} />
@@ -131,11 +168,6 @@ export default function Profile() {
                     await signIn()
                     showNotification("Go ahead and change your password")
                 }
-                console.log(JSON.stringify(e))
-                // showNotification("You must sign in again", {
-                //     severity: "warning"
-                // })
-                // await signIn()
             }
         }
     }
@@ -148,9 +180,9 @@ export default function Profile() {
     }
 
     async function save() {
-        console.log(photoURL)
         try {
             await user.updateProfile({ displayName, photoURL })
+            await user.saveAdditional({ description, displayName, photoURL })
         } catch (e) {
             console.log(e)
         }
