@@ -1,39 +1,54 @@
-import logo from "./logo.svg"
 import "./App.css"
-import { navigate, register, Router } from "./lib/routes"
-import { Link } from "@material-ui/core"
+import { register, Router } from "./lib/routes"
+import { CssBaseline } from "@material-ui/core"
+import { Suspense, lazy } from "react"
+import { User } from "./lib/useUser"
+import { createTheme, ThemeProvider } from "@material-ui/core"
+
+const theme = createTheme({
+    overrides: {
+        MuiCssBaseline: {
+            "@global": {
+                body: {
+                    background:
+                        "linear-gradient(45deg, #fe6b8b 30%, #ff8e53 90%)",
+                    backgroundRepeat: "no-repeat",
+                    backgroundAttachment: "fixed"
+                }
+            }
+        }
+    },
+    palette: {
+        background: {
+            default: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+            paper: "#fff"
+        },
+        primary: {
+            main: "#444",
+            contrastText: "#fff"
+        }
+    }
+})
 
 register(
-    "/testme",
-    <div>
-        Testing<h1>This</h1>
-    </div>
+    "/admin",
+    lazy(() => import("./routes/admin"))
 )
-
-register("/test/:id/me", <TestRoute />)
-
-function TestRoute({ id }) {
-    return <div>Route {id}</div>
-}
+register(
+    "/admin/profile",
+    lazy(() => import("./routes/admin-profile"))
+)
 
 function App() {
     return (
-        <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-
-                <Link
-                    component="button"
-                    onClick={() =>
-                        navigate(`https://2rip4.csb.app/test${Date.now()}`)
-                    }
-                >
-                    Learn React
-                </Link>
-
-                <Router />
-            </header>
-        </div>
+        <User>
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <Suspense fallback={<div>Loading...</div>}>
+                    <Router />
+                </Suspense>
+            </ThemeProvider>
+        </User>
     )
 }
 
