@@ -1,4 +1,4 @@
-import "https://github.com/miketalbot/cccc-widget/blob/main/src/plugins/example.js"
+import "https://raw.githubusercontent.com/miketalbot/cccc-widget/main/src/plugins/example.js"
 
 const {
     Material: { TextField, Box, ThemeProvider, CssBaseline },
