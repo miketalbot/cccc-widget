@@ -1,23 +1,19 @@
-import { message } from "./example.jsx"
-
+import { Typography } from "@material-ui/core"
 
 const {
     Material: { TextField, Box, ThemeProvider, CssBaseline },
     Plugins: { PluginTypes, register },
-    React,
     setFromEvent,
     ReactDOM,
     theme,
     useRefresh
 } = window.Framework4C
 
-register(PluginTypes.MAIN, "Remote", editor, runtime)
+register(PluginTypes.FOOTER, "Profile", editor, runtime)
 
 function editor({ parent, ...props }) {
     ReactDOM.render(<Editor {...props} />, parent)
 }
-
-console.log("Remote loaded", message)
 
 function Editor({ settings, onChange }) {
     const refresh = useRefresh(onChange)
@@ -25,12 +21,19 @@ function Editor({ settings, onChange }) {
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <Box mt={2}>
+                <Typography gutterBottom>
+                    The footer profile shows the first couple of lines from your
+                    personal profile and allows you to specify a short headline
+                    specific for this article
+                </Typography>
+            </Box>
+            <Box mt={2}>
                 <TextField
-                    value={settings.headLine || ""}
+                    value={settings.headLine ?? ""}
                     onChange={refresh(
                         setFromEvent((v) => (settings.headLine = v))
                     )}
-                    helperText="If specified, this appears as a large headline above your standard profile description"
+                    helperText="If specified, this appears as a larger headline above your standard profile description"
                     label="Additional Headline"
                     variant="outlined"
                     fullWidth

@@ -25,4 +25,3 @@ window.Framework4C = {
     Plugins: { register: pluginRegister, PluginTypes, Plugins }
 }
 
-console.log(window.Framework4C)

@@ -1,5 +1,6 @@
 import {
     AppBar,
+    Avatar,
     Box,
     IconButton,
     makeStyles,
@@ -12,6 +13,7 @@ import { SignInScreen } from "./parts/signin"
 import { MdPerson } from "react-icons/md"
 import { MdHome } from "react-icons/md"
 import { FaRegNewspaper } from "react-icons/fa"
+import logo from "../assets/4C_logo.jpg"
 
 const useStyles = makeStyles({
     appBar: {
@@ -26,6 +28,9 @@ export function Administration({ children }) {
         <User shouldBeCreator={true} fallback={<SignInScreen />}>
             <AppBar className={classes.appBar} position="static">
                 <Toolbar variant="dense">
+                    <Box mr={1}>
+                        <Avatar size="large" src={logo} />
+                    </Box>
                     <Typography variant="h6" component="h1">
                         <strong>4C</strong> Widget
                     </Typography>
