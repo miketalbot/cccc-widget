@@ -1,4 +1,5 @@
-import  "./example.js"
+import { message } from "./example2.js"
+
 
 const {
     Material: { TextField, Box, ThemeProvider, CssBaseline },
@@ -16,7 +17,7 @@ function editor({ parent, ...props }) {
     ReactDOM.render(<Editor {...props} />, parent)
 }
 
-console.log("Remote loaded")
+console.log("Remote loaded", message)
 
 function Editor({ settings, onChange }) {
     const refresh = useRefresh(onChange)
