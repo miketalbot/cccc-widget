@@ -1,3 +1,5 @@
+import "./example.js"
+
 const {
     Material: { TextField, Box, ThemeProvider, CssBaseline },
     Plugins: { PluginTypes, register },
