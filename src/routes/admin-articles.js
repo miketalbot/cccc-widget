@@ -30,7 +30,7 @@ import { useState } from "react"
 import { useDialog } from "../lib/useDialog"
 import { showNotification } from "../lib/notifications"
 import { FaNewspaper } from "react-icons/fa"
-import { MdDelete } from "react-icons/md"
+import { MdClear, MdDelete } from "react-icons/md"
 import { confirm } from "../lib/confirm"
 import { VirtualWindow } from "virtual-window"
 import { pick } from "../lib/pick"
@@ -56,7 +56,17 @@ export default function Articles() {
             <Container>
                 <Box width={1} clone>
                     <Card elevation={3}>
-                        <CardHeader title="Your Articles" />
+                        <CardHeader
+                            title="Your Articles"
+                            action={
+                                <IconButton
+                                    aria-label="Close and go back icon"
+                                    onClick={goBack}
+                                >
+                                    <MdClear />
+                                </IconButton>
+                            }
+                        />
                         <CardContent>
                             <Box
                                 maxHeight={"75vh"}
@@ -83,7 +93,9 @@ export default function Articles() {
             </Container>
         </Administration>
     )
-
+    function goBack() {
+        window.history.back(1)
+    }
     async function addArticle() {
         const name = await getName()
         if (name) {

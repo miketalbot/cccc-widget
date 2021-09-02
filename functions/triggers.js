@@ -53,7 +53,8 @@ module.exports = function (exports) {
             if (responseSnap.exists) {
                 await responseRef.set(
                     {
-                        processedTags: data.processedTags || []
+                        processedTags: data.processedTags || [],
+                        comment: data.comment || false
                     },
                     { merge: true }
                 )
@@ -62,6 +63,7 @@ module.exports = function (exports) {
             await responseRef.set({
                 created: Date.now(),
                 visits: 0,
+                comment: data.comment || false,
                 uniqueVisits: 0,
                 lastUniqueVisit: 0,
                 lastUniqueDay: 0,

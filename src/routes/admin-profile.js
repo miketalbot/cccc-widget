@@ -11,6 +11,7 @@ import {
     DialogContent,
     DialogTitle,
     FormControl,
+    IconButton,
     InputAdornment,
     InputLabel,
     makeStyles,
@@ -20,7 +21,7 @@ import { useState } from "react"
 import { setFromEvent } from "../lib/setFromEvent"
 import { useUserContext } from "../lib/useUser"
 import { Administration } from "./Administration"
-import { MdLock } from "react-icons/all"
+import { MdClear, MdLock } from "react-icons/all"
 import { raise } from "../lib/raise"
 import { ImageUploadButton } from "../lib/uploadButton"
 import { MdFileUpload } from "react-icons/all"
@@ -61,7 +62,17 @@ export default function Profile() {
             <Container>
                 <Box width={1} clone>
                     <Card elevation={3}>
-                        <CardHeader title="Edit Your Profile" />
+                        <CardHeader
+                            title="Edit Your Profile"
+                            action={
+                                <IconButton
+                                    aria-label="Close and go back icon"
+                                    onClick={goBack}
+                                >
+                                    <MdClear />
+                                </IconButton>
+                            }
+                        />
                         <CardContent>
                             <TextField
                                 variant="outlined"
@@ -155,7 +166,9 @@ export default function Profile() {
             </Container>
         </Administration>
     )
-
+    function goBack() {
+        window.history.back(1)
+    }
     async function handlePassword() {
         const newPassword = await changePassword()
         if (newPassword) {

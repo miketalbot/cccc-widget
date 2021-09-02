@@ -119,9 +119,7 @@ export default function Article({ id }) {
                             </CardContent>
                             <CardActions>
                                 <Box flex={1} />
-                                <Button onClick={goBack} color="secondary">
-                                    Back
-                                </Button>
+
                                 <Button
                                     onClick={refresh(
                                         () =>
