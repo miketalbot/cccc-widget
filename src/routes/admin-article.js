@@ -8,7 +8,7 @@ import {
     Container,
     Tab
 } from "@material-ui/core"
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { showNotification } from "../lib/notifications"
 import { useRecord } from "../lib/useRecord"
 import { useUserContext } from "../lib/useUser"
@@ -22,41 +22,7 @@ import { TabContext, TabList, TabPanel } from "@material-ui/lab"
 import { PluginTypes } from "../lib/plugins"
 import { PluginDetails } from "./PluginDetails"
 import { AdvancedArticleSettings } from "./AdvancedArticleSettings"
-
-function usePlugins(definition, deps = []) {
-    useEffect(() => {
-        if (!definition) return
-        setTimeout(async () => {
-            const plugins = definition
-                .split("\n")
-                .map((d) => d.split("|").map((p) => p.trim()))
-            for (let [url, type] of plugins) {
-                if (type === "text/jsx" || type === "text/babel")
-                    await loadBabel()
-                if (document.body.querySelector(`script[src~="${url}"]`))
-                    continue
-                const script = document.createElement("script")
-                script.type = type
-                script.src = `${url}?${Date.now()}`
-                script.setAttribute("data-presets", "env,react")
-                document.body.appendChild(script)
-            }
-            window.dispatchEvent(new Event("DOMContentLoaded"))
-        })
-        //eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [deps])
-
-    function loadBabel() {
-        return new Promise((resolve) => {
-            const babelUrl = "https://unpkg.com/@babel/standalone/babel.min.js"
-            if (document.body.querySelector(`script[src='${babelUrl}']`)) return
-            const script = document.createElement("script")
-            script.src = babelUrl
-            script.onload = resolve
-            document.body.appendChild(script)
-        })
-    }
-}
+import { useEditorPlugins } from "../lib/usePlugins"
 
 export default function Article({ id }) {
     const user = useUserContext()
@@ -68,7 +34,7 @@ export default function Article({ id }) {
     )
     const shouldUpdate = useRef(false)
     const [plugins, setPlugins] = useState(0)
-    usePlugins(article?.additionalPlugins, [plugins])
+    useEditorPlugins(article?.additionalPlugins, [plugins])
     useEvent("can-navigate", (_, info) => {
         if (updated.current) {
             info.message =
