@@ -107,6 +107,9 @@ export default function Article({ id }) {
                             </CardContent>
                             <CardActions>
                                 <Box flex={1} />
+                                <Button onClick={goBack} color="secondary">
+                                    Back
+                                </Button>
                                 <Button
                                     onClick={refresh(
                                         () =>
@@ -127,6 +130,10 @@ export default function Article({ id }) {
             )}
         </Administration>
     )
+
+    function goBack() {
+        window.history.back(1)
+    }
 
     function change() {
         if (!updated.current) {
