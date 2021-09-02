@@ -33,11 +33,11 @@ function usePlugins(definition, deps = []) {
             for (let [url, type] of plugins) {
                 if (type === "text/jsx" || type === "text/babel")
                     await loadBabel()
-                if (document.body.querySelector(`script[src="${url}"]`))
+                if (document.body.querySelector(`script[src~="${url}"]`))
                     continue
                 const script = document.createElement("script")
                 script.type = type
-                script.src = url
+                script.src = `${url}?${Date.now()}`
                 script.setAttribute("data-presets", "env,react")
                 document.body.appendChild(script)
             }
