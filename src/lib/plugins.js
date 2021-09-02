@@ -11,6 +11,7 @@ export const Plugins = {
 }
 
 export function register(type, name, editor, runtime) {
+    console.log("Register", type, name)
     Plugins[type][name] = { name, editor, type, runtime }
     raise("plugins-updated")
 }

@@ -1,6 +1,7 @@
 const {
     Material: { TextField, Box, ThemeProvider, CssBaseline },
     Plugins: { PluginTypes, register },
+    React,
     setFromEvent,
     ReactDOM,
     theme,
@@ -12,6 +13,8 @@ register(PluginTypes.MAIN, "Remote", editor, runtime)
 function editor({ parent, ...props }) {
     ReactDOM.render(<Editor {...props} />, parent)
 }
+
+console.log("Remote loaded")
 
 function Editor({ settings, onChange }) {
     const refresh = useRefresh(onChange)

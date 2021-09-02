@@ -6,10 +6,9 @@ import {
     CardContent,
     CardHeader,
     Container,
-    Tab,
-    TextField
+    Tab
 } from "@material-ui/core"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { showNotification } from "../lib/notifications"
 import { useRecord } from "../lib/useRecord"
 import { useUserContext } from "../lib/useUser"
@@ -22,7 +21,42 @@ import { useEvent } from "../lib/useEvent"
 import { TabContext, TabList, TabPanel } from "@material-ui/lab"
 import { PluginTypes } from "../lib/plugins"
 import { PluginDetails } from "./PluginDetails"
-import { setFromEvent } from "../lib/setFromEvent"
+import { AdvancedArticleSettings } from "./AdvancedArticleSettings"
+
+function usePlugins(definition, deps = []) {
+    useEffect(() => {
+        if (!definition) return
+        setTimeout(async () => {
+            const plugins = definition
+                .split("\n")
+                .map((d) => d.split("|").map((p) => p.trim()))
+            for (let [url, type] of plugins) {
+                if (type === "text/jsx" || type === "text/babel")
+                    await loadBabel()
+                if (document.body.querySelector(`script[src="${url}"]`))
+                    continue
+                const script = document.createElement("script")
+                script.type = type
+                script.src = url
+                script.setAttribute("data-presets", "env,react")
+                document.body.appendChild(script)
+            }
+            window.dispatchEvent(new Event("DOMContentLoaded"))
+        })
+        //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [deps])
+
+    function loadBabel() {
+        return new Promise((resolve) => {
+            const babelUrl = "https://unpkg.com/@babel/standalone/babel.min.js"
+            if (document.body.querySelector(`script[src='${babelUrl}']`)) return
+            const script = document.createElement("script")
+            script.src = babelUrl
+            script.onload = resolve
+            document.body.appendChild(script)
+        })
+    }
+}
 
 export default function Article({ id }) {
     const user = useUserContext()
@@ -32,6 +66,9 @@ export default function Article({ id }) {
     const [article, update] = useRecord(
         articles.doc(user.uid).collection("articles").doc(id)
     )
+    const shouldUpdate = useRef(false)
+    const [plugins, setPlugins] = useState(0)
+    usePlugins(article?.additionalPlugins, [plugins])
     useEvent("can-navigate", (_, info) => {
         if (updated.current) {
             info.message =
@@ -83,9 +120,18 @@ export default function Article({ id }) {
                                         />
                                     </TabPanel>
                                     <TabPanel value="3">
-                                        <AdvancedSettings
+                                        <AdvancedArticleSettings
                                             article={article}
-                                            onChange={change}
+                                            onChange={() => {
+                                                change()
+                                                shouldUpdate.current = true
+                                            }}
+                                            reload={() => {
+                                                if (!shouldUpdate.current)
+                                                    return
+                                                setPlugins((v) => v + 1)
+                                                shouldUpdate.current = false
+                                            }}
                                         />
                                     </TabPanel>
                                 </TabContext>
@@ -119,25 +165,4 @@ export default function Article({ id }) {
             refresh()
         }
     }
-}
-
-function AdvancedSettings({ onChange, article }) {
-    const refresh = useRefresh(onChange)
-    return (
-        <>
-            <TextField
-                variant="outlined"
-                multiline
-                fullWidth
-                helperText="Add the url of each plugin on a new line"
-                minRows={3}
-                maxRows={10}
-                label="Additional Plugins"
-                value={article.additionalPlugins ?? ""}
-                onChange={refresh(
-                    setFromEvent((v) => (article.additionalPlugins = v))
-                )}
-            />
-        </>
-    )
 }
