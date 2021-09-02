@@ -55,7 +55,7 @@ export function useEditorPlugins(definition, deps = []) {
                 script.type = type
                 script.setAttribute("data-presets", "env,react")
                 script.setAttribute("data-type", "module")
-                script.src = url
+                script.src = url + "?" + Date.now()
                 document.body.appendChild(script)
             }
             if (hadBabel) {
