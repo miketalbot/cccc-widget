@@ -56,7 +56,9 @@ export function useEditorPlugins(definition, deps = []) {
                 script.setAttribute("data-presets", "env,react")
                 script.setAttribute("data-plugins", "transform-modules-umd")
                 script.setAttribute("data-type", "module")
-                script.src = url + "?" + Date.now()
+                script.setAttribute("defer", "")
+                script.setAttribute("async", "")
+                script.src = url
                 document.body.appendChild(script)
             }
             if (hadBabel) {
@@ -73,7 +75,9 @@ function loadBabel() {
         if (document.body.querySelector(`script[src='${babelUrl}']`)) return
         const script = document.createElement("script")
         script.src = babelUrl
-        script.onload = resolve
+        script.onload = () => {
+            resolve()
+        }
         document.body.appendChild(script)
     })
 }
