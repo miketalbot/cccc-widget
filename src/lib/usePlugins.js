@@ -54,6 +54,7 @@ export function useEditorPlugins(definition, deps = []) {
                 const script = document.createElement("script")
                 script.type = type
                 script.setAttribute("data-presets", "env,react")
+                script.setAttribute("data-plugins", "transform-modules-umd")
                 script.setAttribute("data-type", "module")
                 script.src = url + "?" + Date.now()
                 document.body.appendChild(script)

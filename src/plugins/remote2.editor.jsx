@@ -1,4 +1,4 @@
-import * as data from "https://raw.githubusercontent.com/miketalbot/cccc-widget/main/src/plugins/example.js"
+import  "./example.js"
 
 const {
     Material: { TextField, Box, ThemeProvider, CssBaseline },
