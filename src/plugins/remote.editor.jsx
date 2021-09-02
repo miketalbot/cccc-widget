@@ -1,4 +1,4 @@
-import { message } from "./example2.js"
+import { message } from "https://raw.githubusercontent.com/miketalbot/cccc-widget/main/src/plugins/example2.js"
 
 
 const {
