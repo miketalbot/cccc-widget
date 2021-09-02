@@ -1,4 +1,4 @@
-import { TextField } from "@material-ui/core"
+import { CardContent, TextField } from "@material-ui/core"
 import { useRefresh } from "../lib/useRefresh"
 import { setFromEvent } from "../lib/setFromEvent"
 import { useState } from "react"
@@ -7,7 +7,7 @@ export function AdvancedArticleSettings({ onChange, reload, article }) {
     const refresh = useRefresh(onChange)
     const [value, setValue] = useState(article.additionalPlugins ?? "")
     return (
-        <>
+        <CardContent>
             <TextField
                 variant="outlined"
                 multiline
@@ -23,6 +23,6 @@ export function AdvancedArticleSettings({ onChange, reload, article }) {
                 value={value}
                 onChange={setFromEvent(setValue)}
             />
-        </>
+        </CardContent>
     )
 }

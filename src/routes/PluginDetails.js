@@ -1,4 +1,4 @@
-import { Box, TextField } from "@material-ui/core"
+import { Box, CardContent, TextField } from "@material-ui/core"
 import { Autocomplete } from "@material-ui/lab"
 import { Plugins } from "../lib/plugins"
 import { useRefresh } from "../lib/useRefresh"
@@ -9,7 +9,7 @@ export function PluginDetails({ article, onChange, type }) {
     const typeSettings = (settings[article[type]] =
         settings[article[type]] || {})
     return (
-        <>
+        <CardContent>
             <Autocomplete
                 onChange={refresh((_, v) => (article[type] = v))}
                 value={article[type] ?? ""}
@@ -31,7 +31,7 @@ export function PluginDetails({ article, onChange, type }) {
                     settings={typeSettings}
                 />
             )}
-        </>
+        </CardContent>
     )
 }
 

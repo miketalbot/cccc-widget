@@ -28,13 +28,13 @@ export function Administration({ children }) {
         <User shouldBeCreator={true} fallback={<SignInScreen />}>
             <AppBar className={classes.appBar} position="static">
                 <Toolbar variant="dense">
-                    <Box mr={1}>
+                    <Box mr={2}>
                         <Avatar size="large" src={logo} />
                     </Box>
                     <Typography variant="h6" component="h1">
-                        <strong>4C</strong> Widget
+                        Widget
                     </Typography>
-                    <Box ml={4}>
+                    <Box ml={1}>
                         <IconButton
                             aria-label="Home"
                             color="inherit"

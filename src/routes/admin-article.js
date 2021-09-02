@@ -32,6 +32,9 @@ export default function Article({ id }) {
     const [article, update] = useRecord(
         articles.doc(user.uid).collection("articles").doc(id)
     )
+    if (article) {
+        article.author = user.uid
+    }
     const shouldUpdate = useRef(false)
     const [plugins, setPlugins] = useState(0)
     useEditorPlugins(article?.additionalPlugins, [plugins])
