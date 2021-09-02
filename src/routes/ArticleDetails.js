@@ -4,7 +4,7 @@ import noop from "../lib/noop"
 import { showNotification } from "../lib/notifications"
 import { setFromEvent } from "../lib/setFromEvent"
 import { useRefresh } from "../lib/useRefresh"
-import { getTag } from "./admin-article"
+import { getTag } from "../lib/getTag"
 
 export function ArticleDetails({ article, onChange = noop }) {
     const refresh = useRefresh(onChange)
@@ -44,7 +44,7 @@ export function ArticleDetails({ article, onChange = noop }) {
                     label="Image"
                     InputProps={{
                         endAdornment: !!article.image && (
-                            <Box p={1}>
+                            <Box m={1} mr={-0.5} borderRadius={8} clone>
                                 <img
                                     alt="Preview"
                                     width={150}

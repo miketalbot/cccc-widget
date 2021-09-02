@@ -1,5 +1,4 @@
 export function raise(eventName, ...params) {
-    console.log(params)
     const event = new Event(eventName)
     event._parameters = params
     window.dispatchEvent(event)

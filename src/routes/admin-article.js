@@ -7,11 +7,10 @@ import {
     CardHeader,
     Container,
     Tab,
-    Tabs
+    TextField
 } from "@material-ui/core"
 import { useRef, useState } from "react"
 import { showNotification } from "../lib/notifications"
-import { Case, If, Switch } from "../lib/switch"
 import { useRecord } from "../lib/useRecord"
 import { useUserContext } from "../lib/useUser"
 import { articles } from "./admin-articles"
@@ -20,10 +19,14 @@ import { ArticleDetails } from "./ArticleDetails"
 import "./admin"
 import { useRefresh } from "../lib/useRefresh"
 import { useEvent } from "../lib/useEvent"
+import { TabContext, TabList, TabPanel } from "@material-ui/lab"
+import { PluginTypes } from "../lib/plugins"
+import { PluginDetails } from "./PluginDetails"
+import { setFromEvent } from "../lib/setFromEvent"
 
 export default function Article({ id }) {
     const user = useUserContext()
-    const [tab, setTab] = useState(0)
+    const [tab, setTab] = useState("0")
     const refresh = useRefresh()
     const updated = useRef(false)
     const [article, update] = useRecord(
@@ -43,27 +46,50 @@ export default function Article({ id }) {
                         <Card elevation={3}>
                             <CardHeader title={article.name} />
                             <CardContent>
-                                <Tabs
-                                    value={tab}
-                                    onChange={(_, tab) => setTab(tab)}
-                                >
-                                    <Tab label="Article Details" />
-                                    <Tab label="Main Widget" />
-                                    <Tab label="Footer Widget" />
-                                </Tabs>
+                                <TabContext value={tab}>
+                                    <TabList
+                                        aria-label="Article configuration tabs"
+                                        onChange={(_, tab) => setTab(tab)}
+                                    >
+                                        <Tab
+                                            label="Article Details"
+                                            value="0"
+                                        />
+                                        <Tab label="Main Widget" value="1" />
+                                        <Tab label="Footer Widget" value="2" />
+                                        <Tab
+                                            label="Advanced Settings"
+                                            value="3"
+                                        />
+                                    </TabList>
+                                    <TabPanel value="0">
+                                        <ArticleDetails
+                                            article={article}
+                                            onChange={change}
+                                        />
+                                    </TabPanel>
+                                    <TabPanel value="1">
+                                        <PluginDetails
+                                            article={article}
+                                            onChange={change}
+                                            type={PluginTypes.MAIN}
+                                        />
+                                    </TabPanel>
+                                    <TabPanel value="2">
+                                        <PluginDetails
+                                            article={article}
+                                            onChange={change}
+                                            type={PluginTypes.FOOTER}
+                                        />
+                                    </TabPanel>
+                                    <TabPanel value="3">
+                                        <AdvancedSettings
+                                            article={article}
+                                            onChange={change}
+                                        />
+                                    </TabPanel>
+                                </TabContext>
                             </CardContent>
-                            <Switch value={tab}>
-                                <Case when={0}>
-                                    <ArticleDetails
-                                        article={article}
-                                        onChange={() =>
-                                            !updated.current &&
-                                            (updated.current = true) &&
-                                            refresh()
-                                        }
-                                    />
-                                </Case>
-                            </Switch>
                             <CardActions>
                                 <Box flex={1} />
                                 <Button
@@ -86,12 +112,32 @@ export default function Article({ id }) {
             )}
         </Administration>
     )
+
+    function change() {
+        if (!updated.current) {
+            updated.current = true
+            refresh()
+        }
+    }
 }
 
-export function getTag(document, tag) {
-    const element = document.head.querySelector(`meta[property="${tag}"]`)
-    if (element) {
-        return element.content
-    }
-    return null
+function AdvancedSettings({ onChange, article }) {
+    const refresh = useRefresh(onChange)
+    return (
+        <>
+            <TextField
+                variant="outlined"
+                multiline
+                fullWidth
+                helperText="Add the url of each plugin on a new line"
+                minRows={3}
+                maxRows={10}
+                label="Additional Plugins"
+                value={article.additionalPlugins ?? ""}
+                onChange={refresh(
+                    setFromEvent((v) => (article.additionalPlugins = v))
+                )}
+            />
+        </>
+    )
 }
