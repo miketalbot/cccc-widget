@@ -10,16 +10,19 @@
         "@testing-library/user-event": "^12.8.3",
         "browser-image-resizer": "2.2.0",
         "classnames": "^2.3.1",
+        "dayjs": "^1.10.6",
         "draft-js": "^0.11.7",
         "draftjs-to-html": "^0.9.1",
         "firebase": "8.10.0",
         "html-to-draftjs": "^1.5.0",
+        "nanoid": "^3.1.25",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
         "react-draft-wysiwyg": "^1.14.7",
         "react-firebaseui": "5.0.2",
         "react-icons": "4.2.0",
-        "react-scripts": "4.0.3"
+        "react-scripts": "4.0.3",
+        "virtual-window": "^1.0.20"
     },
     "scripts": {
         "start": "react-scripts start",

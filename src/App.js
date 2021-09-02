@@ -1,7 +1,12 @@
 import "./App.css"
 import { register, Router } from "./lib/routes"
-import { CssBaseline } from "@material-ui/core"
-import { Suspense, lazy } from "react"
+import {
+    Box,
+    CircularProgress,
+    CssBaseline,
+    makeStyles
+} from "@material-ui/core"
+import { Suspense, lazy, useMemo } from "react"
 import { User } from "./lib/useUser"
 import { createTheme, ThemeProvider } from "@material-ui/core"
 import { Dialogs } from "./lib/useDialog"
@@ -44,19 +49,46 @@ register(
     "/admin/articles",
     lazy(() => import("./routes/admin-articles"))
 )
+register(
+    "/admin/article/:id",
+    lazy(() => import("./routes/admin-article"))
+)
 
 function App() {
     return (
         <User>
             <ThemeProvider theme={theme}>
                 <CssBaseline />
-                <Suspense fallback={<div>Loading...</div>}>
+                <Suspense fallback={<Loader />}>
                     <Router component={<main />} />
                     <Dialogs />
                     <SnackBars />
                 </Suspense>
             </ThemeProvider>
         </User>
+    )
+}
+
+const useStyles = makeStyles({
+    circle: {
+        color: (props) => props.color,
+        strokeLinecap: "round"
+    }
+})
+
+function Loader({ size = 48, color = "white" }) {
+    const classes = useStyles({ color })
+    return (
+        <Box
+            display="flex"
+            width={1}
+            height={1}
+            position="absolute"
+            alignItems="center"
+            justifyContent="center"
+        >
+            <CircularProgress size={size * 2} thickness={4} classes={classes} />
+        </Box>
     )
 }
 

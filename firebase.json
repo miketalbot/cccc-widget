@@ -5,5 +5,9 @@
     "storageBucket": "cccc-widget.appspot.com",
     "messagingSenderId": "161601216755",
     "appId": "1:161601216755:web:1fedfd381420e207a79786",
-    "measurementId": "G-PTJX5ZRGPD"
+    "measurementId": "G-PTJX5ZRGPD",
+    "firestore": {
+        "rules": "firestore.rules",
+        "indexes": "firestore.indexes.json"
+    }
 }

@@ -29,13 +29,23 @@ export function Administration({ children }) {
                     <Typography variant="h6" component="h1">
                         <strong>4C</strong> Widget
                     </Typography>
-                    <Box ml={2}>
+                    <Box ml={4}>
                         <IconButton
                             aria-label="Home"
                             color="inherit"
                             onClick={() => navigate("/admin")}
                         >
                             <MdHome />
+                        </IconButton>
+                    </Box>
+                    <Box flex={1} />
+                    <Box mr={1}>
+                        <IconButton
+                            aria-label="Articles"
+                            color="inherit"
+                            onClick={() => navigate("/admin/articles")}
+                        >
+                            <FaRegNewspaper />
                         </IconButton>
                     </Box>
                     <Box mr={1}>
@@ -45,15 +55,6 @@ export function Administration({ children }) {
                             onClick={() => navigate("/admin/profile")}
                         >
                             <MdPerson />
-                        </IconButton>
-                    </Box>
-                    <Box mr={1}>
-                        <IconButton
-                            aria-label="Articles"
-                            color="inherit"
-                            onClick={() => navigate("/admin/articles")}
-                        >
-                            <FaRegNewspaper />
                         </IconButton>
                     </Box>
                 </Toolbar>

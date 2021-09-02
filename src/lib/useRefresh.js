@@ -8,20 +8,21 @@ export function useRefresh(...functions) {
         return () => (mounted.current = false)
     }, [])
     const refreshFunction = useMemo(
-        () => (...params) => {
-            if (params.length === 1 && typeof params[0] === "function") {
-                return (...subParams) => {
-                    params[0](...subParams)
-                    refreshFunction()
+        () =>
+            (...params) => {
+                if (params.length === 1 && typeof params[0] === "function") {
+                    return async (...subParams) => {
+                        await params[0](...subParams)
+                        refreshFunction()
+                    }
                 }
-            }
-            for (let fn of functions) {
-                fn(...params)
-            }
-            if (mounted.current) {
-                refresh((i) => i + 1)
-            }
-        },
+                for (let fn of functions) {
+                    fn(...params)
+                }
+                if (mounted.current) {
+                    refresh((i) => i + 1)
+                }
+            },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [...functions]
     )

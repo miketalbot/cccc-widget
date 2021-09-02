@@ -10,8 +10,10 @@ import {
 import { Administration } from "./Administration"
 import { MdPerson } from "react-icons/md"
 import { FaRegNewspaper } from "react-icons/fa"
-import "./admin-profile"
 import { navigate } from "../lib/routes"
+import "./admin-profile"
+import "./admin-article"
+import "./admin-articles"
 
 export default function AdminPage() {
     return (

@@ -32,6 +32,7 @@ import { Interface } from "./parts/signin"
 import { useEvent } from "../lib/useEvent"
 import HTMLEditor from "../lib/HtmlEditor"
 import NotchedOutline from "@material-ui/core/OutlinedInput/NotchedOutline"
+import "./admin"
 
 const storage = firebase.storage()
 
@@ -60,7 +61,7 @@ export default function Profile() {
             <Container>
                 <Box width={1} clone>
                     <Card elevation={3}>
-                        <CardHeader component="h2" title="Edit Your Profile" />
+                        <CardHeader title="Edit Your Profile" />
                         <CardContent>
                             <TextField
                                 variant="outlined"

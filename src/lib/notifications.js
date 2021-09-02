@@ -6,6 +6,7 @@ import { useEvent } from "./useEvent"
 
 export function showNotification(message, alertProps = { severity: "info" }) {
     raise("show-notification", message, alertProps)
+    return true
 }
 
 export function SnackBars() {
@@ -21,13 +22,15 @@ export function SnackBars() {
             <Snackbar
                 anchorOrigin={{
                     vertical: "bottom",
-                    horizontal: "left"
+                    horizontal: "center"
                 }}
                 open={open}
                 autoHideDuration={6000}
                 onClose={() => setOpen(false)}
             >
-                <Alert {...content.alertProps}>{content.message}</Alert>
+                <Alert onClose={() => setOpen(false)} {...content.alertProps}>
+                    {content.message}
+                </Alert>
             </Snackbar>
         )
     )

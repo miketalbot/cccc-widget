@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { confirm } from "./confirm"
 import { raise, raiseWithOptions } from "./raise"
 import { useDebouncedEvent } from "./useEvent"
 
@@ -43,8 +44,22 @@ export function navigate(url, state = {}) {
 }
 
 export function useLocation() {
-    const [location, setLocation] = useState(window.location)
-    useDebouncedEvent("popstate", () => setLocation({ ...window.location }), 30)
+    const [location, setLocation] = useState({ ...window.location })
+    useDebouncedEvent(
+        "popstate",
+        async () => {
+            const { message } = raise("can-navigate", {})
+            if (message) {
+                if (!(await confirm(message))) {
+                    window.history.pushState(location.state, "", location.href)
+                    return
+                }
+            }
+            setLocation({ ...window.location })
+        },
+        30
+    )
+
     return location
 }
 

@@ -13,7 +13,6 @@ const UserContext = createContext(null)
 
 export function User({ shouldBeCreator = false, children, fallback = null }) {
     const user = useUser({ shouldBeCreator })
-    console.log("Set context", user?.displayName)
     return (
         <UserContext.Provider value={user}>
             {!!user ? children : fallback}

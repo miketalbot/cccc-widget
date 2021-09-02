@@ -1,4 +1,4 @@
-import { createContext, useCallback, useEffect, useRef } from "react"
+import { createContext, useCallback, useEffect, useRef, useState } from "react"
 import useAsync from "./useAsync"
 import { useCurrentState } from "./useCurrentState"
 import NotchedOutline from "@material-ui/core/OutlinedInput/NotchedOutline"
@@ -115,6 +115,13 @@ export function HTMLEditor({
 }) {
     label = labelText || label
     const currentValue = useRef(value)
+    const [update, setUpdate] = useState(0)
+    useEffect(() => {
+        if (currentValue.current !== value) {
+            currentValue.current = value
+            setUpdate((u) => u + 1)
+        }
+    }, [value])
     const Draft = useAsync(async () => {
         if (cache.Editor) return cache
         const { ContentState, convertToRaw, EditorState, Modifier } =
@@ -141,7 +148,7 @@ export function HTMLEditor({
         htmlToDraft
     } = Draft
     //eslint-disable-next-line react-hooks/exhaustive-deps
-    const Item = useCallback(InnerHtml, [Editor ? 1 : 0])
+    const Item = useCallback(InnerHtml, [Editor ? 1 : 0, update])
     return (
         !!Editor && (
             <DraftContext.Provider value={Draft}>
@@ -305,6 +312,7 @@ export function HTMLEditor({
                                     )
                                     const newValue = draftToHtml(rawState)
                                     if (newValue !== value) {
+                                        currentValue.current = newValue
                                         onChange(newValue)
                                     }
                                 } catch (e) {
