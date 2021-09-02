@@ -26,7 +26,7 @@ export function Administration({ children }) {
     const classes = useStyles()
     return (
         <User shouldBeCreator={true} fallback={<SignInScreen />}>
-            <AppBar className={classes.appBar} position="static">
+            <AppBar className={classes.appBar} position="fixed">
                 <Toolbar variant="dense">
                     <Box mr={2}>
                         <Avatar size="large" src={logo} />
@@ -64,7 +64,7 @@ export function Administration({ children }) {
                     </Box>
                 </Toolbar>
             </AppBar>
-            <Box width={1} p={4}>
+            <Box width={1} p={4} mt={4}>
                 {children}
             </Box>
         </User>

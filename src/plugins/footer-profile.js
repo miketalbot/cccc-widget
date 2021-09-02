@@ -9,7 +9,7 @@ const {
     useRefresh
 } = window.Framework4C
 
-register(PluginTypes.FOOTER, "Profile", editor, runtime)
+register(PluginTypes.FOOTER, "Footer Profile", editor, runtime)
 
 function editor({ parent, ...props }) {
     ReactDOM.render(<Editor {...props} />, parent)
@@ -22,9 +22,8 @@ function Editor({ settings, onChange }) {
             <CssBaseline />
             <Box mt={2}>
                 <Typography gutterBottom>
-                    The footer profile shows the first couple of lines from your
-                    personal profile and allows you to specify a short headline
-                    specific for this article
+                    The footer profile shows your display name and an extra line
+                    of text you may specify below
                 </Typography>
             </Box>
             <Box mt={2}>
@@ -33,7 +32,7 @@ function Editor({ settings, onChange }) {
                     onChange={refresh(
                         setFromEvent((v) => (settings.headLine = v))
                     )}
-                    helperText="If specified, this appears as a larger headline above your standard profile description"
+                    helperText="If specified this appears under your display name"
                     label="Additional Headline"
                     variant="outlined"
                     fullWidth
@@ -42,5 +41,24 @@ function Editor({ settings, onChange }) {
         </ThemeProvider>
     )
 }
+function runtime({ parent, ...props }) {
+    ReactDOM.render(<Runtime {...props} />, parent)
+}
 
-function runtime() {}
+function Runtime({ settings, user }) {
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Box width={1} pl={4} pr={4} color="white" borderRadius={8} p={1}>
+                <Typography variant="h6" component="h3">
+                    {user.displayName}
+                </Typography>
+                {!!settings.headLine && (
+                    <Typography gutterBottom variant="body2">
+                        {settings.headLine}
+                    </Typography>
+                )}
+            </Box>
+        </ThemeProvider>
+    )
+}

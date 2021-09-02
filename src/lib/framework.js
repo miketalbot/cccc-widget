@@ -10,6 +10,16 @@ import { setFromEvent, setFromValueParam } from "./setFromEvent"
 import { useRefresh } from "./useRefresh"
 import HTMLEditor from "./HtmlEditor"
 import { ImageUploadButton } from "./uploadButton"
+import {
+    db,
+    recommend,
+    respond,
+    respondUnique,
+    view,
+    firebase,
+    awardPoints
+} from "./firebase"
+
 window.Framework4C = {
     HTMLEditor,
     ImageUploadButton,
@@ -22,6 +32,16 @@ window.Framework4C = {
     Events: { useEvent, useDebouncedEvent, raise },
     React,
     ReactDOM,
-    Plugins: { register: pluginRegister, PluginTypes, Plugins }
+    Plugins: { register: pluginRegister, PluginTypes, Plugins },
+    Interaction: {
+        awardPoints,
+        respond,
+        respondUnique
+    },
+    FireBase: {
+        firebase,
+        db,
+        view,
+        recommend
+    }
 }
-

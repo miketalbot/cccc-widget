@@ -1,4 +1,4 @@
-import { Box, CardContent, TextField } from "@material-ui/core"
+import { Box, CardContent, makeStyles, TextField } from "@material-ui/core"
 import HTMLEditor from "../lib/HtmlEditor"
 import noop from "../lib/noop"
 import { showNotification } from "../lib/notifications"
@@ -6,7 +6,12 @@ import { setFromEvent } from "../lib/setFromEvent"
 import { useRefresh } from "../lib/useRefresh"
 import { getTag } from "../lib/getTag"
 
+const useStyles = makeStyles({
+    root: {}
+})
+
 export function ArticleDetails({ article, onChange = noop }) {
+    const classes = useStyles()
     const refresh = useRefresh(onChange)
     return (
         <>
@@ -25,7 +30,18 @@ export function ArticleDetails({ article, onChange = noop }) {
                     fullWidth
                     label="URL"
                     value={article.url ?? ""}
-                    onChange={refresh(setFromEvent(updateArticle))}
+                    onBlur={() => updateArticle(article.url)}
+                    onChange={refresh(setFromEvent((v) => (article.url = v)))}
+                />
+            </CardContent>
+            <CardContent>
+                <TextField
+                    variant="outlined"
+                    fullWidth
+                    helperText="Separate tags with a comma.  Tags help us to recommend your article."
+                    label="Tags"
+                    value={article.tags ?? ""}
+                    onChange={refresh(setFromEvent(updateTags))}
                 />
             </CardContent>
             <CardContent>
@@ -41,10 +57,13 @@ export function ArticleDetails({ article, onChange = noop }) {
                 <TextField
                     variant="outlined"
                     fullWidth
+                    multiline
+                    classes={classes}
                     label="Image"
                     InputProps={{
+                        classes,
                         endAdornment: !!article.image && (
-                            <Box m={1} mr={-0.5} borderRadius={8} clone>
+                            <Box m={1} mr={-0.5} borderRadius={4} clone>
                                 <img
                                     alt="Preview"
                                     width={150}
@@ -66,6 +85,15 @@ export function ArticleDetails({ article, onChange = noop }) {
             </CardContent>
         </>
     )
+
+    function updateTags(v) {
+        article.tags = v
+        article.processedTags = v
+            .toLowerCase()
+            .split(",")
+            .map((c) => c.trim())
+            .filter((v) => !!v)
+    }
 
     async function updateArticle(url) {
         article.url = url

@@ -1,5 +1,16 @@
 const {
-    Material: { TextField, Box, ThemeProvider, CssBaseline },
+    Material: {
+        TextField,
+        Box,
+        makeStyles,
+        Card,
+        CardContent,
+        Typography,
+        CardHeader,
+        CardMedia,
+        ThemeProvider,
+        CssBaseline
+    },
     Plugins: { PluginTypes, register },
     setFromEvent,
     ReactDOM,
@@ -34,4 +45,40 @@ function Editor({ settings, onChange }) {
     )
 }
 
-function runtime() {}
+function runtime({ parent, ...props }) {
+    ReactDOM.render(<Runtime {...props} />, parent)
+}
+
+function Runtime({ settings, user }) {
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Box m={2} width={1}>
+                <Card elevation={6}>
+                    <CardContent>
+                        <Typography gutterBottom variant="h5" component="h2">
+                            {user.displayName}
+                        </Typography>
+                        {!!settings.headLine && (
+                            <Typography gutterBottom variant="body1">
+                                {settings.headLine}
+                            </Typography>
+                        )}
+                        <Typography
+                            gutterBottom
+                            variant="body2"
+                            color="textSecondary"
+                            component="div"
+                        >
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: user.description
+                                }}
+                            />
+                        </Typography>
+                    </CardContent>
+                </Card>
+            </Box>
+        </ThemeProvider>
+    )
+}

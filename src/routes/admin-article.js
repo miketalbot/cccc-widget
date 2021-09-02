@@ -6,6 +6,7 @@ import {
     CardContent,
     CardHeader,
     Container,
+    IconButton,
     Tab
 } from "@material-ui/core"
 import { useRef, useState } from "react"
@@ -23,6 +24,7 @@ import { PluginTypes } from "../lib/plugins"
 import { PluginDetails } from "./PluginDetails"
 import { AdvancedArticleSettings } from "./AdvancedArticleSettings"
 import { useEditorPlugins } from "../lib/usePlugins"
+import { MdClear } from "react-icons/md"
 
 export default function Article({ id }) {
     const user = useUserContext()
@@ -50,7 +52,17 @@ export default function Article({ id }) {
                 <Container>
                     <Box mt={2} width={1} clone>
                         <Card elevation={3}>
-                            <CardHeader title={article.name} />
+                            <CardHeader
+                                action={
+                                    <IconButton
+                                        aria-label="Close and go back icon"
+                                        onClick={goBack}
+                                    >
+                                        <MdClear />
+                                    </IconButton>
+                                }
+                                title={article.name}
+                            />
                             <CardContent>
                                 <TabContext value={tab}>
                                     <TabList
