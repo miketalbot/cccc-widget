@@ -25,7 +25,7 @@ function Editor({ settings, onChange }) {
             <CssBaseline />
             <Box mt={2}>
                 <TextField
-                    value={settings.headLine ?? ""}
+                    value={settings.headLine || ""}
                     onChange={refresh(
                         setFromEvent((v) => (settings.headLine = v))
                     )}
