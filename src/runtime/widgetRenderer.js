@@ -16,7 +16,9 @@ export async function renderWidget(parent, id, user, useArticle) {
         // Do some fallback
         return
     }
-    view(id).catch(console.error)
+    if (!useArticle) {
+        view(id).catch(console.error)
+    }
     // Get the actual data of the document
     const article = useArticle || definitionDoc.data()
     const holder = makeContainer(parent)

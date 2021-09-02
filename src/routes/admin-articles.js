@@ -43,7 +43,12 @@ export default function Articles() {
     const user = useUserContext()
     const getName = useDialog(GetArticleName)
     const allArticles = sortBy(
-        useCollection(articles.doc(user.uid).collection("articles")),
+        useCollection(
+            articles
+                .doc(user.uid)
+                .collection("articles")
+                .where("comment", "!=", true)
+        ),
         (v) => -v.date
     )
     return (

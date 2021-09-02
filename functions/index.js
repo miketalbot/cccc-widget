@@ -6,7 +6,7 @@ const db = admin.firestore()
 require("./triggers")(exports, db)
 
 exports.view = functions.https.onCall(async ({ articleId }, context) => {
-    if (false && context.app === undefined) {
+    if (context.app === undefined) {
         console.error("Not validated")
         throw new functions.https.HttpsError(
             "failed-precondition",
@@ -74,7 +74,7 @@ async function incrementTag(tag, value) {
 
 exports.respond = functions.https.onCall(
     async ({ articleId, type = "general", response }, context) => {
-        if (false && context.app === undefined) {
+        if (context.app === undefined) {
             throw new functions.https.HttpsError(
                 "failed-precondition",
                 "The function must be called from an App Check verified app."
@@ -101,7 +101,7 @@ exports.respond = functions.https.onCall(
 
 exports.recommend = functions.https.onCall(
     async ({ articleId, number = 10 }, context) => {
-        if (false && context.app === undefined) {
+        if (context.app === undefined) {
             throw new functions.https.HttpsError(
                 "failed-precondition",
                 "The function must be called from an App Check verified app."
@@ -133,7 +133,7 @@ exports.recommend = functions.https.onCall(
 
 exports.respondUnique = functions.https.onCall(
     async ({ articleId, type = "general", response }, context) => {
-        if (false && context.app === undefined) {
+        if (context.app === undefined) {
             throw new functions.https.HttpsError(
                 "failed-precondition",
                 "The function must be called from an App Check verified app."
@@ -158,7 +158,8 @@ exports.respondUnique = functions.https.onCall(
 
 exports.awardPoints = functions.https.onCall(
     async ({ points = 1, achievement = "Plugin Award" }, context) => {
-        if (false && context.app === undefined) {
+        points = Math.max(0, Math.min(points, 20))
+        if (context.app === undefined) {
             throw new functions.https.HttpsError(
                 "failed-precondition",
                 "The function must be called from an App Check verified app."
@@ -177,6 +178,7 @@ async function awardPoints(
     bonus = () => [0]
 ) {
     if (!userUid) return
+    points = Math.max(0, points)
     const scoreRef = db.collection("scores").doc(userUid)
     const snap = await scoreRef.get()
     const data = snap.exists ? snap.data() : {}

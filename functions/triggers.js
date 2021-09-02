@@ -41,6 +41,9 @@ module.exports = function (exports) {
                 return
             }
             const data = change.after.data()
+            sanitizeAll(data)
+            data.comment = data.comment || false
+            await change.after.ref.set(data)
             await db
                 .collection("articles")
                 .doc(data.uid)
@@ -67,4 +70,35 @@ module.exports = function (exports) {
                 processedTags: data.processedTags || []
             })
         })
+}
+
+function sanitizeAll(value) {
+    if (
+        typeof value === "string" &&
+        (value.includes("</") || value.includes("/>"))
+    ) {
+        return sanitizeHtml(value, {
+            transformTags: {
+                a: (tagName, attribs) => {
+                    return {
+                        tagName,
+                        attribs: {
+                            ...attribs,
+                            target: "_blank"
+                        }
+                    }
+                }
+            }
+        })
+    }
+    if (Array.isArray(value)) {
+        for (let i = 0; i < value.length; i++) {
+            value[i] = sanitizeAll(value[i])
+        }
+    } else if (value && typeof value === "object") {
+        for (let [prop, current] of Object.entries(value)) {
+            value[prop] = sanitizeAll(current)
+        }
+    }
+    return value
 }

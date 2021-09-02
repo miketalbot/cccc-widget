@@ -15,16 +15,30 @@ export function ArticleDetails({ article, onChange = noop }) {
     const refresh = useRefresh(onChange)
     return (
         <>
-            <CardContent>
-                <TextField
-                    variant="outlined"
-                    fullWidth
-                    label="Name"
-                    value={article.name ?? ""}
-                    onChange={refresh(setFromEvent((v) => (article.name = v)))}
-                />
-            </CardContent>
-            <CardContent>
+            <Box mt={2} display="flex">
+                <Box mr={1} flex={1}>
+                    <TextField
+                        variant="outlined"
+                        fullWidth
+                        label="Name"
+                        value={article.name ?? ""}
+                        onChange={refresh(
+                            setFromEvent((v) => (article.name = v))
+                        )}
+                    />
+                </Box>
+                <Box>
+                    <TextField
+                        variant="outlined"
+                        fullWidth
+                        helperText="Separate tags with a comma.  Tags help us to recommend your article."
+                        label="Tags"
+                        value={article.tags ?? ""}
+                        onChange={refresh(setFromEvent(updateTags))}
+                    />
+                </Box>
+            </Box>
+            <Box mt={2}>
                 <TextField
                     variant="outlined"
                     fullWidth
@@ -33,18 +47,8 @@ export function ArticleDetails({ article, onChange = noop }) {
                     onBlur={() => updateArticle(article.url)}
                     onChange={refresh(setFromEvent((v) => (article.url = v)))}
                 />
-            </CardContent>
-            <CardContent>
-                <TextField
-                    variant="outlined"
-                    fullWidth
-                    helperText="Separate tags with a comma.  Tags help us to recommend your article."
-                    label="Tags"
-                    value={article.tags ?? ""}
-                    onChange={refresh(setFromEvent(updateTags))}
-                />
-            </CardContent>
-            <CardContent>
+            </Box>
+            <Box mt={2}>
                 <TextField
                     variant="outlined"
                     fullWidth
@@ -52,8 +56,8 @@ export function ArticleDetails({ article, onChange = noop }) {
                     value={article.title ?? ""}
                     onChange={refresh(setFromEvent((v) => (article.title = v)))}
                 />
-            </CardContent>
-            <CardContent>
+            </Box>
+            <Box mt={2}>
                 <TextField
                     variant="outlined"
                     fullWidth
@@ -75,14 +79,14 @@ export function ArticleDetails({ article, onChange = noop }) {
                     value={article.image ?? ""}
                     onChange={refresh(setFromEvent((v) => (article.image = v)))}
                 />
-            </CardContent>
-            <CardContent>
+            </Box>
+            <Box mt={2}>
                 <HTMLEditor
                     value={article.description || "<p></p>"}
                     onChange={refresh((v) => (article.description = v))}
                     label="Description"
                 />
-            </CardContent>
+            </Box>
         </>
     )
 
