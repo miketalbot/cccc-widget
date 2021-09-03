@@ -15,7 +15,6 @@ import { useRecord } from "../lib/useRecord"
 import { useUserContext } from "../lib/useUser"
 import { articles } from "./admin-articles"
 import { Administration } from "./parts/Administration"
-import { ArticleDetails } from "./parts/ArticleDetails"
 import "./admin"
 import { useRefresh } from "../lib/useRefresh"
 import { useEvent } from "../lib/useEvent"
@@ -25,8 +24,9 @@ import { PluginDetails } from "./parts/PluginDetails"
 import { AdvancedArticleSettings } from "./parts/AdvancedArticleSettings"
 import { useEditorPlugins } from "../lib/usePlugins"
 import { MdClear } from "react-icons/md"
+import { CommentDetails } from "./parts/CommentDetails"
 
-export default function Article({ id }) {
+export default function Comment({ id }) {
     const user = useUserContext()
     const [tab, setTab] = useState("0")
     const refresh = useRefresh()
@@ -70,7 +70,7 @@ export default function Article({ id }) {
                                         onChange={(_, tab) => setTab(tab)}
                                     >
                                         <Tab
-                                            label="Article Details"
+                                            label="Comment Details"
                                             value="0"
                                         />
                                         <Tab label="Main Widget" value="1" />
@@ -81,7 +81,7 @@ export default function Article({ id }) {
                                         />
                                     </TabList>
                                     <TabPanel value="0">
-                                        <ArticleDetails
+                                        <CommentDetails
                                             article={article}
                                             onChange={change}
                                         />
@@ -124,7 +124,7 @@ export default function Article({ id }) {
                                     onClick={refresh(
                                         () =>
                                             update() &&
-                                            showNotification("Article saved") &&
+                                            showNotification("Comment saved") &&
                                             (updated.current = false)
                                     )}
                                     color="secondary"

@@ -7,9 +7,9 @@ import {
     Container,
     useTheme
 } from "@material-ui/core"
-import { Administration } from "./Administration"
+import { Administration } from "./parts/Administration"
 import { MdPerson } from "react-icons/md"
-import { FaRegNewspaper } from "react-icons/fa"
+import { FaComment, FaRegNewspaper } from "react-icons/fa"
 import { navigate } from "../lib/routes"
 import "./admin-profile"
 import "./admin-article"
@@ -26,18 +26,25 @@ export default function AdminPage() {
                     justifyContent="space-around"
                 >
                     <Panel
-                        title="Profile"
-                        icon={<MdPerson />}
-                        onClick={() => navigate("/admin/profile")}
-                    >
-                        Configure Your Profile
-                    </Panel>
-                    <Panel
                         title="Articles"
                         icon={<FaRegNewspaper />}
                         onClick={() => navigate("/admin/articles")}
                     >
                         Manage Your Articles
+                    </Panel>
+                    <Panel
+                        title="Comments"
+                        icon={<FaComment />}
+                        onClick={() => navigate("/admin/comments")}
+                    >
+                        Manage Your Comments
+                    </Panel>
+                    <Panel
+                        title="Profile"
+                        icon={<MdPerson />}
+                        onClick={() => navigate("/admin/profile")}
+                    >
+                        Configure Your Profile
                     </Panel>
                 </Box>
             </Container>
@@ -55,7 +62,7 @@ function Panel({ icon, children, title, onClick = () => {} }) {
     const theme = useTheme()
     const classes = useStyles()
     return (
-        <Box width={1 / 3} m={1} minWidth={250} clone>
+        <Box width={1 / 4} m={1} minWidth={220} clone>
             <Card
                 onClick={onClick}
                 role="button"

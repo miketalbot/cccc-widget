@@ -1,8 +1,9 @@
 import { db, view } from "../lib/firebase"
 import logo from "../assets/4C_logo.jpg"
 import { Plugins, PluginTypes } from "../lib/plugins"
+import { raise } from "../lib/raise"
 
-export async function renderWidget(parent, id, user, useArticle) {
+export async function renderWidget(parent, id, user, useArticle = null) {
     const definitionRef = user
         ? db
               .collection("userarticles")
@@ -14,15 +15,23 @@ export async function renderWidget(parent, id, user, useArticle) {
     const definitionDoc = await definitionRef.get()
     if (!definitionDoc.exists && !useArticle) {
         // Do some fallback
-        return
+        return null
     }
     if (!useArticle) {
         view(id).catch(console.error)
     }
     // Get the actual data of the document
     const article = useArticle || definitionDoc.data()
+    const response = {}
+    const removeListener = db
+        .collection("responses")
+        .doc(id)
+        .onSnapshot((update) => {
+            Object.assign(response, update.data())
+            raise(`response-${id}`, response)
+            raise(`response`, response)
+        })
     const holder = makeContainer(parent)
-    parent.appendChild(holder.main)
     holder.logoWidget.style.backgroundImage = `url(${logo})`
     holder.avatarWidget.style.backgroundImage = `url(${user.photoURL})`
     article.pluginSettings = article.pluginSettings || {}
@@ -32,7 +41,9 @@ export async function renderWidget(parent, id, user, useArticle) {
         article[PluginTypes.MAIN],
         article.pluginSettings[article[PluginTypes.MAIN]],
         article,
-        user
+        user,
+        response,
+        !!useArticle
     )
     renderPlugin(
         holder.footerWidget,
@@ -40,19 +51,41 @@ export async function renderWidget(parent, id, user, useArticle) {
         article[PluginTypes.FOOTER],
         article.pluginSettings[article[PluginTypes.FOOTER]],
         article,
-        user
+        user,
+        response,
+        !!useArticle
     )
+    return removeListener
 }
 
-function renderPlugin(parent, type, pluginName, settings, article, user) {
+function renderPlugin(
+    parent,
+    type,
+    pluginName,
+    settings,
+    article,
+    user,
+    response,
+    previewMode
+) {
     if (!settings || !pluginName || !type || !parent || !article || !user)
         return
     const plugin = Plugins[type][pluginName]
     if (!plugin || !plugin.runtime) return
-    plugin.runtime({ parent, article, settings, type, pluginName, user })
+    plugin.runtime({
+        parent,
+        article,
+        settings,
+        type,
+        pluginName,
+        user,
+        response,
+        previewMode
+    })
 }
 
-function makeContainer(parent = document.body) {
+function makeContainer(parent) {
+    parent = parent || document.body
     if (parent._madeContainer) return parent._madeContainer
 
     parent.style.background = `linear-gradient(45deg, #fe6b8b 30%, #ff8e53 90%)`
@@ -75,7 +108,8 @@ function makeContainer(parent = document.body) {
     main.appendChild(top)
     const mainWidget = document.createElement("section")
     Object.assign(mainWidget.style, {
-        width: "66%"
+        width: "66%",
+        position: "relative"
     })
     top.appendChild(mainWidget)
     const notificationWidget = document.createElement("section")
@@ -102,7 +136,8 @@ function makeContainer(parent = document.body) {
         display: "flex",
         alignItems: "center",
         width: "calc(100% + 8px)",
-        overflow: "hidden"
+        overflow: "hidden",
+        position: "relative"
     })
     main.appendChild(bottom)
     const avatarWidget = document.createElement("div")
@@ -132,6 +167,8 @@ function makeContainer(parent = document.body) {
         backgroundSize: "contain"
     })
     bottom.appendChild(logoWidget)
+    parent.appendChild(main)
+
     return (parent._madeContainer = {
         main,
         mainWidget,

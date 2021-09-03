@@ -1,10 +1,10 @@
-import { Box, CardContent, makeStyles, TextField } from "@material-ui/core"
-import HTMLEditor from "../lib/HtmlEditor"
-import noop from "../lib/noop"
-import { showNotification } from "../lib/notifications"
-import { setFromEvent } from "../lib/setFromEvent"
-import { useRefresh } from "../lib/useRefresh"
-import { getTag } from "../lib/getTag"
+import { Box, makeStyles, TextField } from "@material-ui/core"
+import HTMLEditor from "../../lib/HtmlEditor"
+import noop from "../../lib/noop"
+import { showNotification } from "../../lib/notifications"
+import { setFromEvent } from "../../lib/setFromEvent"
+import { useRefresh } from "../../lib/useRefresh"
+import { getTag } from "../../lib/getTag"
 
 const useStyles = makeStyles({
     root: {}

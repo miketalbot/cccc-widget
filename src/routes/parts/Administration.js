@@ -7,13 +7,13 @@ import {
     Toolbar,
     Typography
 } from "@material-ui/core"
-import { navigate } from "../lib/routes"
-import { User } from "../lib/useUser"
-import { SignInScreen } from "./parts/signin"
+import { navigate } from "../../lib/routes"
+import { User } from "../../lib/useUser"
+import { SignInScreen } from "./signin"
 import { MdPerson } from "react-icons/md"
 import { MdHome } from "react-icons/md"
-import { FaRegNewspaper } from "react-icons/fa"
-import logo from "../assets/4C_logo.jpg"
+import { FaComment, FaRegNewspaper } from "react-icons/fa"
+import logo from "../../assets/4C_logo.jpg"
 
 const useStyles = makeStyles({
     appBar: {
@@ -51,6 +51,15 @@ export function Administration({ children }) {
                             onClick={() => navigate("/admin/articles")}
                         >
                             <FaRegNewspaper />
+                        </IconButton>
+                    </Box>
+                    <Box mr={1}>
+                        <IconButton
+                            aria-label="Comments"
+                            color="inherit"
+                            onClick={() => navigate("/admin/comments")}
+                        >
+                            <FaComment />
                         </IconButton>
                     </Box>
                     <Box mr={1}>

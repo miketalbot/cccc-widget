@@ -1,5 +1,4 @@
 import { useEffect } from "react"
-import { BiHandicap } from "react-icons/bi"
 
 export function usePlugins(definition, deps = []) {
     useEffect(() => {

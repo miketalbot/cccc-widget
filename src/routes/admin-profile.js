@@ -20,7 +20,7 @@ import {
 import { useState } from "react"
 import { setFromEvent } from "../lib/setFromEvent"
 import { useUserContext } from "../lib/useUser"
-import { Administration } from "./Administration"
+import { Administration } from "./parts/Administration"
 import { MdClear, MdLock } from "react-icons/all"
 import { raise } from "../lib/raise"
 import { ImageUploadButton } from "../lib/uploadButton"

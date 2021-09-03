@@ -29,7 +29,7 @@ import { setFromEvent } from "../lib/setFromEvent"
 import { useState } from "react"
 import { useDialog } from "../lib/useDialog"
 import { showNotification } from "../lib/notifications"
-import { FaNewspaper } from "react-icons/fa"
+import { FaComment } from "react-icons/fa"
 import { MdClear, MdDelete } from "react-icons/md"
 import { confirm } from "../lib/confirm"
 import { VirtualWindow } from "virtual-window"
@@ -41,13 +41,13 @@ export const articles = db.collection("userarticles")
 
 export default function Articles() {
     const user = useUserContext()
-    const getName = useDialog(GetArticleName)
-    const allArticles = sortBy(
+    const getName = useDialog(GetCommentName)
+    const allComments = sortBy(
         useCollection(
             articles
                 .doc(user.uid)
                 .collection("articles")
-                .where("comment", "!=", true)
+                .where("comment", "==", true)
         ),
         (v) => -v.date
     )
@@ -57,7 +57,7 @@ export default function Articles() {
                 <Box width={1} clone>
                     <Card elevation={3}>
                         <CardHeader
-                            title="Your Articles"
+                            title="Your Comments"
                             action={
                                 <IconButton
                                     aria-label="Close and go back icon"
@@ -70,22 +70,22 @@ export default function Articles() {
                         <CardContent>
                             <Box
                                 maxHeight={"75vh"}
-                                height={allArticles.length * 80 + 8}
+                                height={allComments.length * 80 + 8}
                                 clone
                             >
                                 <List>
                                     <VirtualWindow
                                         keyFn={pick("uid")}
                                         itemSize={80}
-                                        list={allArticles}
-                                        item={<Article />}
+                                        list={allComments}
+                                        item={<Comment />}
                                     />
                                 </List>
                             </Box>
                         </CardContent>
                         <CardActions>
-                            <Button onClick={addArticle} color="primary">
-                                + Article
+                            <Button onClick={addComment} color="primary">
+                                + Comment
                             </Button>
                         </CardActions>
                     </Card>
@@ -96,21 +96,22 @@ export default function Articles() {
     function goBack() {
         window.history.back(1)
     }
-    async function addArticle() {
+    async function addComment() {
         const name = await getName()
         if (name) {
-            const article = {
+            const comment = {
                 uid: nanoid(),
                 name,
+                comment: true,
                 date: Date.now()
             }
             try {
                 await articles
                     .doc(user.uid)
                     .collection("articles")
-                    .doc(article.uid)
-                    .set(article)
-                showNotification("Article created")
+                    .doc(comment.uid)
+                    .set(comment)
+                showNotification("Comment created")
             } catch (e) {
                 showNotification(e.message, { severity: "error" })
             }
@@ -118,11 +119,11 @@ export default function Articles() {
     }
 }
 
-function GetArticleName({ ok, cancel }) {
+function GetCommentName({ ok, cancel }) {
     const [name, setName] = useState("")
     return (
         <>
-            <DialogTitle>New Article</DialogTitle>
+            <DialogTitle>New Comment</DialogTitle>
             <DialogContent>
                 <TextField
                     autoFocus
@@ -145,13 +146,13 @@ function GetArticleName({ ok, cancel }) {
     )
 }
 
-function Article({ item: { name, date, uid } }) {
+function Comment({ item: { name, date, uid } }) {
     const user = useUserContext()
     return (
-        <ListItem button onClick={() => navigate(`/admin/article/${uid}`)}>
+        <ListItem button onClick={() => navigate(`/admin/comment/${uid}`)}>
             <ListItemAvatar>
                 <Avatar>
-                    <FaNewspaper />
+                    <FaComment />
                 </Avatar>
             </ListItemAvatar>
             <ListItemText
@@ -175,7 +176,7 @@ function Article({ item: { name, date, uid } }) {
             if (
                 !(await confirm(
                     `Are you sure you want to delete "${name}"?`,
-                    "Delete Article"
+                    "Delete Comment"
                 ))
             )
                 return

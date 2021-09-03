@@ -26,6 +26,14 @@ register(
     "/admin/article/:id",
     lazy(() => import("./routes/admin-article"))
 )
+register(
+    "/admin/comments",
+    lazy(() => import("./routes/admin-comments"))
+)
+register(
+    "/admin/comment/:id",
+    lazy(() => import("./routes/admin-comment"))
+)
 
 function App() {
     return (
@@ -41,12 +49,5 @@ function App() {
         </User>
     )
 }
-
-export const useStyles = makeStyles({
-    circle: {
-        color: (props) => props.color,
-        strokeLinecap: "round"
-    }
-})
 
 export default App

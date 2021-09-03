@@ -19,6 +19,8 @@ const db = firebase.firestore()
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
 export default app
 
+firebase.appCheck().activate("6Le83j4cAAAAAL54JtkeuZBpkTHPhdcgbVpubInK", true)
+
 function define(name, ...params) {
     const fn = firebase.functions().httpsCallable(name)
     return async function (...callWith) {
@@ -33,8 +35,8 @@ function define(name, ...params) {
 }
 
 const view = define("view", "articleId")
-const respond = define("respond", "articleId", "type", "respond")
-const respondUnique = define("respond", "articleId", "type", "respondUnique")
+const respond = define("respond", "articleId", "type", "response")
+const respondUnique = define("respondUnique", "articleId", "type", "response")
 const recommend = define("recommend", "articleId", "number")
 const awardPoints = define("awardPoints", "points", "achievement")
 

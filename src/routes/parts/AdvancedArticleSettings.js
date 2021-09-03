@@ -1,6 +1,6 @@
 import { CardContent, TextField } from "@material-ui/core"
-import { useRefresh } from "../lib/useRefresh"
-import { setFromEvent } from "../lib/setFromEvent"
+import { useRefresh } from "../../lib/useRefresh"
+import { setFromEvent } from "../../lib/setFromEvent"
 import { useState } from "react"
 
 export function AdvancedArticleSettings({ onChange, reload, article }) {
