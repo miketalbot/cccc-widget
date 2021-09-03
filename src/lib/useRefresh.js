@@ -17,7 +17,9 @@ export function useRefresh(...functions) {
                     }
                 }
                 for (let fn of functions) {
-                    fn(...params)
+                    if (fn) {
+                        fn(...params)
+                    }
                 }
                 if (mounted.current) {
                     refresh((i) => i + 1)

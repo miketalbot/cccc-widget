@@ -88,6 +88,11 @@ exports.respond = functions.https.onCall(
         const responseRef = db.collection("responses").doc(articleId)
         const doc = await responseRef.get()
         const data = doc.exists ? doc.data() : {}
+        data.types = data.types || []
+        if (!data.types.includes(type)) {
+            data.types.push(type)
+        }
+
         const responseCollections = (data.responses = data.responses || {})
         const responses = (responseCollections[type] =
             responseCollections[type] || {})
@@ -148,6 +153,10 @@ exports.respondUnique = functions.https.onCall(
         const responseRef = db.collection("responses").doc(articleId)
         const doc = await responseRef.get()
         const data = doc.exists ? doc.data() : {}
+        data.types = data.types || []
+        if (!data.types.includes(type)) {
+            data.types.push(type)
+        }
         const responseCollections = (data.responses = data.responses || {})
         const responses = (responseCollections[type] =
             responseCollections[type] || {})

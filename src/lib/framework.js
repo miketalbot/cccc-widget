@@ -23,6 +23,9 @@ import { Loader } from "./Loader"
 import * as pie from "@nivo/pie"
 import * as line from "@nivo/line"
 import * as bar from "@nivo/bar"
+import { bind, Bind, Bound, makeLabelFrom, useBoundContext } from "./Bound"
+import { BoundAutocomplete, BoundTextField } from "./bound-components"
+import { Sortable, SortableItem } from "../lib/Sortable"
 
 function useResponse(response) {
     const [current, setCurrent] = useState(response?.response || response)
@@ -34,6 +37,19 @@ function useResponse(response) {
 
 window.Framework4C = {
     HTMLEditor,
+    Binding: {
+        Bound: Bound,
+        Bind: Bind,
+        bind: bind,
+        makeLabelFrom: makeLabelFrom,
+        useBoundContext: useBoundContext,
+        Common: {
+            BoundTextField: BoundTextField,
+            BoundAutocomplete: BoundAutocomplete
+        }
+    },
+    Sortable: Sortable,
+    SortableItem: SortableItem,
     ImageUploadButton,
     Material,
     Loader,

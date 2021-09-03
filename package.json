@@ -3,6 +3,8 @@
     "version": "0.1.1",
     "private": true,
     "dependencies": {
+        "@dnd-kit/core": "^3.1.1",
+        "@dnd-kit/sortable": "^4.0.0",
         "@material-ui/core": "4.12.3",
         "@material-ui/lab": "4.0.0-alpha.60",
         "@nivo/bar": "^0.73.1",
@@ -14,14 +16,18 @@
         "@testing-library/user-event": "^12.8.3",
         "browser-image-resizer": "2.2.0",
         "classnames": "^2.3.1",
+        "craco": "^0.0.3",
         "dayjs": "^1.10.6",
+        "decamelize": "^1.2.0",
         "draft-js": "^0.11.7",
         "draftjs-to-html": "^0.9.1",
         "firebase": "8.10.0",
         "firebase-functions": "^3.15.5",
         "html-to-draftjs": "^1.5.0",
         "nanoid": "^3.1.25",
+        "preact": "^10.5.14",
         "react": "^17.0.2",
+        "react-color": "^2.19.3",
         "react-dom": "^17.0.2",
         "react-draft-wysiwyg": "^1.14.7",
         "react-firebaseui": "5.0.2",
@@ -30,9 +36,9 @@
         "virtual-window": "^1.0.20"
     },
     "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
+        "start": "craco start",
+        "build": "craco build",
+        "test": "craco test",
         "eject": "react-scripts eject"
     },
     "eslintConfig": {

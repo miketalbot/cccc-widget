@@ -61,6 +61,7 @@ module.exports = function (exports) {
                 return
             }
             await responseRef.set({
+                types: [],
                 created: Date.now(),
                 visits: 0,
                 comment: data.comment || false,

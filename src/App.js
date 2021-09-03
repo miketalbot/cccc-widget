@@ -1,6 +1,6 @@
 import "./App.css"
 import { register, Router } from "./lib/routes"
-import { CssBaseline, makeStyles } from "@material-ui/core"
+import { CssBaseline } from "@material-ui/core"
 import { Suspense, lazy } from "react"
 import { User } from "./lib/useUser"
 import { ThemeProvider } from "@material-ui/core"

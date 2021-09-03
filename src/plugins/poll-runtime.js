@@ -1,8 +1,10 @@
-import { Button } from "@material-ui/core"
-import { useState } from "react"
+import { IconButton } from "@material-ui/core"
+import { nanoid } from "nanoid"
+import { MdDelete, MdDragHandle } from "react-icons/md"
 
 const {
     Material: {
+        Button,
         TextField,
         Box,
         Card,
@@ -12,9 +14,17 @@ const {
         CssBaseline
     },
     Loader,
+    Sortable,
+    SortableItem,
     Plugins: { PluginTypes, register },
     Interaction: { respondUnique, useResponse },
     setFromEvent,
+    Binding: {
+        useBoundContext,
+        Bound,
+        Common: { BoundTextField }
+    },
+    React: { useState },
     ReactDOM,
     theme,
     useRefresh
@@ -31,8 +41,69 @@ function Editor({ settings, onChange }) {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Box mt={2}>Put poll answers here</Box>
+            <Bound refresh={refresh} target={settings} onChange={onChange}>
+                <Box mt={2}>
+                    <PollConfig />
+                </Box>
+            </Bound>
         </ThemeProvider>
+    )
+}
+
+function PollConfig() {
+    const { target, refresh } = useBoundContext()
+    const answers = (target.answers = target.answers || [])
+
+    return (
+        <>
+            <BoundTextField field="question" />
+            <Box mt={2}>
+                <Sortable items={answers} onDragEnd={refresh}>
+                    {answers.map((answer, index) => (
+                        <Answer key={answer.id} index={index} answer={answer} />
+                    ))}
+                </Sortable>
+            </Box>
+            <Button color="primary" onClick={addAnswer}>
+                + Answer
+            </Button>
+        </>
+    )
+
+    function addAnswer() {
+        answers.push({ id: nanoid(), answer: "" })
+        refresh()
+    }
+}
+
+function Answer({ answer, index }) {
+    return (
+        <SortableItem
+            borderRadius={4}
+            bgcolor="#fff8"
+            m={1}
+            display="flex"
+            alignItems="center"
+            index={index}
+        >
+            <Bound target={answer}>
+                <Box mr={1}>
+                    <MdDragHandle />
+                </Box>
+                <Box flex={1} mr={1}>
+                    <BoundTextField field="answer" />
+                </Box>
+                <Box flex={0.5} mr={1}>
+                    <BoundTextField
+                        field="score"
+                        transformOut={(v) => parseInt(v)}
+                    />
+                </Box>
+                <IconButton color="secondary">
+                    <MdDelete />
+                </IconButton>
+            </Bound>
+        </SortableItem>
     )
 }
 
