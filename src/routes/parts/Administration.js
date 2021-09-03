@@ -27,7 +27,7 @@ export function Administration({ children }) {
     return (
         <User shouldBeCreator={true} fallback={<SignInScreen />}>
             <AppBar className={classes.appBar} position="fixed">
-                <Toolbar variant="dense">
+                <Toolbar>
                     <Box mr={2}>
                         <Avatar size="large" src={logo} />
                     </Box>
@@ -73,7 +73,7 @@ export function Administration({ children }) {
                     </Box>
                 </Toolbar>
             </AppBar>
-            <Box width={1} p={4} mt={4}>
+            <Box width={1} p={4} mt={6}>
                 {children}
             </Box>
         </User>

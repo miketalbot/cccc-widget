@@ -40,20 +40,20 @@ export function Bind({
     defaultValue = defaultValue || props.default || ""
     const { onChange, target, refresh } = useBoundContext()
     const localRefresh = useRefresh(onChange)
-    set(target, field, get(target, field) ?? defaultValue)
     return (
         <input.type
             {...input.props}
             {...props}
             {...{
-                [valueProp]: transformIn(get(target, field)),
+                [valueProp]: transformIn(get(target, field) ?? defaultValue),
                 [onChangeProp]: handleChange
             }}
         />
     )
 
     function handleChange(...params) {
-        set(target, field, transformOut(extract(...params)))
+        const value = transformOut(extract(...params))
+        set(target, field, value)
         if (sideEffects || input.props.sideEffects) {
             refresh()
         } else {
@@ -65,13 +65,15 @@ export function Bind({
 export function bind(
     input,
     {
-        onProps = (props) =>
-            (props.label = props.label || makeLabelFrom(props.field)),
+        onProps = (props) => ({
+            ...props,
+            label: props.label || makeLabelFrom(props.field)
+        }),
         ...options
     } = {}
 ) {
     return function (props) {
-        onProps(props)
+        props = onProps(props)
         return <Bind {...options} {...props} input={input} />
     }
 }

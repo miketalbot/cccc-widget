@@ -6,6 +6,7 @@ import {
     Typography
 } from "@material-ui/core"
 import { useEffect, useRef, useState } from "react"
+import { useUserContext } from "../../lib/useUser"
 import { renderWidget } from "../../runtime/widgetRenderer"
 
 const useStyles = makeStyles({
@@ -22,6 +23,8 @@ const useStyles = makeStyles({
 })
 
 export function RenderWidget({ article, user, useArticle }) {
+    const systemUser = useUserContext()
+    user = user || systemUser
     const width = Math.min(600, window.innerWidth * 0.75)
     const [zoom, setZoom] = useState(useArticle?.zoom ?? true)
     const eventHandler = useRef(null)

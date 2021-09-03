@@ -1,6 +1,7 @@
 import {
     Box,
     Button,
+    CardContent,
     CssBaseline,
     IconButton,
     ThemeProvider,
@@ -45,8 +46,13 @@ function PollConfig() {
 
     return (
         <>
-            <BoundTextField field="question" />
-            <Box mt={2}>
+            <CardContent>
+                <BoundTextField field="question" />
+            </CardContent>
+            <CardContent>
+                <BoundColorField field="questionColor" default="white" />
+            </CardContent>
+            <CardContent>
                 <Typography variant="overline" component="h3" gutterBottom>
                     Answers
                 </Typography>
@@ -59,7 +65,7 @@ function PollConfig() {
                         />
                     ))}
                 </Sortable>
-            </Box>
+            </CardContent>
             <Button color="primary" onClick={addAnswer}>
                 + Answer
             </Button>

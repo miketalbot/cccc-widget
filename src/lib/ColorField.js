@@ -3,26 +3,42 @@ import {
     ClickAwayListener,
     IconButton,
     InputAdornment,
+    makeStyles,
     Popper,
     TextField
 } from "@material-ui/core"
 import { useState } from "react"
-import { CompactPicker } from "react-color"
-import { FaSquare } from "react-icons/fa"
+import { SketchPicker } from "react-color"
 import { MdExpandLess, MdExpandMore } from "react-icons/md"
 import { bind } from "./Bound"
 
+const useStyles = makeStyles({
+    color: {
+        boxShadow: "0 0 0px 1px #eee",
+        height: 16,
+        width: 16,
+        borderRadius: 2
+    }
+})
+
 export function ColorField({ value, onChange, ...props }) {
     const [open, setOpen] = useState(false)
+    const classes = useStyles()
     return (
         <>
             <TextField
                 InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">
-                            <Box color={value}>
-                                <FaSquare />
-                            </Box>
+                            <Box
+                                className={classes.color}
+                                onClick={(e) =>
+                                    setOpen((open) =>
+                                        open ? false : e.currentTarget
+                                    )
+                                }
+                                bgcolor={value}
+                            />
                         </InputAdornment>
                     ),
                     endAdornment: (
@@ -43,9 +59,14 @@ export function ColorField({ value, onChange, ...props }) {
                 onChange={onChange}
                 {...props}
             />
-            <Popper placement="bottom-end" open={!!open} anchorEl={open}>
+            <Popper
+                style={{ zIndex: 10000 }}
+                placement="bottom-end"
+                open={!!open}
+                anchorEl={open}
+            >
                 <ClickAwayListener onClickAway={() => open && setOpen(null)}>
-                    <CompactPicker
+                    <SketchPicker
                         onChangeComplete={handlePicker}
                         color={value}
                     />

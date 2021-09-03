@@ -1,9 +1,10 @@
 import { Box, CardContent, TextField } from "@material-ui/core"
 import { Autocomplete } from "@material-ui/lab"
 import { Plugins } from "../../lib/plugins"
+import { raise } from "../../lib/raise"
 import { useRefresh } from "../../lib/useRefresh"
 import { useUserContext } from "../../lib/useUser"
-import { RenderWidget } from "./RenderWidget"
+import { UpdateWidget } from "./UpdateWidget"
 
 export function PluginDetails({ article, onChange, type }) {
     const refresh = useRefresh(onChange)
@@ -30,11 +31,14 @@ export function PluginDetails({ article, onChange, type }) {
                 <Editor
                     plugin={Plugins[type][article[type]]}
                     article={article}
-                    onChange={refresh}
+                    onChange={(...params) => {
+                        onChange(...params)
+                        raise("refresh-widget")
+                    }}
                     settings={typeSettings}
                 />
             )}
-            <RenderWidget
+            <UpdateWidget
                 article={article.uid}
                 user={user}
                 useArticle={article}
@@ -44,10 +48,20 @@ export function PluginDetails({ article, onChange, type }) {
 }
 
 function Editor({ plugin, article, onChange, settings }) {
-    return !!plugin && <Box width={1} ref={attachEditor} />
+    return (
+        !!plugin && (
+            <Box
+                onKeyDown={(e) => e.stopPropagation()}
+                width={1}
+                ref={attachEditor}
+            />
+        )
+    )
 
     function attachEditor(parent) {
         if (!parent) return
-        plugin.editor({ parent, article, onChange, settings })
+        setTimeout(() => {
+            plugin.editor({ parent, article, onChange, settings })
+        })
     }
 }

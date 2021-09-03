@@ -1,14 +1,12 @@
 import {
     closestCenter,
     DndContext,
-    KeyboardSensor,
     PointerSensor,
     useSensor,
     useSensors
 } from "@dnd-kit/core"
 import {
     SortableContext,
-    sortableKeyboardCoordinates,
     useSortable,
     verticalListSortingStrategy
 } from "@dnd-kit/sortable"
@@ -17,9 +15,11 @@ import { noop } from "./noop"
 
 export function Sortable({ items, id = "id", children, onDragEnd = noop }) {
     const sensors = useSensors(
-        useSensor(PointerSensor),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates
+        useSensor(PointerSensor, {
+            // Require the mouse to move by 10 pixels before activating
+            activationConstraint: {
+                distance: 10
+            }
         })
     )
     return (
@@ -68,8 +68,6 @@ export function SortableItem({ Component = Box, id, children, ...props }) {
     const { attributes, listeners, setNodeRef, transform, transition } =
         useSortable({ id })
     const style = {
-        position: "relative",
-        zIndex: transform ? 1000 : 0,
         transform: convert(transform),
         transition
     }
@@ -78,6 +76,11 @@ export function SortableItem({ Component = Box, id, children, ...props }) {
             {...props}
             {...attributes}
             {...listeners}
+            onKeyDown={(e) => {
+                if (e.target.nodeName !== "input") {
+                    listeners.onKeyDown && listeners.onKeyDown(e)
+                }
+            }}
             ref={setNodeRef}
             style={style}
         >

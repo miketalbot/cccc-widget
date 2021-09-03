@@ -31,7 +31,7 @@ export async function renderWidget(parent, id, user, useArticle = null) {
             raise(`response-${id}`, response)
             raise(`response`, response)
         })
-    const holder = makeContainer(parent)
+    const holder = makeContainer(parent, article)
     holder.logoWidget.style.backgroundImage = `url(${logo})`
     holder.avatarWidget.style.backgroundImage = `url(${user.photoURL})`
     article.pluginSettings = article.pluginSettings || {}
@@ -84,11 +84,15 @@ function renderPlugin(
     })
 }
 
-function makeContainer(parent) {
+function makeContainer(parent, article) {
     parent = parent || document.body
-    if (parent._madeContainer) return parent._madeContainer
+    parent.style.background = `linear-gradient(45deg, ${
+        article?.gradientFrom ?? "#fe6b8b"
+    } 30%, ${article?.gradientTo ?? "#ff8e53"} 90%)`
+    if (parent._madeContainer) {
+        return parent._madeContainer
+    }
 
-    parent.style.background = `linear-gradient(45deg, #fe6b8b 30%, #ff8e53 90%)`
     const main = document.createElement("main")
     Object.assign(main.style, {
         display: "flex",
