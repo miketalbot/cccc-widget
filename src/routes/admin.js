@@ -14,6 +14,7 @@ import { navigate } from "../lib/routes"
 import "./admin-profile"
 import "./admin-article"
 import "./admin-articles"
+import "../plugins/editor"
 
 export default function AdminPage() {
     return (

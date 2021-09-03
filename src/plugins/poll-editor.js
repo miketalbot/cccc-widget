@@ -3,15 +3,17 @@ import {
     Button,
     CssBaseline,
     IconButton,
-    ThemeProvider
+    ThemeProvider,
+    Typography
 } from "@material-ui/core"
 import { nanoid } from "nanoid"
+import React from "react"
 import reactDom from "react-dom"
-import { MdDelete, MdDragHandle } from "react-icons/md"
+import { FaEllipsisV } from "react-icons/fa"
+import { MdDelete } from "react-icons/md"
 import { Bound, useBoundContext } from "../lib/Bound"
 import { BoundTextField } from "../lib/bound-components"
 import { BoundColorField } from "../lib/ColorField"
-import { pick } from "../lib/pick"
 import { PluginTypes, register } from "../lib/plugins"
 import { Sortable, SortableItem } from "../lib/Sortable"
 import { theme } from "../lib/theme"
@@ -45,9 +47,16 @@ function PollConfig() {
         <>
             <BoundTextField field="question" />
             <Box mt={2}>
+                <Typography variant="overline" component="h3" gutterBottom>
+                    Answers
+                </Typography>
                 <Sortable items={answers} onDragEnd={refresh}>
                     {answers.map((answer) => (
-                        <Answer key={answer.id} answer={answer} />
+                        <Answer
+                            answers={answers}
+                            key={answer.id}
+                            answer={answer}
+                        />
                     ))}
                 </Sortable>
             </Box>
@@ -63,7 +72,8 @@ function PollConfig() {
     }
 }
 
-function Answer({ answer, index }) {
+function Answer({ answers, answer }) {
+    const { refresh } = useBoundContext()
     return (
         <SortableItem
             borderRadius={4}
@@ -74,8 +84,8 @@ function Answer({ answer, index }) {
             id={answer.id}
         >
             <Bound target={answer}>
-                <Box mr={1}>
-                    <MdDragHandle />
+                <Box mr={1} color="#444" fontSize={16}>
+                    <FaEllipsisV />
                 </Box>
                 <Box flex={1} mr={1}>
                     <BoundTextField field="answer" />
@@ -83,10 +93,18 @@ function Answer({ answer, index }) {
                 <Box flex={0.4} mr={1}>
                     <BoundColorField field="color" default="#999999" />
                 </Box>
-                <IconButton color="secondary">
+                <IconButton onClick={remove} color="secondary">
                     <MdDelete />
                 </IconButton>
             </Bound>
         </SortableItem>
     )
+
+    function remove() {
+        const idx = answers.indexOf(answer)
+        if (idx !== -1) {
+            answers.splice(idx, 1)
+            refresh()
+        }
+    }
 }

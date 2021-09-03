@@ -1,9 +1,9 @@
-import React, { useState } from "react"
+import React from "react"
 import ReactDOM from "react-dom"
 import * as Material from "@material-ui/core"
 import { register, navigate, useLocation } from "./routes"
 import { raise } from "./raise"
-import { useEvent, useDebouncedEvent } from "./useEvent"
+import { useDebouncedEvent, useEvent } from "./useEvent"
 import { register as pluginRegister, PluginTypes, Plugins } from "./plugins"
 import { theme } from "./theme"
 import { setFromEvent, setFromValueParam } from "./setFromEvent"
@@ -26,14 +26,7 @@ import * as bar from "@nivo/bar"
 import { bind, Bind, Bound, makeLabelFrom, useBoundContext } from "./Bound"
 import { BoundAutocomplete, BoundTextField } from "./bound-components"
 import { Sortable, SortableItem } from "../lib/Sortable"
-
-function useResponse(response) {
-    const [current, setCurrent] = useState(response?.response || response)
-    useEvent("response", () =>
-        setCurrent({ ...(response?.response || response) })
-    )
-    return current
-}
+import { useResponse } from "./useResponse"
 
 window.Framework4C = {
     HTMLEditor,
