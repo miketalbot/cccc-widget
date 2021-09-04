@@ -49,12 +49,14 @@ export default function Profile() {
     const user = useUserContext()
     const refresh = useRefresh()
     const [description, setDescription] = useState(user.description || "")
+    const [profileURL, setProfileURL] = useState(user.profileURL || "")
     const [displayName, setDisplayName] = useState(user.displayName || "")
     const [photoURL, setPhotoURL] = useState(user.photoURL || "")
     const dirty =
         displayName !== (user.displayName || "") ||
         photoURL !== (user.photoURL || "") ||
-        description !== (user.description || "")
+        description !== (user.description || "") ||
+        profileURL !== (user.profileURL || "")
     const changePassword = useDialog(ChangePassword)
     const signIn = useDialog(SignIn)
     return (
@@ -141,6 +143,15 @@ export default function Profile() {
                                 </Box>
                             </FormControl>
                         </CardContent>
+                        <CardContent>
+                            <TextField
+                                variant="outlined"
+                                fullWidth
+                                value={profileURL}
+                                onChange={setFromEvent(setProfileURL)}
+                                label="Profile URL"
+                            />
+                        </CardContent>
 
                         <CardActions>
                             <Button
@@ -196,7 +207,12 @@ export default function Profile() {
     async function save() {
         try {
             await user.updateProfile({ displayName, photoURL })
-            await user.saveAdditional({ description, displayName, photoURL })
+            await user.saveAdditional({
+                description,
+                displayName,
+                photoURL,
+                profileURL
+            })
         } catch (e) {
             console.log(e)
         }

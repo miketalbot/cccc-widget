@@ -33,9 +33,18 @@ export async function renderWidget(parent, id, user, useArticle = null) {
             raise(`response-${id}`, response)
             raise(`response`, response)
         })
-    const holder = makeContainer(parent, article)
+    const holder = makeContainer(parent, article, user)
     holder.logoWidget.style.backgroundImage = `url(${logo})`
-    holder.avatarWidget.style.backgroundImage = `url(${user.photoURL})`
+    if (user.photoURL) {
+        holder.avatarWidget.style.backgroundImage = `url(${user.photoURL})`
+    }
+    if (user.profileURL) {
+        holder.avatarWidget.role = "button"
+        holder.avatarWidget.style.cursor = "pointer"
+        holder.avatarWidget["aria-label"] = "Link to authors profile page"
+        holder.avatarWidget.onclick = () =>
+            window.open(user.profileURL, "_blank", "noreferrer noopener")
+    }
     article.pluginSettings = article.pluginSettings || {}
     renderPlugin(
         holder.mainWidget,
@@ -88,7 +97,7 @@ function renderPlugin(
     })
 }
 
-function makeContainer(parent, article) {
+function makeContainer(parent, article, user) {
     parent = parent || document.body
     parent.style.background = `linear-gradient(45deg, ${
         article?.gradientFrom ?? "#fe6b8b"

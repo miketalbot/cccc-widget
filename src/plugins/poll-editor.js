@@ -9,7 +9,7 @@ import {
 } from "@material-ui/core"
 import { nanoid } from "nanoid"
 import randomColor from "randomcolor"
-import React, { useRef, useState } from "react"
+import React, { useState } from "react"
 import reactDom from "react-dom"
 import { FaEllipsisV } from "react-icons/fa"
 import { MdDelete } from "react-icons/md"

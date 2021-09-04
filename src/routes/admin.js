@@ -5,9 +5,12 @@ import {
     CardHeader,
     makeStyles,
     Container,
-    useTheme
+    useTheme,
+    Typography
 } from "@material-ui/core"
 import { Administration } from "./parts/Administration"
+import { AllUniqueVisits } from "./parts/AllUniqueVisits"
+import { AllVisits } from "./parts/AllVisits"
 import { MdPerson } from "react-icons/md"
 import { FaComment, FaRegNewspaper } from "react-icons/fa"
 import { navigate } from "../lib/routes"
@@ -20,6 +23,22 @@ export default function AdminPage() {
     return (
         <Administration>
             <Container>
+                <Box
+                    mb={5}
+                    height={100}
+                    fontSize={32}
+                    display="flex"
+                    flexWrap="wrap"
+                    alignItems="center"
+                    justifyContent="space-between"
+                >
+                    <Box mr={1} color="#333">
+                        <AllVisits />
+                    </Box>
+                    <Box mr={1} color="#333">
+                        <AllUniqueVisits />
+                    </Box>
+                </Box>
                 <Box
                     display="flex"
                     flexWrap="wrap"

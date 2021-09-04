@@ -25,7 +25,11 @@ const useStyles = makeStyles({
 export function Administration({ children }) {
     const classes = useStyles()
     return (
-        <User shouldBeCreator={true} fallback={<SignInScreen />}>
+        <User
+            key="userAdmin"
+            shouldBeCreator={true}
+            fallback={<SignInScreen />}
+        >
             <AppBar className={classes.appBar} position="fixed">
                 <Toolbar>
                     <Box mr={2}>
@@ -44,6 +48,7 @@ export function Administration({ children }) {
                         </IconButton>
                     </Box>
                     <Box flex={1} />
+
                     <Box mr={1}>
                         <IconButton
                             aria-label="Articles"

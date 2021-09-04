@@ -115,6 +115,7 @@ export function ArticleDetails({ article, onChange = noop }) {
             article.title = title
             article.description = description
             article.image = image
+            refresh()
         } catch (e) {
             showNotification(
                 "A problem occurred retrieving the url: " + e.message,

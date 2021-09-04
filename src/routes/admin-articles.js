@@ -30,12 +30,15 @@ import { useState } from "react"
 import { useDialog } from "../lib/useDialog"
 import { showNotification } from "../lib/notifications"
 import { FaNewspaper } from "react-icons/fa"
-import { MdClear, MdDelete } from "react-icons/md"
+import { MdClear, MdDelete, MdPerson } from "react-icons/md"
 import { confirm } from "../lib/confirm"
 import { VirtualWindow } from "virtual-window"
 import { pick } from "../lib/pick"
 import { navigate } from "../lib/routes"
 import "./admin"
+import { useResponse, useResponseFor } from "../lib/useResponse"
+import { IoMdEye } from "react-icons/io"
+import { Odometer } from "../lib/odometer"
 
 export const articles = db.collection("userarticles")
 
@@ -147,6 +150,7 @@ function GetArticleName({ ok, cancel }) {
 
 function Article({ item: { name, date, uid } }) {
     const user = useUserContext()
+    const response = useResponseFor(uid)
     return (
         <ListItem button onClick={() => navigate(`/admin/article/${uid}`)}>
             <ListItemAvatar>
@@ -159,13 +163,36 @@ function Article({ item: { name, date, uid } }) {
                 secondary={dayjs(date).format("D MMMM YYYY [ at ] HH:mm")}
             />
             <ListItemSecondaryAction>
-                <IconButton
-                    color="secondary"
-                    onClick={remove}
-                    aria-label="Delete"
+                <Box
+                    color="#555"
+                    display="flex"
+                    alignItems="center"
+                    lineHeight={0}
                 >
-                    <MdDelete />
-                </IconButton>
+                    {!!response && (
+                        <>
+                            <Box mr={1}>
+                                <IoMdEye color="#999" />
+                            </Box>
+                            <Box mr={2}>
+                                <Odometer>{response.visits}</Odometer>
+                            </Box>
+                            <Box mr={1}>
+                                <MdPerson color="#999" />
+                            </Box>
+                            <Box mr={1}>
+                                <Odometer>{response.uniqueVisits}</Odometer>
+                            </Box>
+                        </>
+                    )}
+                    <IconButton
+                        color="secondary"
+                        onClick={remove}
+                        aria-label="Delete"
+                    >
+                        <MdDelete />
+                    </IconButton>
+                </Box>
             </ListItemSecondaryAction>
         </ListItem>
     )
