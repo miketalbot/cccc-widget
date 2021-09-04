@@ -66,6 +66,16 @@ export async function renderWidget(parent, id, user, useArticle = null) {
         response,
         !!useArticle
     )
+    renderPlugin(
+        holder.notificationWidget,
+        PluginTypes.NOTIFICATION,
+        article[PluginTypes.NOTIFICATION] || "defaultNotification",
+        article.pluginSettings[article[PluginTypes.NOTIFICATION]] || {},
+        article,
+        user,
+        response,
+        !!useArticle
+    )
     return () => {
         removeListener()
     }

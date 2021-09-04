@@ -120,6 +120,7 @@ exports.recommend = functions.https.onCall(
         const rowSnap = await db
             .collection("responses")
             .where("comment", "!=", true)
+            .orderBy("comment", "desc")
             .orderBy("lastUniqueDay", "desc")
             .orderBy("visits", "desc")
             .limit(number * 4)

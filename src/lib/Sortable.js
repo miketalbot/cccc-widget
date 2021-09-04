@@ -11,7 +11,7 @@ import {
     verticalListSortingStrategy
 } from "@dnd-kit/sortable"
 import { Box } from "@material-ui/core"
-import { useMemo } from "react"
+import { useLayoutEffect, useMemo } from "react"
 import { noop } from "./noop"
 
 export function Sortable({ items, id = "id", children, onDragEnd = noop }) {
@@ -82,9 +82,9 @@ export function SortableItem({
         () => ({ ...attributes, ...listeners }),
         [attributes, listeners]
     )
-    if (setDragProps) {
+    useLayoutEffect(() => {
         setDragProps(dragProps)
-    }
+    }, [dragProps, setDragProps])
     return (
         <Component
             {...props}

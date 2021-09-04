@@ -105,13 +105,13 @@ function Answer({ answers, answer }) {
                 >
                     <FaEllipsisV />
                 </Box>
-                <Box flex={1} mr={1}>
+                <Box flex={0.8} mr={1}>
                     <BoundTextField field="answer" />
                 </Box>
-                <Box flex={0.3} mr={1}>
+                <Box flex={0.4} mr={1}>
                     <BoundTextField field="legend" />
                 </Box>
-                <Box flex={0.3} mr={1}>
+                <Box flex={0.5} mr={1}>
                     <BoundColorField field="color" default="#999999" />
                 </Box>
                 <IconButton

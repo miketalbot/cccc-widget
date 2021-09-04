@@ -148,13 +148,13 @@ function GetArticleName({ ok, cancel }) {
     )
 }
 
-function Article({ item: { name, date, uid } }) {
+function Article({ item: { name, date, uid, image } }) {
     const user = useUserContext()
     const response = useResponseFor(uid)
     return (
         <ListItem button onClick={() => navigate(`/admin/article/${uid}`)}>
             <ListItemAvatar>
-                <Avatar>
+                <Avatar src={image}>
                     <FaNewspaper />
                 </Avatar>
             </ListItemAvatar>

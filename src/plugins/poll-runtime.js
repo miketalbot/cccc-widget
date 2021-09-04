@@ -8,7 +8,7 @@ register(PluginTypes.MAIN, "Poll", undefined, runtime)
 
 function runtime({ parent, ...props }) {
     reactDom.render(
-        <Suspense>
+        <Suspense fallback={<div />}>
             <Runtime {...props} />
         </Suspense>,
         parent

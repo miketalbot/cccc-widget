@@ -5,6 +5,7 @@ import { showNotification } from "../../lib/notifications"
 import { setFromEvent } from "../../lib/setFromEvent"
 import { useRefresh } from "../../lib/useRefresh"
 import { getTag } from "../../lib/getTag"
+import { uniqBy } from "../../lib/uniqBy"
 
 const useStyles = makeStyles({
     root: {}
@@ -92,11 +93,14 @@ export function ArticleDetails({ article, onChange = noop }) {
 
     function updateTags(v) {
         article.tags = v
-        article.processedTags = v
-            .toLowerCase()
-            .split(",")
-            .map((c) => c.trim())
-            .filter((v) => !!v)
+        article.processedTags = uniqBy(
+            v
+                .toLowerCase()
+                .split(",")
+                .map((c) => c.trim())
+                .filter((v) => !!v),
+            (v) => v
+        )
     }
 
     async function updateArticle(url) {

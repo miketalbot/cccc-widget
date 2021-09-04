@@ -2,12 +2,14 @@ import { raise } from "./raise"
 
 export const PluginTypes = {
     MAIN: "main",
-    FOOTER: "footer"
+    FOOTER: "footer",
+    NOTIFICATION: "notification"
 }
 
 export const Plugins = {
     [PluginTypes.MAIN]: {},
-    [PluginTypes.FOOTER]: {}
+    [PluginTypes.FOOTER]: {},
+    [PluginTypes.NOTIFICATION]: {}
 }
 
 export function register(type, name, editor, runtime) {

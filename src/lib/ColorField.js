@@ -44,8 +44,9 @@ export function ColorField({ value, onChange, ...props }) {
                         </InputAdornment>
                     ),
                     endAdornment: (
-                        <InputAdornment position="end">
+                        <Box mr={-1}>
                             <IconButton
+                                size="small"
                                 aria-label="Show/Hide color picker"
                                 onClick={(e) =>
                                     setOpen((open) =>
@@ -55,7 +56,7 @@ export function ColorField({ value, onChange, ...props }) {
                             >
                                 {open ? <MdExpandLess /> : <MdExpandMore />}
                             </IconButton>
-                        </InputAdornment>
+                        </Box>
                     )
                 }}
                 value={value}

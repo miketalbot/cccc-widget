@@ -50,7 +50,7 @@ function Runtime({ settings, user }) {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Box m={2} width={1}>
+            <Box m={2}>
                 <Card elevation={6}>
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="h2">

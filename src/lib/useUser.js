@@ -6,6 +6,7 @@ import { useEvent } from "./useEvent"
 import { useRefresh } from "./useRefresh"
 import { db } from "./firebase"
 import { showNotification } from "./notifications"
+import { useRecord } from "./useRecord"
 
 const auth = firebase.auth()
 
@@ -71,8 +72,11 @@ export function useUser({ shouldBeCreator } = {}) {
         {},
         user?.uid
     )
-
     const myUser = user?.isAnonymous && shouldBeCreator ? null : user
+    const [score] = useRecord(db.collection("scores").doc(myUser?.uid), [
+        myUser?.uid
+    ])
+
     return myUser
         ? {
               ...additional,
@@ -90,6 +94,8 @@ export function useUser({ shouldBeCreator } = {}) {
                   }
                   return additional
               },
+              score: score?.score,
+              achievements: score?.achievements,
               email: myUser.email,
               uid: myUser.uid,
               displayName: myUser.displayName,

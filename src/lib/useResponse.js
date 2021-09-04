@@ -10,13 +10,13 @@ export function useResponse(response) {
     return current
 }
 
-export function useResponseFor(uid) {
+export function useResponseFor(uid, method = "onSnapshot") {
     const [response, setResponse] = useState()
     useEffect(() => {
         return db
             .collection("responses")
             .doc(uid)
-            .onSnapshot((update) => {
+            [method]((update) => {
                 setResponse(update.data())
             })
     }, [uid])

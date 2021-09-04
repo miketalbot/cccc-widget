@@ -3,6 +3,7 @@ import { useRefresh } from "../../lib/useRefresh"
 import { TextField } from "@material-ui/core"
 import noop from "../../lib/noop"
 import { setFromEvent } from "../../lib/setFromEvent"
+import { uniqBy } from "../../lib/uniqBy"
 
 export function CommentDetails({ article, onChange = noop }) {
     const refresh = useRefresh(onChange)
@@ -36,10 +37,13 @@ export function CommentDetails({ article, onChange = noop }) {
 
     function updateTags(v) {
         article.tags = v
-        article.processedTags = v
-            .toLowerCase()
-            .split(",")
-            .map((c) => c.trim())
-            .filter((v) => !!v)
+        article.processedTags = uniqBy(
+            v
+                .toLowerCase()
+                .split(",")
+                .map((c) => c.trim())
+                .filter((v) => !!v),
+            (v) => v
+        )
     }
 }
