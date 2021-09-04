@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { GiConsoleController } from "react-icons/gi"
 import { showNotification } from "./notifications"
 
 export function useRecord(docRef, deps = []) {
@@ -23,4 +24,17 @@ export function useRecord(docRef, deps = []) {
             return false
         }
     }
+}
+
+export function useRecordStatic(docRef, deps = []) {
+    const [record, setRecord] = useState()
+    useEffect(() => {
+        console.log("Retrieve", docRef)
+        docRef.get().then((record) => {
+            console.log("Gett", record)
+            setRecord(record.data())
+        })
+        //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, deps)
+    return record
 }

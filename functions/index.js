@@ -133,7 +133,7 @@ exports.recommend = functions.https.onCall(
             )
             rows.push({ id: row.id, score })
         })
-        rows.sort((a, b) => b.score - a.score)
+        rows.sort((a, b) => b.score - a.score).filter((r) => r.id !== articleId)
         return rows.slice(0, number).map((r) => r.id)
     }
 )
