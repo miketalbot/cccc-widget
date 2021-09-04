@@ -89,12 +89,11 @@ function Notifications({ user, article }) {
 
 function Article({ id }) {
     const record = useRecordStatic(db.collection("articles").doc(id), [id])
-    console.log(id, record)
     return (
         !!record && (
             <Box mb={1} clone>
                 <Card>
-                    <CardActionArea>
+                    <CardActionArea onClick={goto}>
                         <CardMedia
                             image={record.image}
                             style={{ height: 120 }}
@@ -116,4 +115,7 @@ function Article({ id }) {
             </Box>
         )
     )
+    function goto() {
+        window.open(record.url, "_blank")
+    }
 }
