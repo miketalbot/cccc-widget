@@ -25,6 +25,8 @@ import { PluginDetails } from "./parts/PluginDetails"
 import { AdvancedArticleSettings } from "./parts/AdvancedArticleSettings"
 import { useEditorPlugins } from "../lib/usePlugins"
 import { MdClear } from "react-icons/md"
+import { BoundColorField } from "../lib/ColorField"
+import { UpdateWidget } from "./parts/UpdateWidget"
 
 export default function Article({ id }) {
     const user = useUserContext()
@@ -73,6 +75,7 @@ export default function Article({ id }) {
                                             label="Article Details"
                                             value="0"
                                         />
+                                        <Tab label="Colors" value="4" />
                                         <Tab label="Main Widget" value="1" />
                                         <Tab label="Footer Widget" value="2" />
                                         <Tab
@@ -113,6 +116,27 @@ export default function Article({ id }) {
                                                 setPlugins((v) => v + 1)
                                                 shouldUpdate.current = false
                                             }}
+                                        />
+                                    </TabPanel>
+                                    <TabPanel value="4">
+                                        <CardContent>
+                                            <BoundColorField
+                                                sideEffects
+                                                field="gradientFrom"
+                                                default="#fe6b8b"
+                                            />
+                                        </CardContent>
+                                        <CardContent>
+                                            <BoundColorField
+                                                sideEffects
+                                                field="gradientTo"
+                                                default="#ff8e53"
+                                            />
+                                        </CardContent>
+                                        <UpdateWidget
+                                            accessibility={console.warn}
+                                            article={article.uid}
+                                            useArticle={article}
                                         />
                                     </TabPanel>
                                 </TabContext>
