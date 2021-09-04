@@ -118,7 +118,8 @@ export default function Comment({ id }) {
                                                 />
                                             </CardContent>
                                             <UpdateWidget
-                                                article={article.id}
+                                                accessibility={console.warn}
+                                                article={article.uid}
                                                 useArticle={article}
                                             />
                                         </TabPanel>

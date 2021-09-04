@@ -3,6 +3,7 @@
     "version": "0.1.1",
     "private": true,
     "dependencies": {
+        "@axe-core/react": "^4.2.2",
         "@dnd-kit/core": "^3.1.1",
         "@dnd-kit/sortable": "^4.0.0",
         "@material-ui/core": "4.12.3",
@@ -26,6 +27,7 @@
         "html-to-draftjs": "^1.5.0",
         "nanoid": "^3.1.25",
         "preact": "^10.5.14",
+        "randomcolor": "^0.6.2",
         "react": "^17.0.2",
         "react-color": "^2.19.3",
         "react-dom": "^17.0.2",

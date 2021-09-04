@@ -11,6 +11,7 @@ import {
     verticalListSortingStrategy
 } from "@dnd-kit/sortable"
 import { Box } from "@material-ui/core"
+import { useMemo } from "react"
 import { noop } from "./noop"
 
 export function Sortable({ items, id = "id", children, onDragEnd = noop }) {
@@ -64,18 +65,30 @@ function convert(transform) {
     return `translate3d(${transform.x}px, ${transform.y}px, -100px)`
 }
 
-export function SortableItem({ Component = Box, id, children, ...props }) {
+export function SortableItem({
+    Component = Box,
+    setDragProps,
+    id,
+    children,
+    ...props
+}) {
     const { attributes, listeners, setNodeRef, transform, transition } =
         useSortable({ id })
     const style = {
         transform: convert(transform),
         transition
     }
+    const dragProps = useMemo(
+        () => ({ ...attributes, ...listeners }),
+        [attributes, listeners]
+    )
+    if (setDragProps) {
+        setDragProps(dragProps)
+    }
     return (
         <Component
             {...props}
-            {...attributes}
-            {...listeners}
+            {...(setDragProps ? {} : dragProps)}
             onKeyDown={(e) => {
                 if (e.target.nodeName !== "input") {
                     listeners.onKeyDown && listeners.onKeyDown(e)

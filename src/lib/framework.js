@@ -27,6 +27,7 @@ import { bind, Bind, Bound, makeLabelFrom, useBoundContext } from "./Bound"
 import { BoundAutocomplete, BoundTextField } from "./bound-components"
 import { Sortable, SortableItem } from "../lib/Sortable"
 import { useResponse } from "./useResponse"
+import { reduceMotion } from "./reduce-motion"
 
 window.Framework4C = {
     HTMLEditor,
@@ -40,6 +41,9 @@ window.Framework4C = {
             BoundTextField: BoundTextField,
             BoundAutocomplete: BoundAutocomplete
         }
+    },
+    Accessibility: {
+        reduceMotion: reduceMotion
     },
     Sortable: Sortable,
     SortableItem: SortableItem,

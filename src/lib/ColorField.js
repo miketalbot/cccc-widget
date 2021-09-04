@@ -31,6 +31,8 @@ export function ColorField({ value, onChange, ...props }) {
                     startAdornment: (
                         <InputAdornment position="start">
                             <Box
+                                role="button"
+                                aria-label="Show/hide color picker on the left"
                                 className={classes.color}
                                 onClick={(e) =>
                                     setOpen((open) =>
@@ -44,6 +46,7 @@ export function ColorField({ value, onChange, ...props }) {
                     endAdornment: (
                         <InputAdornment position="end">
                             <IconButton
+                                aria-label="Show/Hide color picker"
                                 onClick={(e) =>
                                     setOpen((open) =>
                                         open ? false : e.currentTarget

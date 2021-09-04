@@ -2,6 +2,7 @@ import { db, view } from "../lib/firebase"
 import logo from "../assets/4C_logo.jpg"
 import { Plugins, PluginTypes } from "../lib/plugins"
 import { raise } from "../lib/raise"
+import { merge } from "../lib/merge"
 
 export async function renderWidget(parent, id, user, useArticle = null) {
     const definitionRef = user
@@ -27,7 +28,8 @@ export async function renderWidget(parent, id, user, useArticle = null) {
         .collection("responses")
         .doc(id)
         .onSnapshot((update) => {
-            Object.assign(response, update.data())
+            const updatedData = update.data()
+            Object.assign(response, updatedData)
             raise(`response-${id}`, response)
             raise(`response`, response)
         })
@@ -55,7 +57,9 @@ export async function renderWidget(parent, id, user, useArticle = null) {
         response,
         !!useArticle
     )
-    return removeListener
+    return () => {
+        removeListener()
+    }
 }
 
 function renderPlugin(
@@ -113,6 +117,10 @@ function makeContainer(parent, article) {
     const mainWidget = document.createElement("section")
     Object.assign(mainWidget.style, {
         width: "66%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "stretch",
+        justifyContent: "stretch",
         position: "relative"
     })
     top.appendChild(mainWidget)
@@ -145,13 +153,14 @@ function makeContainer(parent, article) {
     })
     main.appendChild(bottom)
     const avatarWidget = document.createElement("div")
-    Object.assign(avatarWidget.style, {
+    merge(avatarWidget.style, {
         borderRadius: "100%",
         width: "64px",
         height: "64px",
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover"
     })
+    avatarWidget["aria-label"] = "Author avatar"
     bottom.appendChild(avatarWidget)
     const footerWidget = document.createElement("section")
     Object.assign(footerWidget.style, {
@@ -159,11 +168,12 @@ function makeContainer(parent, article) {
     })
     bottom.appendChild(footerWidget)
     const logoWidget = document.createElement("a")
-    Object.assign(logoWidget, {
+    merge(logoWidget, {
         href: "https://4c.rocks",
-        target: "_blank"
+        target: "_blank",
+        "aria-label": "Link to 4C Rocks site"
     })
-    Object.assign(logoWidget.style, {
+    merge(logoWidget.style, {
         display: "block",
         width: "64px",
         height: "64px",

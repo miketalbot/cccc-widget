@@ -29,7 +29,7 @@ export function Administration({ children }) {
             <AppBar className={classes.appBar} position="fixed">
                 <Toolbar>
                     <Box mr={2}>
-                        <Avatar size="large" src={logo} />
+                        <Avatar alt="4C Logo" size="large" src={logo} />
                     </Box>
                     <Typography variant="h6" component="h1">
                         Widget

@@ -32,9 +32,11 @@ export function RenderWidget({ article, user, useArticle }) {
         useArticle.zoom = zoom
     }
     useEffect(() => {
-        if (eventHandler.current) {
-            eventHandler.current()
-            eventHandler.current = null
+        return () => {
+            if (eventHandler.current) {
+                eventHandler.current()
+                eventHandler.current = null
+            }
         }
     }, [])
     const height = (width / 6) * 4
@@ -42,7 +44,7 @@ export function RenderWidget({ article, user, useArticle }) {
     return (
         <>
             <Box mt={2}>
-                <Typography variant="caption" component="h3">
+                <Typography variant="caption" component="h2">
                     Widget Preview
                 </Typography>
             </Box>

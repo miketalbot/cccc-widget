@@ -1,16 +1,18 @@
-import { createContext, useContext } from "react"
+import { createContext, useContext, useMemo } from "react"
 import { get } from "./get"
 import { set } from "./set"
 import { useRefresh } from "./useRefresh"
 import decamelize from "decamelize"
+import { nanoid } from "nanoid"
 
 const BoundContext = createContext({})
 
 export function Bound({ children, ...props }) {
     const context = useContext(BoundContext)
     context.target = context.target || {}
+    const id = useMemo(() => nanoid, [])
     return (
-        <BoundContext.Provider value={{ ...context, ...props }}>
+        <BoundContext.Provider value={{ ...context, ...props, id }}>
             {children}
         </BoundContext.Provider>
     )
@@ -39,9 +41,12 @@ export function Bind({
 }) {
     defaultValue = defaultValue || props.default || ""
     const { onChange, target, refresh } = useBoundContext()
+    const myId = useMemo(() => nanoid(), [])
     const localRefresh = useRefresh(onChange)
+    set(target, field, get(target, field, defaultValue))
     return (
         <input.type
+            id={myId}
             {...input.props}
             {...props}
             {...{
@@ -81,7 +86,7 @@ export function bind(
 export function makeLabelFrom(fieldName) {
     if (!fieldName) return undefined
     fieldName = fieldName.split(".").slice(-1)[0]
-    return decamelize(fieldName)
+    return decamelize(fieldName, " ")
         .split(" ")
         .map((w) => w[0].toUpperCase() + w.slice(1))
         .join(" ")

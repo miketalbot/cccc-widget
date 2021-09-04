@@ -8,7 +8,8 @@ import {
     Typography
 } from "@material-ui/core"
 import { nanoid } from "nanoid"
-import React from "react"
+import randomColor from "randomcolor"
+import React, { useRef, useState } from "react"
 import reactDom from "react-dom"
 import { FaEllipsisV } from "react-icons/fa"
 import { MdDelete } from "react-icons/md"
@@ -50,6 +51,9 @@ function PollConfig() {
                 <BoundTextField field="question" />
             </CardContent>
             <CardContent>
+                <BoundTextField field="description" />
+            </CardContent>
+            <CardContent>
                 <BoundColorField field="questionColor" default="white" />
             </CardContent>
             <CardContent>
@@ -73,33 +77,48 @@ function PollConfig() {
     )
 
     function addAnswer() {
-        answers.push({ id: nanoid(), answer: "" })
+        answers.push({ id: nanoid(), answer: "", color: randomColor() })
         refresh()
     }
 }
 
 function Answer({ answers, answer }) {
     const { refresh } = useBoundContext()
+    const [dragProps, setDragProps] = useState({})
     return (
         <SortableItem
             borderRadius={4}
             bgcolor="#fff8"
+            setDragProps={setDragProps}
             m={1}
             display="flex"
             alignItems="center"
             id={answer.id}
         >
-            <Bound target={answer}>
-                <Box mr={1} color="#444" fontSize={16}>
+            <Bound target={answer} refresh={refresh}>
+                <Box
+                    aria-label="Drag handle"
+                    mr={1}
+                    color="#444"
+                    fontSize={16}
+                    {...dragProps}
+                >
                     <FaEllipsisV />
                 </Box>
                 <Box flex={1} mr={1}>
                     <BoundTextField field="answer" />
                 </Box>
-                <Box flex={0.4} mr={1}>
+                <Box flex={0.3} mr={1}>
+                    <BoundTextField field="legend" />
+                </Box>
+                <Box flex={0.3} mr={1}>
                     <BoundColorField field="color" default="#999999" />
                 </Box>
-                <IconButton onClick={remove} color="secondary">
+                <IconButton
+                    aria-label="Delete"
+                    onClick={remove}
+                    color="secondary"
+                >
                     <MdDelete />
                 </IconButton>
             </Bound>
