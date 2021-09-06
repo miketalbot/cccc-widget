@@ -25,13 +25,15 @@ import { PluginDetails } from "./parts/PluginDetails"
 import { AdvancedArticleSettings } from "./parts/AdvancedArticleSettings"
 import { useEditorPlugins } from "../lib/usePlugins"
 import { MdClear } from "react-icons/md"
-import { BoundColorField } from "../lib/ColorField"
-import { UpdateWidget } from "./parts/UpdateWidget"
+import { Bound } from "../lib/Bound"
+import { ColorEditor } from "./parts/ColorEditor"
 
 export default function Article({ id }) {
     const user = useUserContext()
     const [tab, setTab] = useState("0")
     const refresh = useRefresh()
+    const changeRefresh = useRefresh(change)
+
     const updated = useRef(false)
     const [article, update] = useRecord(
         articles.doc(user.uid).collection("articles").doc(id)
@@ -51,116 +53,106 @@ export default function Article({ id }) {
     return (
         <Administration>
             {!!article && (
-                <Container>
-                    <Box mt={2} width={1} clone>
-                        <Card elevation={3}>
-                            <CardHeader
-                                action={
-                                    <IconButton
-                                        aria-label="Close and go back icon"
-                                        onClick={goBack}
-                                    >
-                                        <MdClear />
-                                    </IconButton>
-                                }
-                                title={article.name}
-                            />
-                            <CardContent>
-                                <TabContext value={tab}>
-                                    <TabList
-                                        aria-label="Article configuration tabs"
-                                        onChange={(_, tab) => setTab(tab)}
-                                    >
-                                        <Tab
-                                            label="Article Details"
-                                            value="0"
-                                        />
-                                        <Tab label="Colors" value="4" />
-                                        <Tab label="Main Widget" value="1" />
-                                        <Tab label="Footer Widget" value="2" />
-                                        <Tab
-                                            label="Advanced Settings"
-                                            value="3"
-                                        />
-                                    </TabList>
-                                    <TabPanel value="0">
-                                        <ArticleDetails
-                                            article={article}
-                                            onChange={change}
-                                        />
-                                    </TabPanel>
-                                    <TabPanel value="1">
-                                        <PluginDetails
-                                            article={article}
-                                            onChange={change}
-                                            type={PluginTypes.MAIN}
-                                        />
-                                    </TabPanel>
-                                    <TabPanel value="2">
-                                        <PluginDetails
-                                            article={article}
-                                            onChange={change}
-                                            type={PluginTypes.FOOTER}
-                                        />
-                                    </TabPanel>
-                                    <TabPanel value="3">
-                                        <AdvancedArticleSettings
-                                            article={article}
-                                            onChange={() => {
-                                                change()
-                                                shouldUpdate.current = true
-                                            }}
-                                            reload={() => {
-                                                if (!shouldUpdate.current)
-                                                    return
-                                                setPlugins((v) => v + 1)
-                                                shouldUpdate.current = false
-                                            }}
-                                        />
-                                    </TabPanel>
-                                    <TabPanel value="4">
-                                        <CardContent>
-                                            <BoundColorField
-                                                sideEffects
-                                                field="gradientFrom"
-                                                default="#fe6b8b"
+                <Bound
+                    target={article}
+                    refresh={changeRefresh}
+                    onChange={change}
+                >
+                    <Container>
+                        <Box mt={2} width={1} clone>
+                            <Card elevation={3}>
+                                <CardHeader
+                                    action={
+                                        <IconButton
+                                            aria-label="Close and go back icon"
+                                            onClick={goBack}
+                                        >
+                                            <MdClear />
+                                        </IconButton>
+                                    }
+                                    title={article.name}
+                                />
+                                <CardContent>
+                                    <TabContext value={tab}>
+                                        <TabList
+                                            aria-label="Article configuration tabs"
+                                            onChange={(_, tab) => setTab(tab)}
+                                        >
+                                            <Tab label="Details" value="0" />
+                                            <Tab label="Colors" value="4" />
+                                            <Tab
+                                                label="Main Widget"
+                                                value="1"
                                             />
-                                        </CardContent>
-                                        <CardContent>
-                                            <BoundColorField
-                                                sideEffects
-                                                field="gradientTo"
-                                                default="#ff8e53"
+                                            <Tab
+                                                label="Footer Widget"
+                                                value="2"
                                             />
-                                        </CardContent>
-                                        <UpdateWidget
-                                            accessibility={console.warn}
-                                            article={article.uid}
-                                            useArticle={article}
-                                        />
-                                    </TabPanel>
-                                </TabContext>
-                            </CardContent>
-                            <CardActions>
-                                <Box flex={1} />
+                                            <Tab label="Advanced" value="3" />
+                                        </TabList>
+                                        <TabPanel value="0">
+                                            <ArticleDetails
+                                                article={article}
+                                                onChange={change}
+                                            />
+                                        </TabPanel>
+                                        <TabPanel value="1">
+                                            <PluginDetails
+                                                article={article}
+                                                onChange={change}
+                                                type={PluginTypes.MAIN}
+                                            />
+                                        </TabPanel>
+                                        <TabPanel value="2">
+                                            <PluginDetails
+                                                article={article}
+                                                onChange={change}
+                                                type={PluginTypes.FOOTER}
+                                            />
+                                        </TabPanel>
+                                        <TabPanel value="3">
+                                            <AdvancedArticleSettings
+                                                article={article}
+                                                onChange={() => {
+                                                    change()
+                                                    shouldUpdate.current = true
+                                                }}
+                                                reload={() => {
+                                                    if (!shouldUpdate.current)
+                                                        return
+                                                    setPlugins((v) => v + 1)
+                                                    shouldUpdate.current = false
+                                                }}
+                                            />
+                                        </TabPanel>
+                                        <TabPanel value="4">
+                                            <ColorEditor />
+                                        </TabPanel>
+                                    </TabContext>
+                                </CardContent>
+                                <CardActions>
+                                    <Box flex={1} />
 
-                                <Button
-                                    onClick={refresh(
-                                        () =>
-                                            update() &&
-                                            showNotification("Article saved") &&
-                                            (updated.current = false)
-                                    )}
-                                    color="secondary"
-                                    variant="contained"
-                                    disabled={!updated.current}
-                                >
-                                    Save
-                                </Button>
-                            </CardActions>
-                        </Card>
-                    </Box>
-                </Container>
+                                    <Button
+                                        onClick={refresh(
+                                            () =>
+                                                update() &&
+                                                showNotification(
+                                                    "Article saved"
+                                                ) &&
+                                                (updated.current = false)
+                                        )}
+                                        color="secondary"
+                                        variant="contained"
+                                        disabled={!updated.current}
+                                    >
+                                        Save
+                                    </Button>
+                                </CardActions>
+                            </Card>
+                        </Box>
+                    </Container>
+                </Bound>
             )}
         </Administration>
     )

@@ -100,7 +100,11 @@ export function useUser({ shouldBeCreator } = {}) {
               uid: myUser.uid,
               displayName: myUser.displayName,
               photoURL: myUser.photoURL,
-              isAnonymous: myUser.isAnonymous
+              isAnonymous: myUser.isAnonymous,
+              signOut: () => {
+                  localStorage.removeItem("signedIn")
+                  return auth.signOut()
+              }
           }
         : null
 }

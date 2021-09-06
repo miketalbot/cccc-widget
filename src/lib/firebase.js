@@ -39,6 +39,9 @@ const respond = define("respond", "articleId", "type", "response")
 const respondUnique = define("respondUnique", "articleId", "type", "response")
 const recommend = define("recommend", "articleId", "number")
 const awardPoints = define("awardPoints", "points", "achievement")
+const addAchievement = define("addAchievement", "points", "achievement")
+const wasRecommended = define("wasRecommended", "articleId")
+const wasClicked = define("wasClicked", "articleId")
 
 export {
     firebase,
@@ -47,6 +50,9 @@ export {
     view,
     respond,
     respondUnique,
+    addAchievement,
+    wasRecommended,
+    wasClicked,
     recommend,
     awardPoints
 }

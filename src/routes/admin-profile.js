@@ -161,6 +161,13 @@ export default function Profile() {
                             >
                                 Change Password
                             </Button>
+                            <Button
+                                onClick={signOut}
+                                variant="contained"
+                                color="secondary"
+                            >
+                                Sign Out
+                            </Button>
                             <Box flex={1} />
 
                             <Button
@@ -177,6 +184,11 @@ export default function Profile() {
             </Container>
         </Administration>
     )
+    async function signOut() {
+        await user.signOut()
+        window.location.href = "/admin"
+    }
+
     function goBack() {
         window.history.back(1)
     }

@@ -1,3 +1,6 @@
+import { db } from "../lib/firebase"
+import { useRecordStatic } from "../lib/useRecord"
+
 const {
     Material: {
         TextField,
@@ -46,36 +49,45 @@ function runtime({ parent, ...props }) {
     ReactDOM.render(<Runtime {...props} />, parent)
 }
 
-function Runtime({ settings, user }) {
+function Runtime({ settings, article }) {
+    const user = useRecordStatic(
+        db.collection("userprofiles").doc(article.author)
+    )
     return (
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Box m={2}>
-                <Card elevation={6}>
-                    <CardContent>
-                        <Typography gutterBottom variant="h5" component="h2">
-                            {user.displayName}
-                        </Typography>
-                        {!!settings.headLine && (
-                            <Typography gutterBottom variant="body1">
-                                {settings.headLine}
+        !!user && (
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <Box m={2}>
+                    <Card elevation={6}>
+                        <CardContent>
+                            <Typography
+                                gutterBottom
+                                variant="h5"
+                                component="h2"
+                            >
+                                {user.displayName}
                             </Typography>
-                        )}
-                        <Typography
-                            gutterBottom
-                            variant="body2"
-                            color="textSecondary"
-                            component="div"
-                        >
-                            <div
-                                dangerouslySetInnerHTML={{
-                                    __html: user.description
-                                }}
-                            />
-                        </Typography>
-                    </CardContent>
-                </Card>
-            </Box>
-        </ThemeProvider>
+                            {!!settings.headLine && (
+                                <Typography gutterBottom variant="body1">
+                                    {settings.headLine}
+                                </Typography>
+                            )}
+                            <Typography
+                                gutterBottom
+                                variant="body2"
+                                color="textSecondary"
+                                component="div"
+                            >
+                                <div
+                                    dangerouslySetInnerHTML={{
+                                        __html: user.description
+                                    }}
+                                />
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Box>
+            </ThemeProvider>
+        )
     )
 }

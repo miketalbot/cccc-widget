@@ -104,6 +104,45 @@ exports.respond = functions.https.onCall(
     }
 )
 
+exports.addAchievement = functions.https.onCall(
+    async ({ points = 10, achievement }, context) => {
+        if (context.app === undefined) {
+            throw new functions.https.HttpsError(
+                "failed-precondition",
+                "The function must be called from an App Check verified app."
+            )
+        }
+        points = Math.min(points, 50)
+        if (!achievement) return
+        const userUid = context.auth.uid
+        const scoreRef = db.collection("scores").doc(userUid)
+        const snap = await scoreRef.get()
+        const data = snap.exists ? snap.data() : {}
+        data.achievements = data.achievements || {}
+        if (!data.achievements[achievement]) {
+            data.score = (data.score || 0) + points
+            data.achievements[achievement] = Date.now()
+            await scoreRef.set(data)
+        }
+    }
+)
+
+exports.wasRecommended = functions.https.onCall(
+    async ({ articleId }, context) => {
+        if (context.app === undefined) {
+            throw new functions.https.HttpsError(
+                "failed-precondition",
+                "The function must be called from an App Check verified app."
+            )
+        }
+        const responseRef = db.collection("responses").doc(articleId)
+        const doc = await responseRef.get()
+        const data = doc.exists ? doc.data() : {}
+        data.recommends = (data.recommends || 0) + 1
+        await responseRef.set(data)
+    }
+)
+
 exports.recommend = functions.https.onCall(
     async ({ articleId, number = 10 }, context) => {
         if (context.app === undefined) {
@@ -127,13 +166,14 @@ exports.recommend = functions.https.onCall(
             .get()
         rowSnap.forEach((row) => {
             let record = row.data()
+            if (row.id === articleId) return
             let score = record.processedTags.reduce(
                 (a, c) => (tags.has(c) ? a + 1 : a),
                 0
             )
             rows.push({ id: row.id, score })
         })
-        rows.sort((a, b) => b.score - a.score).filter((r) => r.id !== articleId)
+        rows.sort((a, b) => b.score - a.score)
         return rows.slice(0, number).map((r) => r.id)
     }
 )
@@ -149,8 +189,10 @@ exports.respondUnique = functions.https.onCall(
         if (!context.auth.uid) return null
         const article =
             (await db.collection("articles").doc(articleId).get()).data() || {}
-        await awardPoints(context.auth.uid, 100, "Interacted With Article")
-        await awardPoints(article.author, 20, "Gained an interaction")
+        if (response) {
+            await awardPoints(context.auth.uid, 100, "Interacted With Article")
+            await awardPoints(article.author, 20, "Gained an interaction")
+        }
         const responseRef = db.collection("responses").doc(articleId)
         const doc = await responseRef.get()
         const data = doc.exists ? doc.data() : {}
@@ -181,6 +223,24 @@ exports.awardPoints = functions.https.onCall(
         return null
     }
 )
+
+exports.wasClicked = functions.https.onCall(async ({ articleId }, context) => {
+    if (context.app === undefined) {
+        throw new functions.https.HttpsError(
+            "failed-precondition",
+            "The function must be called from an App Check verified app."
+        )
+    }
+    const responseRef = db.collection("responses").doc(articleId)
+    const doc = await responseRef.get()
+    const data = doc.exists ? doc.data() : {}
+    data.clicks = (data.clicks || 0) + 1
+    await responseRef.set(data)
+    await responseRef.collection("clicks").add({
+        uid: context.auth.uid,
+        time: Date.now()
+    })
+})
 
 async function awardPoints(
     userUid,

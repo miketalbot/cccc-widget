@@ -17,7 +17,10 @@ import {
     respondUnique,
     view,
     firebase,
-    awardPoints
+    awardPoints,
+    addAchievement,
+    wasClicked,
+    wasRecommended
 } from "./firebase"
 import { Loader } from "./Loader"
 import * as pie from "@nivo/pie"
@@ -68,7 +71,10 @@ window.Framework4C = {
         useResponse,
         awardPoints,
         respond,
-        respondUnique
+        respondUnique,
+        addAchievement,
+        wasClicked,
+        wasRecommended
     },
     FireBase: {
         firebase,

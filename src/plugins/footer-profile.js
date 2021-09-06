@@ -1,4 +1,6 @@
 import { Typography } from "@material-ui/core"
+import { db } from "../lib/firebase"
+import { useRecordStatic } from "../lib/useRecord"
 
 const {
     Material: { TextField, Box, ThemeProvider, CssBaseline },
@@ -45,20 +47,32 @@ function runtime({ parent, ...props }) {
     ReactDOM.render(<Runtime {...props} />, parent)
 }
 
-function Runtime({ settings, user }) {
+function Runtime({ settings, article }) {
+    const user = useRecordStatic(
+        db.collection("userprofiles").doc(article.author)
+    )
     return (
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Box width={1} pl={4} pr={4} color="white" borderRadius={8} p={1}>
-                <Typography variant="h6" component="h3">
-                    {user.displayName}
-                </Typography>
-                {!!settings.headLine && (
-                    <Typography gutterBottom variant="body2">
-                        {settings.headLine}
+        !!user && (
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <Box
+                    width={1}
+                    pl={4}
+                    pr={4}
+                    color="white"
+                    borderRadius={8}
+                    p={1}
+                >
+                    <Typography variant="h6" component="h3">
+                        {user.displayName}
                     </Typography>
-                )}
-            </Box>
-        </ThemeProvider>
+                    {!!settings.headLine && (
+                        <Typography gutterBottom variant="body2">
+                            {settings.headLine}
+                        </Typography>
+                    )}
+                </Box>
+            </ThemeProvider>
+        )
     )
 }

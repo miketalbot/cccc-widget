@@ -28,9 +28,7 @@ export function useRecord(docRef, deps = []) {
 export function useRecordStatic(docRef, deps = []) {
     const [record, setRecord] = useState()
     useEffect(() => {
-        console.log("Retrieve", docRef)
         docRef.get().then((record) => {
-            console.log("Gett", record)
             setRecord(record.data())
         })
         //eslint-disable-next-line react-hooks/exhaustive-deps

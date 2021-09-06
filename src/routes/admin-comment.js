@@ -25,9 +25,8 @@ import { AdvancedArticleSettings } from "./parts/AdvancedArticleSettings"
 import { useEditorPlugins } from "../lib/usePlugins"
 import { MdClear } from "react-icons/md"
 import { CommentDetails } from "./parts/CommentDetails"
-import { BoundColorField } from "../lib/ColorField"
 import { Bound } from "../lib/Bound"
-import { UpdateWidget } from "./parts/UpdateWidget"
+import { ColorEditor } from "./parts/ColorEditor"
 
 export default function Comment({ id }) {
     const user = useUserContext()
@@ -78,10 +77,7 @@ export default function Comment({ id }) {
                                             aria-label="Article configuration tabs"
                                             onChange={(_, tab) => setTab(tab)}
                                         >
-                                            <Tab
-                                                label="Comment Details"
-                                                value="0"
-                                            />
+                                            <Tab label="Details" value="0" />
                                             <Tab label="Colors" value="4" />
                                             <Tab
                                                 label="Main Widget"
@@ -91,10 +87,7 @@ export default function Comment({ id }) {
                                                 label="Footer Widget"
                                                 value="2"
                                             />
-                                            <Tab
-                                                label="Advanced Settings"
-                                                value="3"
-                                            />
+                                            <Tab label="Advanced" value="3" />
                                         </TabList>
                                         <TabPanel value="0">
                                             <CommentDetails
@@ -103,25 +96,7 @@ export default function Comment({ id }) {
                                             />
                                         </TabPanel>
                                         <TabPanel value="4">
-                                            <CardContent>
-                                                <BoundColorField
-                                                    sideEffects
-                                                    field="gradientFrom"
-                                                    default="#fe6b8b"
-                                                />
-                                            </CardContent>
-                                            <CardContent>
-                                                <BoundColorField
-                                                    sideEffects
-                                                    field="gradientTo"
-                                                    default="#ff8e53"
-                                                />
-                                            </CardContent>
-                                            <UpdateWidget
-                                                accessibility={console.warn}
-                                                article={article.uid}
-                                                useArticle={article}
-                                            />
+                                            <ColorEditor />
                                         </TabPanel>
                                         <TabPanel value="1">
                                             <PluginDetails

@@ -1,5 +1,6 @@
 import { Box, CardContent, TextField } from "@material-ui/core"
 import { Autocomplete } from "@material-ui/lab"
+import { Bound } from "../../lib/Bound"
 import { Plugins } from "../../lib/plugins"
 import { raise } from "../../lib/raise"
 import { useRefresh } from "../../lib/useRefresh"
@@ -13,37 +14,39 @@ export function PluginDetails({ article, onChange, type }) {
     const typeSettings = (settings[article[type]] =
         settings[article[type]] || {})
     return (
-        <CardContent>
-            <Autocomplete
-                onChange={refresh((_, v) => (article[type] = v))}
-                value={article[type] ?? ""}
-                renderInput={(p) => (
-                    <TextField
-                        variant="outlined"
-                        label="Plugin"
-                        fullWidth
-                        {...p}
+        <Bound target={article} onChange={onChange} refresh={refresh}>
+            <CardContent>
+                <Autocomplete
+                    onChange={refresh((_, v) => (article[type] = v))}
+                    value={article[type] ?? ""}
+                    renderInput={(p) => (
+                        <TextField
+                            variant="outlined"
+                            label="Plugin"
+                            fullWidth
+                            {...p}
+                        />
+                    )}
+                    options={Object.keys(Plugins[type]).sort()}
+                />
+                {article[type] && (
+                    <Editor
+                        plugin={Plugins[type][article[type]]}
+                        article={article}
+                        onChange={(...params) => {
+                            onChange(...params)
+                            raise("refresh-widget")
+                        }}
+                        settings={typeSettings}
                     />
                 )}
-                options={Object.keys(Plugins[type]).sort()}
-            />
-            {article[type] && (
-                <Editor
-                    plugin={Plugins[type][article[type]]}
-                    article={article}
-                    onChange={(...params) => {
-                        onChange(...params)
-                        raise("refresh-widget")
-                    }}
-                    settings={typeSettings}
+                <UpdateWidget
+                    article={article.uid}
+                    user={user}
+                    useArticle={article}
                 />
-            )}
-            <UpdateWidget
-                article={article.uid}
-                user={user}
-                useArticle={article}
-            />
-        </CardContent>
+            </CardContent>
+        </Bound>
     )
 }
 
@@ -61,7 +64,7 @@ function Editor({ plugin, article, onChange, settings }) {
     function attachEditor(parent) {
         if (!parent) return
         setTimeout(() => {
-            plugin.editor({ parent, article, onChange, settings })
+            plugin.editor?.({ parent, article, onChange, settings })
         })
     }
 }

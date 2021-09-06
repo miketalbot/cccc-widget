@@ -35,6 +35,7 @@
         "react-firebaseui": "5.0.2",
         "react-icons": "4.2.0",
         "react-scripts": "4.0.3",
+        "react-tsparticles": "^1.34.0",
         "virtual-window": "^1.0.20"
     },
     "scripts": {

@@ -6,6 +6,9 @@ import {
     Typography
 } from "@material-ui/core"
 import { useEffect, useRef, useState } from "react"
+import { useBoundContext } from "../../lib/Bound"
+import { useEvent } from "../../lib/useEvent"
+import { useRefresh } from "../../lib/useRefresh"
 import { useUserContext } from "../../lib/useUser"
 import { renderWidget } from "../../runtime/widgetRenderer"
 
@@ -25,8 +28,10 @@ const useStyles = makeStyles({
 export function RenderWidget({ article, user, useArticle }) {
     const systemUser = useUserContext()
     user = user || systemUser
+    useEvent("refresh-widget", useRefresh())
     const width = Math.min(600, window.innerWidth * 0.75)
     const [zoom, setZoom] = useState(useArticle?.zoom ?? true)
+    const { onChange } = useBoundContext()
     const eventHandler = useRef(null)
     if (useArticle) {
         useArticle.zoom = zoom
@@ -58,7 +63,10 @@ export function RenderWidget({ article, user, useArticle }) {
                         <Switch
                             color="default"
                             checked={zoom}
-                            onChange={() => setZoom((zoom) => !zoom)}
+                            onChange={() => {
+                                setZoom((zoom) => !zoom)
+                                onChange()
+                            }}
                         />
                     }
                     label="Small Preview"

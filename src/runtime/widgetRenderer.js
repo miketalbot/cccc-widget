@@ -4,39 +4,56 @@ import { Plugins, PluginTypes } from "../lib/plugins"
 import { raise } from "../lib/raise"
 import { merge } from "../lib/merge"
 
-export async function renderWidget(parent, id, user, useArticle = null) {
-    const definitionRef = user
-        ? db
-              .collection("userarticles")
-              .doc(user.uid)
-              .collection("articles")
-              .doc(id)
-        : db.collection("articles").doc(id)
+export async function renderWidget(
+    parent,
+    id,
+    user = { isAnonymous: true },
+    useArticle = null
+) {
+    const definitionRef =
+        user && !user.isAnonymous
+            ? db
+                  .collection("userarticles")
+                  .doc(user.uid)
+                  .collection("articles")
+                  .doc(id)
+            : db.collection("articles").doc(id)
 
-    const definitionDoc = await definitionRef.get()
+    const definitionDoc = (parent._definitionDoc =
+        parent._definitionDoc || (await definitionRef.get()))
     if (!definitionDoc.exists && !useArticle) {
         // Do some fallback
         return null
     }
-    if (!useArticle) {
-        view(id).catch(console.error)
+
+    if (parent._uid !== user.uid) {
+        if (!useArticle) {
+            view(id).catch(console.error)
+        }
     }
     // Get the actual data of the document
     const article = useArticle || definitionDoc.data()
     const response = {}
-    const removeListener = db
-        .collection("responses")
-        .doc(id)
-        .onSnapshot((update) => {
-            const updatedData = update.data()
-            Object.assign(response, updatedData)
-            raise(`response-${id}`, response)
-            raise(`response`, response)
-        })
+    const removeListener = (parent._removeListener =
+        parent._removeListener ||
+        db
+            .collection("responses")
+            .doc(id)
+            .onSnapshot((update) => {
+                const updatedData = update.data()
+                Object.assign(response, updatedData)
+                raise(`response-${id}`, response)
+                raise(`response`, response)
+            }))
+
+    parent._uid = user.uid
+    const author = await (
+        await db.collection("userprofiles").doc(article.author).get()
+    ).data()
     const holder = makeContainer(parent, article, user)
     holder.logoWidget.style.backgroundImage = `url(${logo})`
-    if (user.photoURL) {
-        holder.avatarWidget.style.backgroundImage = `url(${user.photoURL})`
+    if (author?.photoURL) {
+        holder.avatarWidget.style.backgroundImage = `url(${author.photoURL})`
     }
     if (user.profileURL) {
         holder.avatarWidget.role = "button"
@@ -107,12 +124,20 @@ function renderPlugin(
     })
 }
 
-function makeContainer(parent, article, user) {
+function makeContainer(parent, article) {
     parent = parent || document.body
     parent.style.background = `linear-gradient(45deg, ${
-        article?.gradientFrom ?? "#fe6b8b"
-    } 30%, ${article?.gradientTo ?? "#ff8e53"} 90%)`
+        article?.overrideGradientFrom ?? article?.gradientFrom ?? "#fe6b8b"
+    } 30%, ${
+        article?.overrideGradientTo ?? article?.gradientTo ?? "#ff8e53"
+    } 90%)`
     if (parent._madeContainer) {
+        parent._madeContainer.bottom.style.background =
+            article.overrideBottomBackground ||
+            article.bottomBackground ||
+            "#333"
+        parent._madeContainer.bottom.style.color =
+            article.overrideBottomColor || article.bottomColor || "#fff"
         return parent._madeContainer
     }
 
@@ -122,7 +147,7 @@ function makeContainer(parent, article, user) {
         flexDirection: "column",
         width: "100%",
         height: "100%",
-        padding: "4px"
+        overflow: "hidden"
     })
     const top = document.createElement("div")
     Object.assign(top.style, {
@@ -130,12 +155,13 @@ function makeContainer(parent, article, user) {
         width: "100%",
         display: "flex",
         justifyContent: "stretch",
-        overflow: "auto"
+        overflow: "hidden"
     })
     main.appendChild(top)
     const mainWidget = document.createElement("section")
     Object.assign(mainWidget.style, {
         width: "66%",
+        flex: 1,
         display: "flex",
         flexDirection: "column",
         alignItems: "stretch",
@@ -145,23 +171,31 @@ function makeContainer(parent, article, user) {
     top.appendChild(mainWidget)
     const notificationWidget = document.createElement("section")
     Object.assign(notificationWidget.style, {
-        width: "34%"
+        width: "34%",
+        maxWidth: "250px",
+        overflowY: "hidden",
+        overflowX: "visible"
     })
     top.appendChild(notificationWidget)
     const middle = document.createElement("div")
     Object.assign(middle.style, {
-        height: "4px"
+        height: "0px"
     })
     main.appendChild(middle)
     const bottom = document.createElement("div")
     Object.assign(bottom.style, {
-        height: "72px",
-        background: "#555",
+        height: "76px",
+        background:
+            article.overrideBottomBackground ||
+            article.bottomBackground ||
+            "#333",
+        color: article.overrideBottomColor || article.bottomColor || "#fff",
         marginLeft: "-4px",
         marginRight: "-4px",
         marginBottom: "-4px",
         boxShadow: "0 0 8px 0px #000A",
-        padding: "4px",
+        padding: "8px",
+        paddingTop: "4px",
         flexGrow: 0,
         flexShrink: 0,
         display: "flex",
@@ -204,6 +238,7 @@ function makeContainer(parent, article, user) {
 
     return (parent._madeContainer = {
         main,
+        bottom,
         mainWidget,
         footerWidget,
         logoWidget,

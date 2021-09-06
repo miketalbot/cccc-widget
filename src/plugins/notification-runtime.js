@@ -4,12 +4,21 @@ import {
     CardActionArea,
     CardContent,
     CardMedia,
+    makeStyles,
     Typography
 } from "@material-ui/core"
-import { Suspense, useEffect, useState } from "react"
+import {
+    createContext,
+    Suspense,
+    useContext,
+    useEffect,
+    useMemo,
+    useState
+} from "react"
 import reactDom from "react-dom"
 import { FaCircle } from "react-icons/fa"
 import { GiTwoCoins } from "react-icons/gi"
+import { wasClicked, wasRecommended } from "../lib/firebase"
 import { db, recommend } from "../lib/firebase"
 import { ListItemBox } from "../lib/ListItemBox"
 import { Odometer } from "../lib/odometer"
@@ -27,73 +36,118 @@ function runtime({ parent, ...props }) {
     )
 }
 
+const InteractionContext = createContext()
+
+const useStyles = makeStyles({
+    score: {
+        position: "absolute",
+        zIndex: 100,
+        width: "calc(100% + 8px)",
+        left: 0,
+        top: 6,
+        padding: 4,
+        background: "#fffc",
+        boxShadow: "0 0 3px 0 white",
+        borderRadius: 8,
+        backdropFilter: "blur(3px)"
+    }
+})
+
 function Notifications({ user, article }) {
+    const observer = useMemo(() => {
+        let observer = new IntersectionObserver(seen(new Set()), {
+            threshold: 0.75
+        })
+        return observer
+    }, [])
+    useEffect(() => {
+        return () => {
+            observer.disconnect()
+        }
+    }, [observer])
     const [recommendations, setRecommendations] = useState([])
     useEffect(() => {
         setTimeout(async () => {
             setRecommendations(await recommend(article.uid, 5))
         })
     }, [article])
-    console.log(recommendations)
+    const classes = useStyles()
     return (
-        <Box
-            color="#222"
-            flex={1}
-            height={1}
-            display="flex"
-            flexDirection="column"
-            fontWeight="bold"
-            pr={1.5}
-            pt={2}
-        >
-            <ListItemBox
-                p={1}
-                width={1}
-                bgcolor="#fff9"
-                borderRadius={8}
-                boxShadow="0 0 12px 0 white"
-                justifyContent="space-between"
+        <InteractionContext.Provider value={observer}>
+            <Box
+                color="#222"
+                flex={1}
+                height={1}
+                display="flex"
+                position="relative"
+                flexDirection="column"
+                fontWeight="bold"
+                mr={1.5}
             >
-                <ListItemBox whiteSpace="nowrap">
-                    <Box mr={1} lineHeight={0} fontSize="150%">
-                        <GiTwoCoins />
-                    </Box>
-                    <Box mr={3} aria-label="Score">
-                        <Odometer>{user?.score}</Odometer>
-                    </Box>
-                </ListItemBox>
+                <ListItemBox
+                    className={classes.score}
+                    justifyContent="space-between"
+                >
+                    <ListItemBox whiteSpace="nowrap">
+                        <Box mr={1} lineHeight={0} fontSize="150%">
+                            <GiTwoCoins />
+                        </Box>
+                        <Box mr={3} aria-label="Score">
+                            <Odometer>{user?.score}</Odometer>
+                        </Box>
+                    </ListItemBox>
 
-                <ListItemBox whiteSpace="nowrap" flex={0} mr={1}>
-                    <Box mr={1} lineHeight={0} fontSize="100%">
-                        <FaCircle />
-                    </Box>
-                    <Box aria-label="Achievements">
-                        <Odometer>
-                            {Object.keys(user?.achievements ?? {}).length}
-                        </Odometer>
-                    </Box>
+                    <ListItemBox whiteSpace="nowrap" flex={0} mr={1}>
+                        <Box mr={1} lineHeight={0} fontSize="100%">
+                            <FaCircle />
+                        </Box>
+                        <Box aria-label="Achievements">
+                            <Odometer>
+                                {Object.keys(user?.achievements ?? {}).length}
+                            </Odometer>
+                        </Box>
+                    </ListItemBox>
                 </ListItemBox>
-            </ListItemBox>
-            <Box mt={2} flex={1} overflow="auto" style={{ zoom: 0.75 }}>
-                {recommendations.map((recommendation) => (
-                    <Article key={recommendation} id={recommendation} />
-                ))}
+                <Box
+                    pl={1}
+                    pt={7}
+                    flex={1}
+                    overflow="auto"
+                    style={{ zoom: 0.75 }}
+                >
+                    {recommendations.map((recommendation) => (
+                        <Article key={recommendation} id={recommendation} />
+                    ))}
+                </Box>
             </Box>
-        </Box>
+        </InteractionContext.Provider>
     )
+}
+
+function seen(seenItems) {
+    return (entries) => {
+        entries.forEach(({ target }) => {
+            if (seenItems.has(target.articleId)) return
+            wasRecommended(target.articleId).catch(console.error)
+            seenItems.add(target.articleId)
+        })
+    }
 }
 
 function Article({ id }) {
     const record = useRecordStatic(db.collection("articles").doc(id), [id])
+    const observer = useContext(InteractionContext)
     return (
         !!record && (
             <Box mb={1} clone>
-                <Card>
+                <Card ref={attachObserver}>
                     <CardActionArea onClick={goto}>
-                        <CardMedia
-                            image={record.image}
-                            style={{ height: 120 }}
-                        />
+                        {record.image && (
+                            <CardMedia
+                                image={record.image}
+                                style={{ height: 120 }}
+                            />
+                        )}
                         <CardContent>
                             <Typography variant="body1" gutterBottom>
                                 {record.title}
@@ -111,7 +165,15 @@ function Article({ id }) {
             </Box>
         )
     )
+    function attachObserver(target) {
+        if (target) {
+            target.articleId = id
+            observer.observe(target)
+        }
+    }
+
     function goto() {
+        wasClicked(id).catch(console.error)
         window.open(record.url, "_blank")
     }
 }

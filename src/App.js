@@ -1,14 +1,15 @@
 import "./App.css"
 import { register, Router } from "./lib/routes"
-import { CssBaseline } from "@material-ui/core"
-import { Suspense, lazy } from "react"
-import { User } from "./lib/useUser"
+import { CssBaseline, Typography } from "@material-ui/core"
+import { Suspense, lazy, useRef, useEffect } from "react"
+import { User, useUserContext } from "./lib/useUser"
 import { ThemeProvider } from "@material-ui/core"
 import { Dialogs } from "./lib/useDialog"
 import { SnackBars } from "./lib/notifications"
 import "./plugins"
 import { theme } from "./lib/theme"
 import { Loader } from "./lib/Loader"
+import { renderWidget } from "./runtime/widgetRenderer"
 
 register(
     "/admin",
@@ -35,13 +36,41 @@ register(
     lazy(() => import("./routes/admin-comment"))
 )
 
+register("/:id", RenderMe)
+
+const fullScreen = {
+    width: "100vw",
+    height: "100vh",
+    top: 0,
+    left: 0,
+    position: "fixed",
+    overflow: "hidden"
+}
+
+function RenderMe({ id }) {
+    const user = useUserContext()
+    const ref = useRef()
+    useEffect(() => {
+        if (!user || !id) return
+        renderWidget(ref.current, id, user)
+    }, [user, id])
+    if (!id) {
+        return (
+            <Typography variant="h3" c="h1">
+                Please specify an article id
+            </Typography>
+        )
+    }
+    return <div style={fullScreen} ref={ref} />
+}
+
 function App() {
     return (
         <User>
             <ThemeProvider theme={theme}>
                 <CssBaseline />
                 <Suspense fallback={<Loader />}>
-                    <Router component={<main />} />
+                    <Router component={<div />} />
                     <Dialogs />
                     <SnackBars />
                 </Suspense>

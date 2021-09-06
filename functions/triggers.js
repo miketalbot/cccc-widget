@@ -54,6 +54,7 @@ module.exports = function (exports) {
                 await responseRef.set(
                     {
                         processedTags: data.processedTags || [],
+                        author: data.author,
                         comment: data.comment || false
                     },
                     { merge: true }
@@ -63,11 +64,14 @@ module.exports = function (exports) {
             await responseRef.set({
                 types: [],
                 created: Date.now(),
+                author: data.author,
                 visits: 0,
                 comment: data.comment || false,
                 uniqueVisits: 0,
                 lastUniqueVisit: 0,
                 lastUniqueDay: 0,
+                recommends: 0,
+                clicks: 0,
                 responses: {},
                 visitTimes: [],
                 processedTags: data.processedTags || []
