@@ -24,6 +24,8 @@ exports.view = functions.https.onCall(async ({ articleId }, context) => {
     const doc = await responseRef.get()
     const data = doc.exists ? doc.data() : {}
     const users = (data.users = data.users || {})
+    const day = Math.floor((Date.now() / 1000) * 60 * 60 * 24)
+
     if (!users[context.auth.uid]) {
         if (article.author !== context.auth.uid) {
             await awardPoints(article.author, 20, "New Unique Reader")
@@ -41,7 +43,7 @@ exports.view = functions.https.onCall(async ({ articleId }, context) => {
         users[context.auth.uid] = Date.now()
         data.uniqueVisits = (data.uniqueVisits || 0) + 1
         data.lastUniqueVisit = Date.now()
-        data.lastUniqueDay = Math.floor((Date.now() / 1000) * 60 * 60 * 24)
+        data.lastUniqueDay = day
         for (let tag of article.processedTags || []) {
             await incrementTag(tag, "uniqueVisits")
         }

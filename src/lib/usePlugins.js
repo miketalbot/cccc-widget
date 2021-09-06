@@ -36,7 +36,7 @@ export function usePlugins(definition, deps = []) {
 export async function loadPlugins(plugins) {
     let hadBabel = false
     for (let url of plugins) {
-        let type
+        let type = "text/javascript"
         if (url.endsWith(".bundle")) {
             const response = await fetch(url)
             if (!response.ok) {
@@ -55,15 +55,15 @@ export async function loadPlugins(plugins) {
             continue
         }
         if (document.body.querySelector(`script[src~="${url}"]`)) continue
+        const script = document.createElement("script")
         if (url.includes(".babel") || url.includes(".jsx")) {
             hadBabel = true
             type = "text/babel"
+            script.setAttribute("data-presets", "env,react")
+            script.setAttribute("data-plugins", "transform-modules-umd")
             await loadBabel()
         }
-        const script = document.createElement("script")
         script.type = type
-        script.setAttribute("data-presets", "env,react")
-        script.setAttribute("data-plugins", "transform-modules-umd")
         script.src = url
         document.body.appendChild(script)
     }

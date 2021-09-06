@@ -81,10 +81,10 @@ export default function Runtime({
                                             data={data}
                                             animate={!reduceMotion()}
                                             margin={{
-                                                top: 30,
-                                                right: 30,
-                                                bottom: 30,
-                                                left: 30
+                                                top: 20,
+                                                right: 120,
+                                                bottom: 20,
+                                                left: 120
                                             }}
                                             innerRadius={0.5}
                                             padAngle={0.7}
@@ -188,13 +188,15 @@ function AnswerCard({ answer, loader, article }) {
         <Box flexGrow={1} m={1} width={1 / 2.2} onClick={click} lineHeight={1}>
             <Box height={1} clone>
                 <Card elevation={5} className={classes.card}>
-                    <CardActionArea>
-                        <Box p={1}>
-                            <Typography variant="body2">
-                                {answer.answer}
-                            </Typography>
-                        </Box>
-                    </CardActionArea>
+                    <Box height={1} clone>
+                        <CardActionArea>
+                            <Box p={1}>
+                                <Typography variant="body2">
+                                    {answer.answer}
+                                </Typography>
+                            </Box>
+                        </CardActionArea>
+                    </Box>
                 </Card>
             </Box>
         </Box>

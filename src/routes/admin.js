@@ -41,7 +41,7 @@ export default function AdminPage() {
                 <Box
                     display="flex"
                     flexWrap="wrap"
-                    alignItems="flex-start"
+                    alignItems="stretch"
                     justifyContent="space-around"
                 >
                     <Panel
@@ -52,7 +52,7 @@ export default function AdminPage() {
                         Manage Your Articles
                     </Panel>
                     <Panel
-                        title="Comments"
+                        title="Comments &amp; Embeds"
                         icon={<FaComment />}
                         onClick={() => navigate("/admin/comments")}
                     >

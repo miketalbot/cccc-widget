@@ -39,6 +39,7 @@ import "./admin"
 import { useResponseFor } from "../lib/useResponse"
 import { IoMdEye } from "react-icons/io"
 import { Odometer } from "../lib/odometer"
+import { PluginTypes } from "../lib/plugins"
 
 export const articles = db.collection("userarticles")
 
@@ -105,6 +106,8 @@ export default function Articles() {
             const article = {
                 uid: nanoid(),
                 name,
+                [PluginTypes.MAIN]: "4C",
+                [PluginTypes.FOOTER]: "Footer Profile",
                 date: Date.now()
             }
             try {

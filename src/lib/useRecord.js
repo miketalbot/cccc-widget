@@ -4,6 +4,7 @@ import { showNotification } from "./notifications"
 export function useRecord(docRef, deps = []) {
     const [record, setRecord] = useState()
     useEffect(() => {
+        if (!docRef.id) return
         return docRef.onSnapshot((record) => {
             setRecord(record.data())
         })

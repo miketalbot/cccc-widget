@@ -36,6 +36,7 @@ import { VirtualWindow } from "virtual-window"
 import { pick } from "../lib/pick"
 import { navigate } from "../lib/routes"
 import "./admin"
+import { PluginTypes } from "../lib/plugins"
 
 export const articles = db.collection("userarticles")
 
@@ -57,7 +58,7 @@ export default function Articles() {
                 <Box width={1} clone>
                     <Card elevation={3}>
                         <CardHeader
-                            title="Your Comments"
+                            title="Your Comments &amp; Embeds"
                             action={
                                 <IconButton
                                     aria-label="Close and go back icon"
@@ -85,7 +86,7 @@ export default function Articles() {
                         </CardContent>
                         <CardActions>
                             <Button onClick={addComment} color="primary">
-                                + Comment
+                                + Comment/Embed
                             </Button>
                         </CardActions>
                     </Card>
@@ -103,6 +104,8 @@ export default function Articles() {
                 uid: nanoid(),
                 name,
                 comment: true,
+                [PluginTypes.MAIN]: "4C",
+                [PluginTypes.FOOTER]: "Footer Profile",
                 date: Date.now()
             }
             try {

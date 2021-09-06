@@ -39,6 +39,7 @@
         "virtual-window": "^1.0.20"
     },
     "scripts": {
+        "host": "craco build && firebase deploy --only hosting",
         "start": "craco start",
         "build": "craco build",
         "test": "craco test",

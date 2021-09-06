@@ -31,6 +31,7 @@ import { BoundAutocomplete, BoundTextField } from "./bound-components"
 import { Sortable, SortableItem } from "../lib/Sortable"
 import { useResponse } from "./useResponse"
 import { reduceMotion } from "./reduce-motion"
+import { handle } from "./handle"
 
 window.Framework4C = {
     HTMLEditor,
@@ -83,3 +84,11 @@ window.Framework4C = {
         recommend
     }
 }
+
+handle("user-updated", function (user) {
+    window.Framework4C.user = user
+    window.Framework4C.FireBase.myArticles = db
+        .collection("userarticles")
+        .doc(user.uid)
+        .collection("articles")
+})

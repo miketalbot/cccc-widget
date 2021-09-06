@@ -4,6 +4,7 @@
 import "../assets/car.css"
 import "../assets/odometer.css"
 import { reduceMotion } from "./reduce-motion"
+import { useThrottledValue } from "./useThrottledValue"
 
 window.odometerOptions = {
     auto: false, // Don't automatically initialize everything with class 'odometer'
@@ -740,7 +741,8 @@ window.odometerOptions = {
 }.call(this))
 
 export function Odometer({ children, theme = "default", format = "(,ddd)" }) {
-    return <div ref={makeOdometer}>{children}</div>
+    const content = useThrottledValue(children, 3000)
+    return !!content && <div ref={makeOdometer}>{content}</div>
 
     function makeOdometer(target) {
         if (!target) return

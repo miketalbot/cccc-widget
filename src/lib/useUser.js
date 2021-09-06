@@ -1,5 +1,5 @@
 import firebase from "firebase/app"
-import { createContext, useContext, useEffect } from "react"
+import { createContext, useContext, useEffect, useMemo } from "react"
 import useAsync from "./useAsync"
 import { useCurrentState } from "./useCurrentState"
 import { useEvent } from "./useEvent"
@@ -7,6 +7,7 @@ import { useRefresh } from "./useRefresh"
 import { db } from "./firebase"
 import { showNotification } from "./notifications"
 import { useRecord } from "./useRecord"
+import { raise } from "./raise"
 
 const auth = firebase.auth()
 
@@ -76,35 +77,38 @@ export function useUser({ shouldBeCreator } = {}) {
     const [score] = useRecord(db.collection("scores").doc(myUser?.uid), [
         myUser?.uid
     ])
-
-    return myUser
-        ? {
-              ...additional,
-              updateProfile: myUser.updateProfile.bind(myUser),
-              updatePassword: myUser.updatePassword.bind(myUser),
-              saveAdditional: async (data) => {
-                  Object.assign(additional, data)
-                  try {
-                      await db
-                          .collection("userprofiles")
-                          .doc(user.uid)
-                          .set(additional, { merge: true })
-                  } catch (e) {
-                      showNotification(e.message, { severity: "error" })
+    return useMemo(() => {
+        const completeUser = myUser
+            ? {
+                  ...additional,
+                  updateProfile: myUser.updateProfile.bind(myUser),
+                  updatePassword: myUser.updatePassword.bind(myUser),
+                  saveAdditional: async (data) => {
+                      Object.assign(additional, data)
+                      try {
+                          await db
+                              .collection("userprofiles")
+                              .doc(user.uid)
+                              .set(additional, { merge: true })
+                      } catch (e) {
+                          showNotification(e.message, { severity: "error" })
+                      }
+                      return additional
+                  },
+                  score: score?.score,
+                  achievements: score?.achievements,
+                  email: myUser.email,
+                  uid: myUser.uid,
+                  displayName: myUser.displayName,
+                  photoURL: myUser.photoURL,
+                  isAnonymous: myUser.isAnonymous,
+                  signOut: () => {
+                      localStorage.removeItem("signedIn")
+                      return auth.signOut()
                   }
-                  return additional
-              },
-              score: score?.score,
-              achievements: score?.achievements,
-              email: myUser.email,
-              uid: myUser.uid,
-              displayName: myUser.displayName,
-              photoURL: myUser.photoURL,
-              isAnonymous: myUser.isAnonymous,
-              signOut: () => {
-                  localStorage.removeItem("signedIn")
-                  return auth.signOut()
               }
-          }
-        : null
+            : null
+        raise("user-updated", completeUser)
+        return completeUser
+    }, [myUser, score, additional, user?.uid])
 }

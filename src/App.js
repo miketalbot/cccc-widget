@@ -1,7 +1,7 @@
 import "./App.css"
 import { register, Router } from "./lib/routes"
 import { CssBaseline, Typography } from "@material-ui/core"
-import { Suspense, lazy, useRef, useEffect } from "react"
+import { Suspense, lazy, useRef, useEffect, useState } from "react"
 import { User, useUserContext } from "./lib/useUser"
 import { ThemeProvider } from "@material-ui/core"
 import { Dialogs } from "./lib/useDialog"
@@ -10,6 +10,7 @@ import "./plugins"
 import { theme } from "./lib/theme"
 import { Loader } from "./lib/Loader"
 import { renderWidget } from "./runtime/widgetRenderer"
+import { initialize } from "./plugins"
 
 register(
     "/admin",
@@ -51,7 +52,7 @@ function RenderMe({ id }) {
     const user = useUserContext()
     const ref = useRef()
     useEffect(() => {
-        if (!user || !id) return
+        if (!user || !id || user.isAnonymous === undefined) return
         renderWidget(ref.current, id, user)
     }, [user, id])
     if (!id) {
@@ -65,17 +66,26 @@ function RenderMe({ id }) {
 }
 
 function App() {
+    const [ready, setReady] = useState(false)
+    useEffect(() => {
+        setTimeout(async () => {
+            await initialize()
+            setReady(true)
+        })
+    }, [])
     return (
-        <User>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <Suspense fallback={<Loader />}>
-                    <Router component={<div />} />
-                    <Dialogs />
-                    <SnackBars />
-                </Suspense>
-            </ThemeProvider>
-        </User>
+        ready && (
+            <User>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    <Suspense fallback={<Loader />}>
+                        <Router component={<div />} />
+                        <Dialogs />
+                        <SnackBars />
+                    </Suspense>
+                </ThemeProvider>
+            </User>
+        )
     )
 }
 

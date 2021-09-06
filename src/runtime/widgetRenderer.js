@@ -94,6 +94,7 @@ export async function renderWidget(
         !!useArticle
     )
     return () => {
+        parent._removeListener = null
         removeListener()
     }
 }
