@@ -3,8 +3,8 @@
       "collectionGroup": "responses",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "comment", "order": "DESCENDING" },
         { "fieldPath": "enabled", "order": "DESCENDING" },
+        { "fieldPath": "comment", "order": "DESCENDING" },
         { "fieldPath": "lastUniqueDay", "order": "DESCENDING" },
         { "fieldPath": "visits", "order": "DESCENDING" }
       ]

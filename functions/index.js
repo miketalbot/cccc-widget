@@ -160,10 +160,9 @@ exports.recommend = functions.https.onCall(
         const rows = []
         const rowSnap = await db
             .collection("responses")
-            .where("comment", "!=", true)
             .where("enabled", "==", true)
+            .where("comment", "!=", true)
             .orderBy("comment", "desc")
-            .orderBy("enabled", "desc")
             .orderBy("lastUniqueDay", "desc")
             .orderBy("visits", "desc")
             .limit(number * 4)
