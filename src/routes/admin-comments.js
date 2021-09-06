@@ -103,6 +103,7 @@ export default function Articles() {
             const comment = {
                 uid: nanoid(),
                 name,
+                enabled: true,
                 comment: true,
                 [PluginTypes.MAIN]: "4C",
                 [PluginTypes.FOOTER]: "Footer Profile",

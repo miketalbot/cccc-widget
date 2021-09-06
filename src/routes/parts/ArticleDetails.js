@@ -6,6 +6,7 @@ import { setFromEvent } from "../../lib/setFromEvent"
 import { useRefresh } from "../../lib/useRefresh"
 import { getTag } from "../../lib/getTag"
 import { uniqBy } from "../../lib/uniqBy"
+import { BoundStandardSwitch } from "../../lib/bound-components"
 
 const useStyles = makeStyles({
     root: {}
@@ -16,6 +17,8 @@ export function ArticleDetails({ article, onChange = noop }) {
     const refresh = useRefresh(onChange)
     return (
         <>
+            <BoundStandardSwitch field="enabled" default={true} />
+
             <Box mt={2} display="flex">
                 <Box mr={1} flex={1}>
                     <TextField
