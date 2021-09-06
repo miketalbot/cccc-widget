@@ -36,7 +36,7 @@ import { VirtualWindow } from "virtual-window"
 import { pick } from "../lib/pick"
 import { navigate } from "../lib/routes"
 import "./admin"
-import { useResponse, useResponseFor } from "../lib/useResponse"
+import { useResponseFor } from "../lib/useResponse"
 import { IoMdEye } from "react-icons/io"
 import { Odometer } from "../lib/odometer"
 

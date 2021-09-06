@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { GiConsoleController } from "react-icons/gi"
 import { showNotification } from "./notifications"
 
 export function useRecord(docRef, deps = []) {

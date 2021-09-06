@@ -1,13 +1,9 @@
 import {
-    Avatar,
     Box,
     Card,
     CardActionArea,
     CardContent,
     CardMedia,
-    ListItem,
-    ListItemAvatar,
-    ListItemText,
     Typography
 } from "@material-ui/core"
 import { Suspense, useEffect, useState } from "react"

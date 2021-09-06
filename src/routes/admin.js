@@ -5,8 +5,7 @@ import {
     CardHeader,
     makeStyles,
     Container,
-    useTheme,
-    Typography
+    useTheme
 } from "@material-ui/core"
 import { Administration } from "./parts/Administration"
 import { AllUniqueVisits } from "./parts/AllUniqueVisits"

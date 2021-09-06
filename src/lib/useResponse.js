@@ -13,12 +13,22 @@ export function useResponse(response) {
 export function useResponseFor(uid, method = "onSnapshot") {
     const [response, setResponse] = useState()
     useEffect(() => {
-        return db
-            .collection("responses")
-            .doc(uid)
-            [method]((update) => {
-                setResponse(update.data())
-            })
-    }, [uid])
+        if (method === "onSnapshot") {
+            return db
+                .collection("responses")
+                .doc(uid)
+                .onSnapshot((update) => {
+                    setResponse(update.data())
+                })
+        } else {
+            return db
+                .collection("responses")
+                .doc(uid)
+                .get()
+                .then((update) => {
+                    setResponse(update.data())
+                })
+        }
+    }, [uid, method])
     return response
 }
