@@ -73,7 +73,7 @@ function Notifications({ user, article }) {
     const [recommendations, setRecommendations] = useState([])
     useEffect(() => {
         setTimeout(async () => {
-            setRecommendations(await recommend(article.uid, 5))
+            setRecommendations(await recommend(article.uid, 10))
         })
     }, [article])
     const classes = useStyles()

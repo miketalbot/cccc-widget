@@ -22,6 +22,7 @@ import {
     ListItemAvatar,
     ListItemSecondaryAction,
     ListItemText,
+    makeStyles,
     TextField
 } from "@material-ui/core"
 import { sortBy } from "../lib/sortBy"
@@ -30,13 +31,16 @@ import { useState } from "react"
 import { useDialog } from "../lib/useDialog"
 import { showNotification } from "../lib/notifications"
 import { FaComment } from "react-icons/fa"
-import { MdClear, MdDelete } from "react-icons/md"
+import { MdClear, MdDelete, MdPerson } from "react-icons/md"
 import { confirm } from "../lib/confirm"
 import { VirtualWindow } from "virtual-window"
 import { pick } from "../lib/pick"
 import { navigate } from "../lib/routes"
 import "./admin"
 import { PluginTypes } from "../lib/plugins"
+import { useResponseFor } from "../lib/useResponse"
+import { IoMdEye } from "react-icons/io"
+import { Odometer } from "../lib/odometer"
 
 export const articles = db.collection("userarticles")
 
@@ -150,8 +154,22 @@ function GetCommentName({ ok, cancel }) {
     )
 }
 
+const useStyles = makeStyles({
+    result: {
+        borderRadius: 8,
+        background: "#eee",
+        display: "flex",
+        alignItems: "center",
+        padding: 4,
+        marginRight: 8,
+        color: "#222"
+    }
+})
+
 function Comment({ item: { name, date, uid } }) {
     const user = useUserContext()
+    const response = useResponseFor(uid)
+    const classes = useStyles()
     return (
         <ListItem button onClick={() => navigate(`/admin/comment/${uid}`)}>
             <ListItemAvatar>
@@ -164,13 +182,50 @@ function Comment({ item: { name, date, uid } }) {
                 secondary={dayjs(date).format("D MMMM YYYY [ at ] HH:mm")}
             />
             <ListItemSecondaryAction>
-                <IconButton
-                    color="secondary"
-                    onClick={remove}
-                    aria-label="Delete"
+                <Box
+                    color="#555"
+                    display="flex"
+                    alignItems="center"
+                    lineHeight={0}
                 >
-                    <MdDelete />
-                </IconButton>
+                    {!!response && (
+                        <Box display="flex" flexWrap="wrap" alignItems="center">
+                            <Box className={classes.result}>
+                                <Box mr={1}>
+                                    <IoMdEye />
+                                </Box>
+                                <Box
+                                    aria-label="Number of visits"
+                                    minWidth={50}
+                                    textAlign="right"
+                                >
+                                    <Odometer>{response.visits || 0}</Odometer>
+                                </Box>
+                            </Box>
+                            <Box className={classes.result}>
+                                <Box mr={1}>
+                                    <MdPerson />
+                                </Box>
+                                <Box
+                                    aria-label="Unique visits"
+                                    minWidth={45}
+                                    textAlign="right"
+                                >
+                                    <Odometer>
+                                        {response.uniqueVisits || 0}
+                                    </Odometer>
+                                </Box>
+                            </Box>
+                        </Box>
+                    )}
+                    <IconButton
+                        color="secondary"
+                        onClick={remove}
+                        aria-label="Delete"
+                    >
+                        <MdDelete />
+                    </IconButton>
+                </Box>
             </ListItemSecondaryAction>
         </ListItem>
     )

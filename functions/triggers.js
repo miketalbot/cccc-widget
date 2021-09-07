@@ -37,7 +37,10 @@ module.exports = function (exports) {
         .onWrite(async (change, context) => {
             if (!change.after.exists) {
                 const id = change.before.data().uid
-                await db.collection("articles").doc(id).delete()
+                await db
+                    .collection("responses")
+                    .doc(id)
+                    .set({ enabled: false }, { merge: true })
                 return
             }
             const data = change.after.data()
