@@ -1,9 +1,13 @@
 import { Box } from "@material-ui/core"
+import { forwardRef } from "react"
 
-export function ListItemBox({ children, ...props }) {
+export const ListItemBox = forwardRef(function ListItemBox(
+    { children, ...props },
+    ref
+) {
     return (
-        <Box display="flex" alignItems="center" width={1} {...props}>
+        <Box ref={ref} display="flex" alignItems="center" width={1} {...props}>
             {children}
         </Box>
     )
-}
+})

@@ -1,8 +1,9 @@
 import { readAndCompressImage } from "browser-image-resizer"
 
-import { IconButton } from "@material-ui/core"
+import { Box, Button, IconButton, makeStyles } from "@material-ui/core"
 
 import { fileToBase64 } from "./file-to-base64"
+import { useRef } from "react"
 
 /**
  * A wrapper function for event handlers that
@@ -102,5 +103,141 @@ export function ImageUploadButton({
         }
         input.value = ""
         onLoading(false)
+    }
+}
+
+const useStyles = makeStyles({
+    uploadButton: {
+        width: 0,
+        height: 0,
+        display: "none",
+        position: "absolute"
+    }
+})
+
+/**
+ * @callback JSONFileCallback
+ * @param {RecordType} parsedData
+ */
+
+/**
+ * @callback BlobFileCallback
+ * @param {Blob} file - the file that has been loaded
+ */
+
+/**
+ * @callback BlobFilesCallback
+ * @param {Blob[]} files - the files which have been loaded
+ */
+
+/**
+ * @class UploadButtonProps
+ * @implements RecordType
+ * @property {NotificationFunction} [onLoading] - a callback for when the image is being loaded and processed
+ * @property {React.Component|function} [Component=Button] - the component used to render the button
+ * @property {string} [accept="*"] - the type of files to accept
+ * @property {boolean} [multiple=false] - whether more than one file can be accepted
+ * @property {JSONFileCallback} [onFile] - a callback for when the file is loaded and parsed as JSON, if multiple files it is called for each of them
+ * @property {BlobFileCallback} [onRaw] - a callback for when the file is loaded, if multiple files then it is called for each of them
+ * @property {BlobFilesCallback} [onRawFiles] - a callback for all of the files that have been loaded before any processing
+ *
+ */
+
+/**
+ * A button that allows for the generic upload
+ * of files to the browser
+ * @param {UploadButtonProps} [props]
+ * @returns {JSX.Element}
+ */
+export function UploadButton({
+    onFile = noop,
+    onRawFiles = noop,
+    onRaw = noop,
+    Component = Button,
+    accept = "*",
+    children,
+    multiple,
+    ...props
+}) {
+    const classes = useStyles()
+    const inputHolder = useRef()
+    const fileInput = useRef()
+
+    return (
+        <>
+            <Component {...props} onClick={prevent(selectFile)}>
+                {children}
+            </Component>
+            <Box
+                className="upload-button-input"
+                ref={inputHolder}
+                style={{
+                    width: 0,
+                    height: 0,
+                    display: "none",
+                    position: "absolute"
+                }}
+            >
+                <input
+                    ref={fileInput}
+                    className={`file-input ${classes.uploadButton}`}
+                    onChange={gotFile}
+                    type="file"
+                    accept={accept}
+                    multiple={multiple}
+                />
+            </Box>
+        </>
+    )
+
+    async function gotFile(e) {
+        const { target: { files = [] } = {} } = e
+        if (await onRawFiles(files, accept)) {
+            return
+        }
+        for (let file of files) {
+            if (await onRaw(file, accept, files.length)) {
+                continue
+            }
+            if (file) {
+                const reader = new FileReader()
+
+                reader.onload = (e) => {
+                    let file = e.target.result
+                    try {
+                        file = JSON.parse(file)
+                    } catch (e) {
+                        // Wasn't JSON
+                    }
+                    onFile(file)
+                }
+                reader.readAsText(file, "utf8")
+            }
+        }
+        clearInputFile(fileInput.current)
+    }
+
+    function selectFile() {
+        const input = document.createElement("input")
+        input.type = "file"
+        input.multiple = multiple
+        input.accept = accept
+        input.style.display = "none"
+        input.onchange = gotFile
+        document.body.appendChild(input)
+        setTimeout(() => {
+            input.click()
+            input.value = ""
+        }, 200)
+    }
+
+    function clearInputFile(f) {
+        if (!f) return
+        f.value = ""
+        // For older browsers if above doesn't work
+        if (f.value) {
+            f.type = "text"
+            f.type = "file"
+        }
     }
 }

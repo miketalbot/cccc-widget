@@ -5,6 +5,7 @@ import {
     CardContent,
     CardMedia,
     makeStyles,
+    Tooltip,
     Typography
 } from "@material-ui/core"
 import {
@@ -23,6 +24,7 @@ import { db, recommend } from "../lib/firebase"
 import { ListItemBox } from "../lib/ListItemBox"
 import { Odometer } from "../lib/odometer"
 import { PluginTypes, register } from "../lib/plugins"
+import { sortBy } from "../lib/sortBy"
 import { useRecordStatic } from "../lib/useRecord"
 
 register(PluginTypes.NOTIFICATION, "defaultNotification", undefined, runtime)
@@ -50,6 +52,9 @@ const useStyles = makeStyles({
         boxShadow: "0 0 3px 0 white",
         borderRadius: 8,
         backdropFilter: "blur(3px)"
+    },
+    achievement: {
+        textTransform: "capitalize"
     }
 })
 
@@ -88,25 +93,34 @@ function Notifications({ user, article }) {
                     className={classes.score}
                     justifyContent="space-between"
                 >
-                    <ListItemBox whiteSpace="nowrap">
-                        <Box mr={1} lineHeight={0} fontSize="150%">
-                            <GiTwoCoins />
-                        </Box>
-                        <Box mr={3} aria-label="Score">
-                            <Odometer>{user?.score}</Odometer>
-                        </Box>
-                    </ListItemBox>
-
-                    <ListItemBox whiteSpace="nowrap" flex={0} mr={1}>
-                        <Box mr={1} lineHeight={0} fontSize="100%">
-                            <FaCircle />
-                        </Box>
-                        <Box aria-label="Achievements">
-                            <Odometer>
-                                {Object.keys(user?.achievements ?? {}).length}
-                            </Odometer>
-                        </Box>
-                    </ListItemBox>
+                    <Tooltip
+                        arrow
+                        title="Your score, based on how much you interact with 4C content"
+                    >
+                        <ListItemBox whiteSpace="nowrap">
+                            <Box mr={1} lineHeight={0} fontSize="150%">
+                                <GiTwoCoins />
+                            </Box>
+                            <Box mr={3} aria-label="Score">
+                                <Odometer>{user?.score}</Odometer>
+                            </Box>
+                        </ListItemBox>
+                    </Tooltip>
+                    <Tooltip title={<Badges user={user} />} arrow>
+                        <ListItemBox whiteSpace="nowrap" flex={0} mr={1}>
+                            <Box mr={1} lineHeight={0} fontSize="100%">
+                                <FaCircle />
+                            </Box>
+                            <Box aria-label="Achievements">
+                                <Odometer>
+                                    {
+                                        Object.keys(user?.achievements ?? {})
+                                            .length
+                                    }
+                                </Odometer>
+                            </Box>
+                        </ListItemBox>
+                    </Tooltip>
                 </ListItemBox>
                 <Box
                     pl={1}
@@ -115,12 +129,50 @@ function Notifications({ user, article }) {
                     overflow="auto"
                     style={{ zoom: 0.75 }}
                 >
+                    <Box
+                        borderRadius={48}
+                        bgcolor="#000d"
+                        boxShadow="0 0 2px 0 #000d"
+                        color="white"
+                        fontWeight={400}
+                        mb={1}
+                        p={0.5}
+                        textAlign="center"
+                    >
+                        Great content from 4C authors
+                    </Box>
                     {recommendations.map((recommendation) => (
                         <Article key={recommendation} id={recommendation} />
                     ))}
                 </Box>
             </Box>
         </InteractionContext.Provider>
+    )
+}
+
+function Badges({ user }) {
+    const classes = useStyles()
+    return (
+        <Box>
+            <Box mb={1}>The achievements you have unlocked:</Box>
+            <Box maxHeight={150} overflow="auto">
+                {sortBy(
+                    Object.entries(user?.achievements || {}),
+                    (v) => -v[1]
+                ).map(([achievement]) => {
+                    return (
+                        <Box display="flex" alignItems="center" mb={0.5}>
+                            <Box mr={1}>
+                                <FaCircle color="gold" />
+                            </Box>
+                            <Box className={classes.achievement}>
+                                {achievement}
+                            </Box>
+                        </Box>
+                    )
+                })}
+            </Box>
+        </Box>
     )
 }
 
@@ -149,12 +201,12 @@ function Article({ id }) {
                             />
                         )}
                         <CardContent>
-                            <Typography variant="body1" gutterBottom>
+                            <Typography variant="body2" gutterBottom>
                                 {record.title}
                             </Typography>
                             <Box
                                 fontWeight={300}
-                                color="textSecondary"
+                                color="#777"
                                 dangerouslySetInnerHTML={{
                                     __html: record.description
                                 }}

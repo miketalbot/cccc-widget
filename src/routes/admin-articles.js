@@ -22,6 +22,7 @@ import {
     ListItemAvatar,
     ListItemSecondaryAction,
     ListItemText,
+    makeStyles,
     TextField
 } from "@material-ui/core"
 import { sortBy } from "../lib/sortBy"
@@ -29,7 +30,7 @@ import { setFromEvent } from "../lib/setFromEvent"
 import { useState } from "react"
 import { useDialog } from "../lib/useDialog"
 import { showNotification } from "../lib/notifications"
-import { FaNewspaper } from "react-icons/fa"
+import { FaNewspaper, FaRegLightbulb } from "react-icons/fa"
 import { MdClear, MdDelete, MdPerson } from "react-icons/md"
 import { confirm } from "../lib/confirm"
 import { VirtualWindow } from "virtual-window"
@@ -40,6 +41,7 @@ import { useResponseFor } from "../lib/useResponse"
 import { IoMdEye } from "react-icons/io"
 import { Odometer } from "../lib/odometer"
 import { PluginTypes } from "../lib/plugins"
+import { GiClick } from "react-icons/gi"
 
 export const articles = db.collection("userarticles")
 
@@ -152,7 +154,20 @@ function GetArticleName({ ok, cancel }) {
     )
 }
 
+const useStyles = makeStyles({
+    result: {
+        borderRadius: 8,
+        background: "#eee",
+        display: "flex",
+        alignItems: "center",
+        padding: 4,
+        marginRight: 8,
+        color: "#222"
+    }
+})
+
 function Article({ item: { name, date, uid, image } }) {
+    const classes = useStyles()
     const user = useUserContext()
     const response = useResponseFor(uid)
     return (
@@ -174,20 +189,60 @@ function Article({ item: { name, date, uid, image } }) {
                     lineHeight={0}
                 >
                     {!!response && (
-                        <>
-                            <Box mr={1}>
-                                <IoMdEye color="#999" />
+                        <Box display="flex" flexWrap="wrap" alignItems="center">
+                            <Box className={classes.result}>
+                                <Box mr={1}>
+                                    <FaRegLightbulb />
+                                </Box>
+                                <Box
+                                    aria-label="Number of recommendations"
+                                    minWidth={50}
+                                    textAlign="right"
+                                >
+                                    <Odometer>
+                                        {response.recommends || 0}
+                                    </Odometer>
+                                </Box>
                             </Box>
-                            <Box mr={2}>
-                                <Odometer>{response.visits}</Odometer>
+                            <Box className={classes.result}>
+                                <Box mr={1}>
+                                    <GiClick />
+                                </Box>
+                                <Box
+                                    aria-label="Clicks on recommendations"
+                                    minWidth={45}
+                                    textAlign="right"
+                                >
+                                    <Odometer>{response.clicks || 0}</Odometer>
+                                </Box>
                             </Box>
-                            <Box mr={1}>
-                                <MdPerson color="#999" />
+                            <Box className={classes.result}>
+                                <Box mr={1}>
+                                    <IoMdEye />
+                                </Box>
+                                <Box
+                                    aria-label="Number of visits"
+                                    minWidth={50}
+                                    textAlign="right"
+                                >
+                                    <Odometer>{response.visits || 0}</Odometer>
+                                </Box>
                             </Box>
-                            <Box mr={1}>
-                                <Odometer>{response.uniqueVisits}</Odometer>
+                            <Box className={classes.result}>
+                                <Box mr={1}>
+                                    <MdPerson />
+                                </Box>
+                                <Box
+                                    aria-label="Unique visits"
+                                    minWidth={45}
+                                    textAlign="right"
+                                >
+                                    <Odometer>
+                                        {response.uniqueVisits || 0}
+                                    </Odometer>
+                                </Box>
                             </Box>
-                        </>
+                        </Box>
                     )}
                     <IconButton
                         color="secondary"

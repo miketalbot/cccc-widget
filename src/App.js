@@ -38,6 +38,7 @@ register(
 )
 
 register("/:id", RenderMe)
+register("/:id/embed", RenderMeEmbed)
 
 const fullScreen = {
     width: "100vw",
@@ -63,6 +64,11 @@ function RenderMe({ id }) {
         )
     }
     return <div style={fullScreen} ref={ref} />
+}
+
+function RenderMeEmbed({ id }) {
+    window.padRightToolbar = true
+    return <RenderMe id={id} />
 }
 
 function App() {

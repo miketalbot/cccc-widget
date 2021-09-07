@@ -6,7 +6,7 @@ export function useThrottledValue(value, time = 300) {
     const lastTime = useRef()
     useEffect(() => {
         if (current === value) return
-        if (!current && value) {
+        if (!current && value !== undefined) {
             setValue(value)
         } else {
             clearTimeout(timer.current)

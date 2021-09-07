@@ -27,6 +27,7 @@ import { useEditorPlugins } from "../lib/usePlugins"
 import { MdClear } from "react-icons/md"
 import { Bound } from "../lib/Bound"
 import { ColorEditor } from "./parts/ColorEditor"
+import { EmbedInfo } from "./parts/EmbedInfo"
 
 export default function Article({ id }) {
     const user = useUserContext()
@@ -80,6 +81,8 @@ export default function Article({ id }) {
                                         >
                                             <Tab label="Details" value="0" />
                                             <Tab label="Colors" value="4" />
+                                            <Tab label="Embed" value="5" />
+
                                             <Tab
                                                 label="Main Widget"
                                                 value="1"
@@ -95,6 +98,9 @@ export default function Article({ id }) {
                                                 article={article}
                                                 onChange={change}
                                             />
+                                        </TabPanel>
+                                        <TabPanel value="5">
+                                            <EmbedInfo />
                                         </TabPanel>
                                         <TabPanel value="1">
                                             <PluginDetails

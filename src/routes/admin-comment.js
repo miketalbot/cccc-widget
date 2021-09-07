@@ -27,6 +27,7 @@ import { MdClear } from "react-icons/md"
 import { CommentDetails } from "./parts/CommentDetails"
 import { Bound } from "../lib/Bound"
 import { ColorEditor } from "./parts/ColorEditor"
+import { EmbedInfo } from "./parts/EmbedInfo"
 
 export default function Comment({ id }) {
     const user = useUserContext()
@@ -79,6 +80,7 @@ export default function Comment({ id }) {
                                         >
                                             <Tab label="Details" value="0" />
                                             <Tab label="Colors" value="4" />
+                                            <Tab label="Embed" value="5" />
                                             <Tab
                                                 label="Main Widget"
                                                 value="1"
@@ -94,6 +96,9 @@ export default function Comment({ id }) {
                                                 article={article}
                                                 onChange={change}
                                             />
+                                        </TabPanel>
+                                        <TabPanel value="5">
+                                            <EmbedInfo />
                                         </TabPanel>
                                         <TabPanel value="4">
                                             <ColorEditor />

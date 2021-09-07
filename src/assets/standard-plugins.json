@@ -1,4 +1,4 @@
 {
-    "editor": ["http://localhost:8080/js/chunk-vendors.js", "http://localhost:8080/js/app.js"],
-    "runtime": ["http://localhost:8080/js/chunk-vendors.js", "http://localhost:8080/js/app.js"]
+    "editor": [],
+    "runtime": []
 }

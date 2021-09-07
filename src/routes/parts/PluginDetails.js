@@ -1,6 +1,8 @@
 import { Box, CardContent, TextField } from "@material-ui/core"
 import { Autocomplete } from "@material-ui/lab"
+import { useEffect, useState } from "react"
 import { Bound } from "../../lib/Bound"
+import { db } from "../../lib/firebase"
 import { Plugins } from "../../lib/plugins"
 import { raise } from "../../lib/raise"
 import { useRefresh } from "../../lib/useRefresh"
@@ -51,6 +53,18 @@ export function PluginDetails({ article, onChange, type }) {
 }
 
 function Editor({ plugin, article, onChange, settings }) {
+    const [response] = useState({})
+    useEffect(() => {
+        return db
+            .collection("responses")
+            .doc(article.uid)
+            .onSnapshot((update) => {
+                const updatedData = update.data()
+                Object.assign(response, updatedData)
+                raise(`response-${article.uid}`, response)
+                raise(`response`, response)
+            })
+    }, [article, response])
     return (
         !!plugin && (
             <Box
@@ -64,7 +78,7 @@ function Editor({ plugin, article, onChange, settings }) {
     function attachEditor(parent) {
         if (!parent) return
         setTimeout(() => {
-            plugin.editor?.({ parent, article, onChange, settings })
+            plugin.editor?.({ parent, article, onChange, settings, response })
         })
     }
 }

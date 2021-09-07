@@ -742,7 +742,7 @@ window.odometerOptions = {
 
 export function Odometer({ children, theme = "default", format = "(,ddd)" }) {
     const content = useThrottledValue(children, 3000)
-    return !!content && <div ref={makeOdometer}>{content}</div>
+    return content !== undefined && <div ref={makeOdometer}>{content}</div>
 
     function makeOdometer(target) {
         if (!target) return

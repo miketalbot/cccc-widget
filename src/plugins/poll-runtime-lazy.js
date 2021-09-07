@@ -68,7 +68,7 @@ export default function Runtime({
                                 <Box className={classes.title}>
                                     <Typography
                                         gutterBottom
-                                        variant="h5"
+                                        variant="h6"
                                         component="h1"
                                     >
                                         {settings.question}

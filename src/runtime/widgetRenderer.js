@@ -197,6 +197,7 @@ function makeContainer(parent, article) {
         boxShadow: "0 0 8px 0px #000A",
         padding: "8px",
         paddingTop: "4px",
+        paddingRight: window.padRightToolbar ? "142px" : undefined,
         flexGrow: 0,
         flexShrink: 0,
         display: "flex",
