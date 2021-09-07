@@ -15,6 +15,8 @@ import { FaComment, FaRegNewspaper } from "react-icons/fa"
 import { navigate } from "../lib/routes"
 import "./admin-profile"
 import "./admin-article"
+import "./admin-comments"
+import "./admin-comment"
 import "./admin-articles"
 import "../plugins/editor"
 

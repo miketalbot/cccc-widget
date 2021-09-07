@@ -2,7 +2,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /responses/{document=**} {
-      allow read: if request.auth != null;
+      allow read: if true;
       allow write: if false;
     }
     match /tags/{document=**} {
@@ -10,7 +10,7 @@ service cloud.firestore {
       allow write: if false;
     }
   	match /articles/{document=**} {
-    	allow read: if request.auth != null;
+    	allow read: if true;
       allow write: if false;
     }
   	match /userarticles/{userId}/{document=**} {
@@ -23,7 +23,7 @@ service cloud.firestore {
       allow write: if false;
     }
   	match /userprofiles/{userId} {
-    	allow read: if request.auth != null;
+    	allow read: if true;
       allow update, delete: if request.auth != null && request.auth.uid == userId;
       allow create: if request.auth != null;
     }

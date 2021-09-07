@@ -38,15 +38,17 @@ export default function Runtime({
               return a
           }, {})
         : {}
-    const data = Object.entries(counts).map(([key, value]) => {
-        const answer = settings.answers.find((a) => a.id === key)
-        return {
-            id: answer.legend || answer.answer,
-            label: answer.answer,
-            color: answer.color,
-            value
-        }
-    })
+    const data = Object.entries(counts)
+        .map(([key, value]) => {
+            const answer = settings.answers.find((a) => a.id === key)
+            return {
+                id: answer?.legend || answer?.answer,
+                label: answer?.answer,
+                color: answer?.color,
+                value
+            }
+        })
+        .filter((a) => !!a.id)
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />

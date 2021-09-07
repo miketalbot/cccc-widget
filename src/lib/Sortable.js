@@ -1,6 +1,7 @@
 import {
     closestCenter,
     DndContext,
+    DragOverlay,
     PointerSensor,
     useSensor,
     useSensors
@@ -10,11 +11,24 @@ import {
     useSortable,
     verticalListSortingStrategy
 } from "@dnd-kit/sortable"
-import { Box } from "@material-ui/core"
-import { useLayoutEffect, useMemo } from "react"
+import { Box, List } from "@material-ui/core"
+import {
+    createContext,
+    useContext,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useState
+} from "react"
+import { createPortal } from "react-dom"
 import { noop } from "./noop"
 
+const DragContext = createContext({})
+
 export function Sortable({ items, id = "id", children, onDragEnd = noop }) {
+    const [overlay, setDragOverlay] = useState(null)
+    const [context] = useState({})
+    context.setDragOverlay = setDragOverlay
     const sensors = useSensors(
         useSensor(PointerSensor, {
             // Require the mouse to move by 10 pixels before activating
@@ -24,20 +38,31 @@ export function Sortable({ items, id = "id", children, onDragEnd = noop }) {
         })
     )
     return (
-        <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-        >
-            <SortableContext
-                items={items.map((item) => item[id])}
-                strategy={verticalListSortingStrategy}
+        <DragContext.Provider value={context}>
+            <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+                onDragStart={handleDragStart}
             >
-                {children}
-            </SortableContext>
-        </DndContext>
+                <SortableContext
+                    items={items.map((item) => item[id])}
+                    strategy={verticalListSortingStrategy}
+                >
+                    {children}
+                </SortableContext>
+                {createPortal(
+                    <DragOverlay>
+                        {overlay && <List>{overlay}</List>}
+                    </DragOverlay>,
+                    document.body
+                )}
+            </DndContext>
+        </DragContext.Provider>
     )
     function handleDragEnd({ active, over }) {
+        context.active = null
+        setDragOverlay(null)
         if (active.id !== over.id) {
             arrayMoveInPlace(
                 items,
@@ -46,6 +71,9 @@ export function Sortable({ items, id = "id", children, onDragEnd = noop }) {
             )
             onDragEnd(items)
         }
+    }
+    function handleDragStart({ active }) {
+        context.active = active
     }
 }
 export function arrayMoveInPlace(array, previousIndex, newIndex) {
@@ -72,12 +100,20 @@ export function SortableItem({
     children,
     ...props
 }) {
+    const { active, setDragOverlay } = useContext(DragContext)
     const { attributes, listeners, setNodeRef, transform, transition } =
         useSortable({ id })
     const style = {
         transform: convert(transform),
-        transition
+        transition,
+        opacity: id === active?.id ? 0.2 : 1
     }
+    useEffect(() => {
+        if (active?.id === id) {
+            setDragOverlay(<Component {...props}>{children}</Component>)
+        }
+        //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [active?.id, id, setDragOverlay])
     const dragProps = useMemo(
         () => ({ ...attributes, ...listeners }),
         [attributes, listeners]
@@ -89,11 +125,6 @@ export function SortableItem({
         <Component
             {...props}
             {...(setDragProps ? {} : dragProps)}
-            onKeyDown={(e) => {
-                if (e.target.nodeName !== "input") {
-                    listeners.onKeyDown && listeners.onKeyDown(e)
-                }
-            }}
             ref={setNodeRef}
             style={style}
         >

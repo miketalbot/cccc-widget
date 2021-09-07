@@ -1,4 +1,4 @@
-import { db, view } from "../lib/firebase"
+import { addAchievement, db, view } from "../lib/firebase"
 import logo from "../assets/4C_logo.jpg"
 import { Plugins, PluginTypes } from "../lib/plugins"
 import { raise } from "../lib/raise"
@@ -10,14 +10,7 @@ export async function renderWidget(
     user = { isAnonymous: true },
     useArticle = null
 ) {
-    const definitionRef =
-        user && !user.isAnonymous
-            ? db
-                  .collection("userarticles")
-                  .doc(user.uid)
-                  .collection("articles")
-                  .doc(id)
-            : db.collection("articles").doc(id)
+    const definitionRef = db.collection("articles").doc(id)
 
     const definitionDoc = (parent._definitionDoc =
         parent._definitionDoc || (await definitionRef.get()))
@@ -103,7 +96,7 @@ function renderPlugin(
     parent,
     type,
     pluginName,
-    settings,
+    settings = {},
     article,
     user,
     response,
@@ -225,6 +218,7 @@ function makeContainer(parent, article) {
     const logoWidget = document.createElement("a")
     merge(logoWidget, {
         href: "https://4c.rocks",
+        onclick: () => addAchievement(25, "Visited 4C Rocks"),
         target: "_blank",
         "aria-label": "Link to 4C Rocks site"
     })

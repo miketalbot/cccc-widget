@@ -5,6 +5,16 @@ const sanitizeHtml = require("sanitize-html")
 const db = admin.firestore()
 
 module.exports = function (exports) {
+    exports.createUser = functions.auth.user().onCreate(({ user }) => {
+        db.collection("userprofiles").doc(user.uid).set(
+            {
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+                email: user.email
+            },
+            { merge: true }
+        )
+    })
     exports.saveProfile = functions.firestore
         .document("userprofiles/{userId}")
         .onWrite(async (change) => {

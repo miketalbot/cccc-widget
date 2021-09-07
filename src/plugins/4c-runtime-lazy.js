@@ -4,6 +4,7 @@ import Particles from "react-tsparticles"
 import { raise } from "../lib/raise"
 import { useMeasurement } from "../lib/useMeasurement"
 import logo from "../assets/4C_logo.jpg"
+import { addAchievement } from "../lib/firebase"
 
 const fire = {
     fullScreen: {
@@ -69,9 +70,9 @@ export default function CCCC({ article }) {
         article.overrideBottomBackground = "#000"
         raise("refresh-widget")
         return () => {
-            delete article.overrideBottomBackground
-            delete article.overrideGradientFrom
-            delete article.overrideGradientTo
+            article.overrideBottomBackground = null
+            article.overrideGradientFrom = null
+            article.overrideGradientTo = null
             raise("refresh-widget")
         }
     }, [article])
@@ -101,6 +102,7 @@ export default function CCCC({ article }) {
                 <a
                     rel="noreferrer"
                     target="_blank"
+                    onClick={() => addAchievement(25, "Visited 4C Rocks")}
                     className={classes.link}
                     href="https://4c.rocks"
                 >

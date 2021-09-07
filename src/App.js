@@ -59,7 +59,7 @@ function RenderMe({ id }) {
     if (!id) {
         return (
             <Typography variant="h3" c="h1">
-                Please specify an article id
+                4C Rocks
             </Typography>
         )
     }

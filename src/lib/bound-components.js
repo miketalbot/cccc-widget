@@ -22,6 +22,7 @@ export function StandardSwitch({
     label,
     ...props
 }) {
+    value = !!value
     return (
         <FormControlLabel
             {...props}

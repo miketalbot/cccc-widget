@@ -213,7 +213,7 @@ exports.respondUnique = functions.https.onCall(
 )
 
 exports.awardPoints = functions.https.onCall(
-    async ({ points = 1, achievement = "Plugin Award" }, context) => {
+    async ({ points = 1, achievement }, context) => {
         points = Math.max(0, Math.min(points, 20))
         if (context.app === undefined) {
             throw new functions.https.HttpsError(
@@ -248,7 +248,7 @@ exports.wasClicked = functions.https.onCall(async ({ articleId }, context) => {
 async function awardPoints(
     userUid,
     points = 1,
-    achievement = "notSpecified",
+    achievement,
     bonus = () => [0]
 ) {
     if (!userUid) return
@@ -259,7 +259,9 @@ async function awardPoints(
     data.achievements = data.achievements || {}
     const [extra = 0, extraAchievement] = bonus(data, points, achievement) || []
     data.score = (data.score || 0) + points + extra
-    data.achievements[achievement] = Date.now()
+    if (achievement) {
+        data.achievements[achievement] = Date.now()
+    }
     if (extraAchievement) {
         data.achievements[extraAchievement] = Date.now()
     }

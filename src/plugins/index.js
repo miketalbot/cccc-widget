@@ -4,6 +4,7 @@ import "./poll-runtime"
 import "./notification-runtime"
 import "./4c-runtime"
 import "./html-runtime"
+import "./quiz-runtime"
 import { loadPlugins } from "../lib/usePlugins"
 
 import CONFIG from "../assets/standard-plugins.json"

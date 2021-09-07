@@ -19,7 +19,8 @@ import {
 import reactDom from "react-dom"
 import { FaCircle } from "react-icons/fa"
 import { GiTwoCoins } from "react-icons/gi"
-import { wasClicked, wasRecommended } from "../lib/firebase"
+
+import { addAchievement, wasClicked, wasRecommended } from "../lib/firebase"
 import { db, recommend } from "../lib/firebase"
 import { ListItemBox } from "../lib/ListItemBox"
 import { Odometer } from "../lib/odometer"
@@ -106,7 +107,7 @@ function Notifications({ user, article }) {
                             </Box>
                         </ListItemBox>
                     </Tooltip>
-                    <Tooltip title={<Badges user={user} />} arrow>
+                    <Tooltip title={<Badges user={user} />} interactive arrow>
                         <ListItemBox whiteSpace="nowrap" flex={0} mr={1}>
                             <Box mr={1} lineHeight={0} fontSize="100%">
                                 <FaCircle />
@@ -161,7 +162,12 @@ function Badges({ user }) {
                     (v) => -v[1]
                 ).map(([achievement]) => {
                     return (
-                        <Box display="flex" alignItems="center" mb={0.5}>
+                        <Box
+                            key={achievement}
+                            display="flex"
+                            alignItems="center"
+                            mb={0.5}
+                        >
                             <Box mr={1}>
                                 <FaCircle color="gold" />
                             </Box>
@@ -225,6 +231,7 @@ function Article({ id }) {
     }
 
     function goto() {
+        addAchievement(50, "Clicked on an article link").catch(console.error)
         wasClicked(id).catch(console.error)
         window.open(record.url, "_blank")
     }

@@ -128,7 +128,7 @@ function PollConfig() {
     }
 }
 
-function DownloadName({ ok, cancel }) {
+export function DownloadName({ ok, cancel }) {
     const [name, setName] = useState("")
     return (
         <>
@@ -154,7 +154,8 @@ function DownloadName({ ok, cancel }) {
         </>
     )
 }
-function Answer({ answers, answer }) {
+
+export function Answer({ answers, answer }) {
     const { refresh, response } = useBoundContext()
     const [dragProps, setDragProps] = useState({})
     useEvent("response", useRefresh())
