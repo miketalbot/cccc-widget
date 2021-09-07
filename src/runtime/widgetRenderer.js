@@ -26,13 +26,14 @@ export async function renderWidget(
     }
     // Get the actual data of the document
     const article = useArticle || definitionDoc.data()
-    const response = {}
+    const response = { notLoaded: true }
     const removeListener = (parent._removeListener =
         parent._removeListener ||
         db
             .collection("responses")
             .doc(id)
             .onSnapshot((update) => {
+                response.notLoaded = false
                 const updatedData = update.data()
                 Object.assign(response, updatedData)
                 raise(`response-${id}`, response)
@@ -48,12 +49,19 @@ export async function renderWidget(
     if (author?.photoURL) {
         holder.avatarWidget.style.backgroundImage = `url(${author.photoURL})`
     }
-    if (user.profileURL) {
+    if (author.profileURL) {
         holder.avatarWidget.role = "button"
         holder.avatarWidget.style.cursor = "pointer"
         holder.avatarWidget["aria-label"] = "Link to authors profile page"
-        holder.avatarWidget.onclick = () =>
-            window.open(user.profileURL, "_blank", "noreferrer noopener")
+        holder.avatarWidget.onclick = () => {
+            if (author.displayName) {
+                addAchievement(
+                    15,
+                    `Visited profile of ${author.displayName}`
+                ).catch(console.error)
+            }
+            window.open(author.profileURL, "_blank", "noreferrer noopener")
+        }
     }
     article.pluginSettings = article.pluginSettings || {}
     renderPlugin(

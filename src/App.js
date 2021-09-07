@@ -1,6 +1,6 @@
 import "./App.css"
 import { register, Router } from "./lib/routes"
-import { CssBaseline, Typography } from "@material-ui/core"
+import { CssBaseline } from "@material-ui/core"
 import { Suspense, lazy, useRef, useEffect, useState } from "react"
 import { User, useUserContext } from "./lib/useUser"
 import { ThemeProvider } from "@material-ui/core"
@@ -57,11 +57,7 @@ function RenderMe({ id }) {
         renderWidget(ref.current, id, user)
     }, [user, id])
     if (!id) {
-        return (
-            <Typography variant="h3" c="h1">
-                4C Rocks
-            </Typography>
-        )
+        return null
     }
     return <div style={fullScreen} ref={ref} />
 }

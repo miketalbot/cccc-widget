@@ -5,7 +5,7 @@ import { useEvent } from "./useEvent"
 export function useResponse(response) {
     const [current, setCurrent] = useState(response?.response || response)
     useEvent("response", (_, response) =>
-        setCurrent({ ...(response?.response || response) })
+        setCurrent({ ...(response?.response || response), notLoaded: false })
     )
     return current
 }

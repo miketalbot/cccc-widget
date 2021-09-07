@@ -28,7 +28,7 @@ export default function Runtime({
     const [size, attach] = useMeasurement()
     const classes = useStyles(settings)
     const [showLoader, setShowLoader] = useState()
-    const { responses: { Poll } = {} } = useResponse(response)
+    const { notLoaded = true, responses: { Poll } = {} } = useResponse(response)
     const { [user.uid]: myResponse } = Poll || {}
     const counts = Poll
         ? Object.values(Poll).reduce((a, c) => {
@@ -55,106 +55,115 @@ export default function Runtime({
             {showLoader ? (
                 <Loader caption={showLoader} />
             ) : (
-                <Box
-                    p={1}
-                    width={1}
-                    flexGrow={1}
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="stretch"
-                    justifyContent="stretch"
-                >
-                    {myResponse ? (
-                        <>
-                            <Box flex={1} display="flex" flexDirection="column">
+                !notLoaded && (
+                    <Box
+                        p={1}
+                        width={1}
+                        flexGrow={1}
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="stretch"
+                        justifyContent="stretch"
+                    >
+                        {myResponse ? (
+                            <>
+                                <Box
+                                    flex={1}
+                                    display="flex"
+                                    flexDirection="column"
+                                >
+                                    <Box className={classes.title}>
+                                        <Typography
+                                            gutterBottom
+                                            variant="h6"
+                                            component="h1"
+                                        >
+                                            {settings.question}
+                                        </Typography>
+                                    </Box>
+                                    <Box flex={1} ref={attach}>
+                                        <Box height={size.height}>
+                                            <ResponsivePie
+                                                colors={{ datum: "data.color" }}
+                                                data={data}
+                                                animate={!reduceMotion()}
+                                                margin={{
+                                                    top: 20,
+                                                    right: 120,
+                                                    bottom: 20,
+                                                    left: 120
+                                                }}
+                                                innerRadius={0.5}
+                                                padAngle={0.7}
+                                                cornerRadius={3}
+                                                activeOuterRadiusOffset={8}
+                                                borderWidth={1}
+                                                borderColor={{
+                                                    from: "color",
+                                                    modifiers: [["darker", 0.2]]
+                                                }}
+                                                arcLinkLabelsSkipAngle={10}
+                                                arcLinkLabelsTextColor={
+                                                    settings.questionColor
+                                                }
+                                                arcLinkLabelsThickness={2}
+                                                arcLinkLabelsColor={{
+                                                    from: "color"
+                                                }}
+                                                arcLabelsSkipAngle={10}
+                                                arcLabelsTextColor={{
+                                                    from: "color",
+                                                    modifiers: [["darker", 2]]
+                                                }}
+                                            />
+                                        </Box>
+                                    </Box>
+                                    {previewMode && (
+                                        <Button
+                                            color="secondary"
+                                            onClick={reset}
+                                        >
+                                            Reset
+                                        </Button>
+                                    )}
+                                </Box>
+                            </>
+                        ) : (
+                            <>
                                 <Box className={classes.title}>
                                     <Typography
                                         gutterBottom
-                                        variant="h6"
+                                        variant="h5"
                                         component="h1"
                                     >
                                         {settings.question}
                                     </Typography>
                                 </Box>
-                                <Box flex={1} ref={attach}>
-                                    <Box height={size.height}>
-                                        <ResponsivePie
-                                            colors={{ datum: "data.color" }}
-                                            data={data}
-                                            animate={!reduceMotion()}
-                                            margin={{
-                                                top: 20,
-                                                right: 120,
-                                                bottom: 20,
-                                                left: 120
-                                            }}
-                                            innerRadius={0.5}
-                                            padAngle={0.7}
-                                            cornerRadius={3}
-                                            activeOuterRadiusOffset={8}
-                                            borderWidth={1}
-                                            borderColor={{
-                                                from: "color",
-                                                modifiers: [["darker", 0.2]]
-                                            }}
-                                            arcLinkLabelsSkipAngle={10}
-                                            arcLinkLabelsTextColor={
-                                                settings.questionColor
-                                            }
-                                            arcLinkLabelsThickness={2}
-                                            arcLinkLabelsColor={{
-                                                from: "color"
-                                            }}
-                                            arcLabelsSkipAngle={10}
-                                            arcLabelsTextColor={{
-                                                from: "color",
-                                                modifiers: [["darker", 2]]
-                                            }}
-                                        />
-                                    </Box>
+                                <Box className={classes.subtitle}>
+                                    <Typography variant="body1" gutterBottom>
+                                        {settings.description}
+                                    </Typography>
                                 </Box>
-                                {previewMode && (
-                                    <Button color="secondary" onClick={reset}>
-                                        Reset
-                                    </Button>
-                                )}
-                            </Box>
-                        </>
-                    ) : (
-                        <>
-                            <Box className={classes.title}>
-                                <Typography
-                                    gutterBottom
-                                    variant="h5"
-                                    component="h1"
+                                <Box
+                                    display="flex"
+                                    flexWrap="wrap"
+                                    alignItems="stretch"
+                                    justifyContent="stretch"
+                                    mt={2}
                                 >
-                                    {settings.question}
-                                </Typography>
-                            </Box>
-                            <Box className={classes.subtitle}>
-                                <Typography variant="body1" gutterBottom>
-                                    {settings.description}
-                                </Typography>
-                            </Box>
-                            <Box
-                                display="flex"
-                                flexWrap="wrap"
-                                alignItems="stretch"
-                                justifyContent="stretch"
-                                mt={2}
-                            >
-                                {settings.answers.map((answer) => (
-                                    <AnswerCard
-                                        article={article}
-                                        loader={setShowLoader}
-                                        key={answer.id}
-                                        answer={answer}
-                                    />
-                                ))}
-                            </Box>
-                        </>
-                    )}
-                </Box>
+                                    {settings.answers.map((answer) => (
+                                        <AnswerCard
+                                            article={article}
+                                            loader={setShowLoader}
+                                            key={answer.id}
+                                            answer={answer}
+                                        />
+                                    ))}
+                                </Box>
+                            </>
+                        )}
+                    </Box>
+                )
             )}
         </ThemeProvider>
     )

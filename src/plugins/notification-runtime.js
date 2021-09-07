@@ -98,7 +98,7 @@ function Notifications({ user, article }) {
                         arrow
                         title="Your score, based on how much you interact with 4C content"
                     >
-                        <ListItemBox whiteSpace="nowrap">
+                        <ListItemBox flex={0} whiteSpace="nowrap">
                             <Box mr={1} lineHeight={0} fontSize="150%">
                                 <GiTwoCoins />
                             </Box>
@@ -107,8 +107,9 @@ function Notifications({ user, article }) {
                             </Box>
                         </ListItemBox>
                     </Tooltip>
+                    <Box flex={10} />
                     <Tooltip title={<Badges user={user} />} interactive arrow>
-                        <ListItemBox whiteSpace="nowrap" flex={0} mr={1}>
+                        <ListItemBox flex={0} whiteSpace="nowrap" mr={1}>
                             <Box mr={1} lineHeight={0} fontSize="100%">
                                 <FaCircle />
                             </Box>
