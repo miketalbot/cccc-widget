@@ -35,7 +35,7 @@ export default function HTML({ article, settings, user, response }) {
                 allResponses?.[user.uid] ??
                 firstResponse
         }
-    }, [userResponse, user.uid, firstResponse])
+    }, [userResponse, user.uid, firstResponse, currentResponse.current])
     const onChange = useCallback(async () => {
         await respondUnique(article.uid, "Quiz", myResponse)
     }, [myResponse, article])
@@ -45,11 +45,13 @@ export default function HTML({ article, settings, user, response }) {
     })
     const state = (myResponse.state =
         myResponse.state ||
-        (settings.introduction.length > 10 ? "intro" : "question"))
+        (settings.introduction?.length > 10 ? "intro" : "question"))
     const question = (myResponse.question = myResponse.question || 0)
+
     myResponse.score = myResponse.score || 0
     myResponse.answers = myResponse.answers || {}
     return (
+        (question !== 0 || settings.questions?.length > 0) &&
         !userResponse.notLoaded && (
             <ThemeProvider theme={theme}>
                 <CssBaseline />
@@ -141,7 +143,7 @@ function QuizQuestion({ question }) {
                 alignItems="stretch"
                 justifyContent="stretch"
             >
-                {definition.answers.map((answer) => (
+                {(definition.answers ?? []).map((answer) => (
                     <AnswerCard
                         definition={definition}
                         key={answer.id}
@@ -378,11 +380,14 @@ function AnswerResult({ answer, definition, answers, total }) {
 }
 
 function QuizEnd() {
+    const done = useRef(false)
     const { settings, refresh, target } = useBoundContext()
     const total = settings.questions.filter((q) =>
         q.answers?.some((a) => a.correct)
     ).length
     useEffect(() => {
+        if (done.current) return
+        done.current = true
         awardPoints(10).catch(console.error)
         if (settings.quizName) {
             addAchievement(50, `Completed Quiz "${settings.quizName}"`).catch(

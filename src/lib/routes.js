@@ -13,18 +13,34 @@ export function Route({ path, children }) {
     return null
 }
 
-export function register(path, call) {
+function inPriorityOrder(a, b) {
+    return +(a?.priority ?? 100) - +(b?.priority ?? 100)
+}
+
+export function register(path, call, priority = 100) {
+    if (!path || typeof path !== "string") {
+        throw new Error("Path must be a string")
+    }
+    const [route, query] = path.split("?")
     if (typeof call === "function" || call._init) {
-        return add({ path: path.split("/"), call })
+        return add({
+            path: route.split("/"),
+            call,
+            priority,
+            query: query ? query.split("&") : undefined
+        })
     } else if (typeof call === "object" && call) {
         return add({
-            path: path.split("/"),
+            path: route.split("/"),
+            priority,
+            query: query ? query.split("&") : undefined,
             call: (props) => <call.type {...call.props} {...props} />
         })
     }
 
     function add(item) {
         routes.push(item)
+        routes.sort(inPriorityOrder)
         raise("routesChanged")
         return () => {
             let idx = routes.indexOf(item)
@@ -71,7 +87,7 @@ export function Router({
     component = <section />
 }) {
     const { pathname } = useLocation()
-    const path = initialPath || pathname
+    const [path, query] = (initialPath || pathname).split("?")
     const parts = path.split("/")
     const route = routes.find(
         (route) =>
@@ -81,6 +97,16 @@ export function Router({
 
     if (!route) return <fallback.type {...fallback.props} path={path} />
     const params = route.path.reduce(mergeParams, { path })
+    const queryParams = query
+        ? query.split("&").reduce((c, a) => {
+              const parts = a.split("=")
+              c[parts[0]] = parts[1]
+              return c
+          }, {})
+        : {}
+    if (route.query) {
+        route.query.forEach((p) => (params[p] = queryParams[p]))
+    }
     return (
         <component.type {...component.props} ref={setFocus}>
             <route.call {...params} />
