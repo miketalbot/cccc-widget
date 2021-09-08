@@ -4,7 +4,6 @@ import {
     Card,
     CardActionArea,
     CardActions,
-    CardHeader,
     CssBaseline,
     List,
     ListItem,
@@ -51,32 +50,36 @@ export default function HTML({ article, settings, user, response }) {
     myResponse.score = myResponse.score || 0
     myResponse.answers = myResponse.answers || {}
     return (
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Bound
-                user={user}
-                allResponses={allResponses}
-                target={myResponse}
-                refresh={refresh}
-                onChange={onChange}
-                settings={settings}
-            >
-                <Box
-                    color={settings.questionColor}
-                    flex={1}
-                    height={1}
-                    position="relative"
-                    overflow="auto"
+        !userResponse.notLoaded && (
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <Bound
+                    user={user}
+                    allResponses={allResponses}
+                    target={myResponse}
+                    refresh={refresh}
+                    onChange={onChange}
+                    settings={settings}
                 >
-                    {state === "intro" && <QuizIntro />}
-                    {state === "question" && (
-                        <QuizQuestion question={question} />
-                    )}
-                    {state === "results" && <QuizResults question={question} />}
-                    {state === "done" && <QuizEnd />}
-                </Box>
-            </Bound>
-        </ThemeProvider>
+                    <Box
+                        color={settings.questionColor}
+                        flex={1}
+                        height={1}
+                        position="relative"
+                        overflow="auto"
+                    >
+                        {state === "intro" && <QuizIntro />}
+                        {state === "question" && (
+                            <QuizQuestion question={question} />
+                        )}
+                        {state === "results" && (
+                            <QuizResults question={question} />
+                        )}
+                        {state === "done" && <QuizEnd />}
+                    </Box>
+                </Bound>
+            </ThemeProvider>
+        )
     )
 }
 
@@ -105,7 +108,18 @@ function QuizIntro() {
     )
 }
 
+const useQuestionStyles = makeStyles({
+    question: {
+        lineHeight: 1.1,
+        "& pre": {
+            fontSize: 13,
+            lineHeight: 1
+        }
+    }
+})
+
 function QuizQuestion({ question }) {
+    const classes = useQuestionStyles()
     const { settings } = useBoundContext()
     const definition = settings.questions[question]
     return (
@@ -113,7 +127,8 @@ function QuizQuestion({ question }) {
             <Box
                 pl={2}
                 pr={2}
-                fontSize="150%"
+                className={classes.question}
+                fontSize="120%"
                 dangerouslySetInnerHTML={{
                     __html: definition.question
                 }}
@@ -275,15 +290,23 @@ function QuizResults({ question }) {
         [user.uid]: target
     })
     const answers = count(responses.map((r) => r.answers[definition.id]))
-
     return (
-        <Box p={2}>
+        <Box p={1} fontSize="90%">
             <Card elevation={3}>
-                <CardHeader dense title={convertToText(definition.question)} />
-                <List>
+                {convertToText(definition.explanation).length > 3 ? (
+                    <Box
+                        ml={2}
+                        mr={2}
+                        dangerouslySetInnerHTML={{
+                            __html: definition.explanation
+                        }}
+                    />
+                ) : null}
+                <List dense>
                     {definition.answers.map((answer) => (
                         <AnswerResult
                             key={answer.id}
+                            definition={definition}
                             answer={answer}
                             answers={answers}
                             total={responses.length}
@@ -311,11 +334,21 @@ function QuizResults({ question }) {
     }
 }
 
-function AnswerResult({ answer, answers, total }) {
+function AnswerResult({ answer, definition, answers, total }) {
     const perc = (answers[answer.id] || 0) / total
+    const hasCorrect = definition.answers.some((c) => c.correct)
 
     return (
-        <ListItem dense>
+        <ListItem dense divider>
+            {hasCorrect && (
+                <Box
+                    mr={1}
+                    fontSize={"150%"}
+                    style={{ opacity: answer.correct ? 1 : 0 }}
+                >
+                    <MdCheck color="green" />
+                </Box>
+            )}
             <ListItemText
                 primary={
                     <ListItemBox>
@@ -347,7 +380,7 @@ function AnswerResult({ answer, answers, total }) {
 function QuizEnd() {
     const { settings, refresh, target } = useBoundContext()
     const total = settings.questions.filter((q) =>
-        q.answers.some((a) => a.correct)
+        q.answers?.some((a) => a.correct)
     ).length
     useEffect(() => {
         awardPoints(10).catch(console.error)

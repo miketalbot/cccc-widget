@@ -195,6 +195,10 @@ function QuestionEditor({ question }) {
                     <Button color="primary" onClick={addAnswer}>
                         + Answer
                     </Button>
+                    <Typography variant="overline" component="h3" gutterBottom>
+                        After Answered
+                    </Typography>
+                    <BoundHTMLEditor field="explanation" />
                 </CardContent>
             </Paper>
         </Bound>
@@ -250,7 +254,11 @@ function Question({ question, index, questions, selected, select }) {
                 <ListItemAvatar>
                     <Avatar className={classes.number}>{index + 1}</Avatar>
                 </ListItemAvatar>
-                <Box dangerouslySetInnerHTML={{ __html: question.question }} />
+                <Box
+                    maxHeight={64}
+                    overflow="auto"
+                    dangerouslySetInnerHTML={{ __html: question.question }}
+                />
                 <ListItemSecondaryAction>
                     <IconButton
                         color="secondary"
