@@ -165,7 +165,7 @@ exports.recommend = functions.https.onCall(
             .orderBy("comment", "desc")
             .orderBy("lastUniqueDay", "desc")
             .orderBy("visits", "desc")
-            .limit(number * 4)
+            .limit(number * 2)
             .get()
         rowSnap.forEach((row) => {
             let record = row.data()

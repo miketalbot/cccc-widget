@@ -317,7 +317,6 @@ function QuizResults({ question }) {
                     ))}
                 </List>
                 <CardActions>
-                    <Box flex={1} />
                     <Button onClick={next} color="primary">
                         Next
                     </Button>
@@ -338,7 +337,11 @@ function QuizResults({ question }) {
 }
 
 function AnswerResult({ answer, definition, answers, total }) {
-    const perc = (answers[answer.id] || 0) / total
+    const denominator = definition.answers.reduce(
+        (c, a) => c + (answers[a.id] || 0),
+        0
+    )
+    const perc = (answers[answer.id] || 0) / denominator
     const hasCorrect = definition.answers.some((c) => c.correct)
 
     return (
@@ -368,7 +371,7 @@ function AnswerResult({ answer, definition, answers, total }) {
                 secondary={
                     <Box flex={1}>
                         <Box
-                            width={(answers[answer.id] || 0) / total}
+                            width={(answers[answer.id] || 0) / denominator}
                             borderRadius={4}
                             bgcolor={answer.color}
                             height={8}
