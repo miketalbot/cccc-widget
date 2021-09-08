@@ -74,7 +74,7 @@ export default function Articles() {
                         />
                         <CardContent>
                             <Box
-                                maxHeight={"75vh"}
+                                maxHeight={"68vh"}
                                 height={allComments.length * 80 + 8}
                                 clone
                             >
