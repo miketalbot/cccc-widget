@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 
 export function useRefresh(...functions) {
-    const [, refresh] = useState(0)
+    const [id, refresh] = useState(0)
     const mounted = useRef(true)
     useEffect(() => {
         mounted.current = true
@@ -28,5 +28,6 @@ export function useRefresh(...functions) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [...functions]
     )
+    refreshFunction.id = id
     return refreshFunction
 }

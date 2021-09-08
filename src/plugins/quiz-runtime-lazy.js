@@ -22,7 +22,7 @@ import { MdCheck, MdClear } from "react-icons/md"
 import { useDialog } from "../lib/useDialog"
 import { delay } from "../lib/delay"
 
-export default function HTML({ article, settings, user, response }) {
+export default function Quiz({ article, settings, user, response }) {
     const userResponse = useResponse(response)
     const [firstResponse] = useState({})
     const currentResponse = useRef()
@@ -35,6 +35,7 @@ export default function HTML({ article, settings, user, response }) {
                 allResponses?.[user.uid] ??
                 firstResponse
         }
+        //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userResponse, user.uid, firstResponse, currentResponse.current])
     const onChange = useCallback(async () => {
         await respondUnique(article.uid, "Quiz", myResponse)

@@ -27,7 +27,7 @@ export function EmbedInfo() {
                     }}
                     variant="outlined"
                     label="Dev"
-                    value={`{% codesandbox n4dpo initialpath=/${uid}/embed %}`}
+                    value={`{% codesandbox n4dpo initialpath=/${uid}/embed runonclick=0 %}`}
                     readOnly
                 />
             </CardContent>
