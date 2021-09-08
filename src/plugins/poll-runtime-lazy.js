@@ -90,7 +90,7 @@ export default function Runtime({
                                                 margin={{
                                                     top: 20,
                                                     right: 120,
-                                                    bottom: 20,
+                                                    bottom: 30,
                                                     left: 120
                                                 }}
                                                 innerRadius={0.5}

@@ -16,7 +16,7 @@ export function EmbedInfo() {
                             <IconButton
                                 onClick={() =>
                                     copyTextToClipboard(
-                                        `{% codesandbox n4dpo initialpath=/${uid}/embed %}`
+                                        `{% codesandbox n4dpo initialpath=/${uid}/embed runonclick=0 %}`
                                     )
                                 }
                                 color="primary"

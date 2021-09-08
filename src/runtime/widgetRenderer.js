@@ -127,6 +127,7 @@ function renderPlugin(
 }
 
 function makeContainer(parent, article) {
+    const isNarrow = window.innerWidth < 500
     parent = parent || document.body
     parent.style.background = `linear-gradient(45deg, ${
         article?.overrideGradientFrom ?? article?.gradientFrom ?? "#fe6b8b"
@@ -140,9 +141,15 @@ function makeContainer(parent, article) {
             "#333"
         parent._madeContainer.bottom.style.color =
             article.overrideBottomColor || article.bottomColor || "#fff"
+
+        parent._madeContainer.bottom.style.display = isNarrow ? "none" : "flex"
+        parent._madeContainer.notificationWidget.style.display = isNarrow
+            ? "none"
+            : "flex"
+
         return parent._madeContainer
     }
-
+    window.addEventListener("resize", () => makeContainer(parent, article))
     const main = document.createElement("main")
     Object.assign(main.style, {
         display: "flex",
@@ -174,6 +181,7 @@ function makeContainer(parent, article) {
     const notificationWidget = document.createElement("section")
     Object.assign(notificationWidget.style, {
         width: "34%",
+        display: isNarrow ? "none" : "block",
         maxWidth: "250px",
         overflowY: "hidden",
         overflowX: "visible"
@@ -198,10 +206,10 @@ function makeContainer(parent, article) {
         boxShadow: "0 0 8px 0px #000A",
         padding: "8px",
         paddingTop: "4px",
+        display: isNarrow ? "none" : "flex",
         paddingRight: window.padRightToolbar ? "142px" : undefined,
         flexGrow: 0,
         flexShrink: 0,
-        display: "flex",
         alignItems: "center",
         width: "calc(100% + 8px)",
         overflow: "hidden",
