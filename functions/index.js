@@ -24,7 +24,7 @@ exports.view = functions.https.onCall(async ({ articleId }, context) => {
     const doc = await responseRef.get()
     const data = doc.exists ? doc.data() : {}
     const users = (data.users = data.users || {})
-    const day = Math.floor((Date.now() / 1000) * 60 * 60 * 24)
+    const day = Math.floor(Date.now() / (1000 * 60 * 60 * 24))
 
     if (!users[context.auth.uid]) {
         if (article.author !== context.auth.uid) {
@@ -101,6 +101,8 @@ exports.respond = functions.https.onCall(
         const list = (responses[context.auth.uid] =
             responses[context.auth.uid] || [])
         list.push(response)
+        data.responseCount = (data.responseCount || 0) + 1
+
         await responseRef.set(data)
         return null
     }
@@ -207,6 +209,7 @@ exports.respondUnique = functions.https.onCall(
         const responses = (responseCollections[type] =
             responseCollections[type] || {})
         responses[context.auth.uid] = response
+        data.responseCount = (data.responseCount || 0) + 1
         await responseRef.set(data)
         return null
     }

@@ -41,6 +41,7 @@ import { PluginTypes } from "../lib/plugins"
 import { useResponseFor } from "../lib/useResponse"
 import { IoMdEye } from "react-icons/io"
 import { Odometer } from "../lib/odometer"
+import { AiOutlineInteraction } from "react-icons/ai"
 
 export const articles = db.collection("userarticles")
 
@@ -190,6 +191,20 @@ function Comment({ item: { name, date, uid } }) {
                 >
                     {!!response && (
                         <Box display="flex" flexWrap="wrap" alignItems="center">
+                            <Box className={classes.result}>
+                                <Box mr={1}>
+                                    <AiOutlineInteraction />
+                                </Box>
+                                <Box
+                                    aria-label="Number of interactions"
+                                    minWidth={50}
+                                    textAlign="right"
+                                >
+                                    <Odometer>
+                                        {response.responseCount || 0}
+                                    </Odometer>
+                                </Box>
+                            </Box>
                             <Box className={classes.result}>
                                 <Box mr={1}>
                                     <IoMdEye />

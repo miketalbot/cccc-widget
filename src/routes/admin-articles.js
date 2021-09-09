@@ -42,6 +42,7 @@ import { IoMdEye } from "react-icons/io"
 import { Odometer } from "../lib/odometer"
 import { PluginTypes } from "../lib/plugins"
 import { GiClick } from "react-icons/gi"
+import { AiOutlineInteraction } from "react-icons/ai"
 
 export const articles = db.collection("userarticles")
 
@@ -190,6 +191,20 @@ function Article({ item: { name, date, uid, image } }) {
                 >
                     {!!response && (
                         <Box display="flex" flexWrap="wrap" alignItems="center">
+                            <Box className={classes.result}>
+                                <Box mr={1}>
+                                    <AiOutlineInteraction />
+                                </Box>
+                                <Box
+                                    aria-label="Number of interactions"
+                                    minWidth={50}
+                                    textAlign="right"
+                                >
+                                    <Odometer>
+                                        {response.responseCount || 0}
+                                    </Odometer>
+                                </Box>
+                            </Box>
                             <Box className={classes.result}>
                                 <Box mr={1}>
                                     <FaRegLightbulb />
