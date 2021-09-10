@@ -30,7 +30,7 @@ export function RenderWidget({ article, user, useArticle }) {
     user = user || systemUser
     useEvent("refresh-widget", useRefresh())
     const width = Math.min(600, window.innerWidth * 0.75)
-    const [zoom, setZoom] = useState(useArticle?.zoom ?? true)
+    const [zoom, setZoom] = useState(useArticle?.zoom ?? false)
     const { onChange } = useBoundContext()
     const eventHandler = useRef(null)
     if (useArticle) {
