@@ -5,6 +5,10 @@ service cloud.firestore {
       allow read: if true;
       allow write: if false;
     }
+    match /counts/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
     match /tags/{document=**} {
       allow read: if request.auth != null;
       allow write: if false;

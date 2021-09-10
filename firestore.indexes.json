@@ -8,6 +8,15 @@
         { "fieldPath": "lastUniqueDay", "order": "DESCENDING" },
         { "fieldPath": "visits", "order": "DESCENDING" }
       ]
+    },{
+      "collectionGroup": "counts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "enabled", "order": "DESCENDING" },
+        { "fieldPath": "comment", "order": "DESCENDING" },
+        { "fieldPath": "lastUniqueDay", "order": "DESCENDING" },
+        { "fieldPath": "visits", "order": "DESCENDING" }
+      ]
     }],
   "fieldOverrides": []
 }

@@ -4,6 +4,7 @@ import { Plugins, PluginTypes } from "../lib/plugins"
 import { raise } from "../lib/raise"
 import { merge } from "../lib/merge"
 
+let response = { notLoaded: true }
 export async function renderWidget(
     parent,
     id,
@@ -26,7 +27,7 @@ export async function renderWidget(
     }
     // Get the actual data of the document
     const article = useArticle || definitionDoc.data()
-    const response = { notLoaded: true }
+
     const removeListener = (parent._removeListener =
         parent._removeListener ||
         db
@@ -36,8 +37,11 @@ export async function renderWidget(
                 response.notLoaded = false
                 const updatedData = update.data()
                 Object.assign(response, updatedData)
-                raise(`response-${id}`, response)
-                raise(`response`, response)
+                setTimeout(() => {
+                    response.notLoaded = false
+                    raise(`response-${id}`, response)
+                    raise(`response`, response)
+                })
             }))
 
     parent._uid = user.uid
@@ -171,6 +175,7 @@ function makeContainer(parent, article) {
     Object.assign(mainWidget.style, {
         width: "66%",
         flex: 1,
+        overflowY: "auto",
         display: "flex",
         flexDirection: "column",
         alignItems: "stretch",

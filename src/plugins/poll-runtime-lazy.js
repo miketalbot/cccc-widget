@@ -70,6 +70,7 @@ export default function Runtime({
                                 <Box
                                     flex={1}
                                     display="flex"
+                                    overflow="auto"
                                     flexDirection="column"
                                 >
                                     <Box className={classes.title}>
@@ -82,7 +83,7 @@ export default function Runtime({
                                         </Typography>
                                     </Box>
                                     <Box flex={1} ref={attach}>
-                                        <Box height={size.height}>
+                                        <Box height={size.height - 10}>
                                             <ResponsivePie
                                                 colors={{ datum: "data.color" }}
                                                 data={data}
@@ -196,7 +197,7 @@ const useStyles = makeStyles({
 function AnswerCard({ answer, loader, article }) {
     const classes = useStyles({ color: answer.color })
     return (
-        <Box flexGrow={1} m={1} width={1 / 2.2} onClick={click} lineHeight={1}>
+        <Box flexGrow={1} m={1} width={1 / 2.5} onClick={click} lineHeight={1}>
             <Box height={1} clone>
                 <Card elevation={5} className={classes.card}>
                     <Box height={1} clone>

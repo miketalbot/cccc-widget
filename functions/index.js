@@ -20,8 +20,8 @@ exports.view = functions.https.onCall(async ({ articleId }, context) => {
     const shard = `__all__${Math.floor(Math.random() * 20)}`
     const article =
         (await db.collection("articles").doc(articleId).get()).data() || {}
-    const responseRef = db.collection("responses").doc(articleId)
-    const doc = await responseRef.get()
+    const countRef = db.collection("counts").doc(articleId)
+    const doc = await countRef.get()
     const data = doc.exists ? doc.data() : {}
     const users = (data.users = data.users || {})
     const day = Math.floor(Date.now() / (1000 * 60 * 60 * 24))
@@ -49,13 +49,13 @@ exports.view = functions.https.onCall(async ({ articleId }, context) => {
         }
         await incrementTag(shard, "uniqueVisits")
     }
-    await responseRef.collection("visits").add({
+    await countRef.collection("visits").add({
         uid: context.auth.uid,
         time: Date.now()
     })
     data.visits = (data.visits || 0) + 1
     data.responses = data.responses || {}
-    await responseRef.set(data)
+    await countRef.set(data)
     for (let tag of article.processedTags || []) {
         await incrementTag(tag, "visits")
     }
@@ -102,6 +102,10 @@ exports.respond = functions.https.onCall(
             responses[context.auth.uid] || [])
         list.push(response)
         data.responseCount = (data.responseCount || 0) + 1
+        await db
+            .collection("counts")
+            .doc(articleId)
+            .set({ responseCount: data.responseCount }, { merge: true })
 
         await responseRef.set(data)
         return null
@@ -131,22 +135,6 @@ exports.addAchievement = functions.https.onCall(
     }
 )
 
-exports.wasRecommended = functions.https.onCall(
-    async ({ articleId }, context) => {
-        if (context.app === undefined) {
-            throw new functions.https.HttpsError(
-                "failed-precondition",
-                "The function must be called from an App Check verified app."
-            )
-        }
-        const responseRef = db.collection("responses").doc(articleId)
-        const doc = await responseRef.get()
-        const data = doc.exists ? doc.data() : {}
-        data.recommends = (data.recommends || 0) + 1
-        await responseRef.set(data)
-    }
-)
-
 exports.recommend = functions.https.onCall(
     async ({ articleId, number = 10 }, context) => {
         if (context.app === undefined) {
@@ -161,7 +149,7 @@ exports.recommend = functions.https.onCall(
             : new Set()
         const rows = []
         const rowSnap = await db
-            .collection("responses")
+            .collection("counts")
             .where("enabled", "==", true)
             .where("comment", "!=", true)
             .orderBy("comment", "desc")
@@ -210,6 +198,10 @@ exports.respondUnique = functions.https.onCall(
             responseCollections[type] || {})
         responses[context.auth.uid] = response
         data.responseCount = (data.responseCount || 0) + 1
+        await db
+            .collection("counts")
+            .doc(articleId)
+            .set({ responseCount: data.responseCount }, { merge: true })
         await responseRef.set(data)
         return null
     }
@@ -237,12 +229,12 @@ exports.wasClicked = functions.https.onCall(async ({ articleId }, context) => {
             "The function must be called from an App Check verified app."
         )
     }
-    const responseRef = db.collection("responses").doc(articleId)
-    const doc = await responseRef.get()
+    const countRef = db.collection("counts").doc(articleId)
+    const doc = await countRef.get()
     const data = doc.exists ? doc.data() : {}
     data.clicks = (data.clicks || 0) + 1
-    await responseRef.set(data)
-    await responseRef.collection("clicks").add({
+    await countRef.set(data)
+    await countRef.collection("clicks").add({
         uid: context.auth.uid,
         time: Date.now()
     })

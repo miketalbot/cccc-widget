@@ -42,6 +42,7 @@ module.exports = function (exports) {
                 )
             }
         })
+
     exports.createArticle = functions.firestore
         .document("userarticles/{userId}/articles/{articleId}")
         .onWrite(async (change, context) => {
@@ -49,6 +50,10 @@ module.exports = function (exports) {
                 const id = change.before.data().uid
                 await db
                     .collection("responses")
+                    .doc(id)
+                    .set({ enabled: false }, { merge: true })
+                await db
+                    .collection("counts")
                     .doc(id)
                     .set({ enabled: false }, { merge: true })
                 return
@@ -73,24 +78,45 @@ module.exports = function (exports) {
                     },
                     { merge: true }
                 )
-                return
+            } else {
+                await responseRef.set({
+                    types: [],
+                    enabled: data.enabled,
+                    created: Date.now(),
+                    author: data.author,
+                    comment: data.comment || false,
+                    responses: {},
+                    processedTags: data.processedTags || []
+                })
             }
-            await responseRef.set({
-                types: [],
-                enabled: data.enabled,
-                created: Date.now(),
-                author: data.author,
-                visits: 0,
-                comment: data.comment || false,
-                uniqueVisits: 0,
-                lastUniqueVisit: 0,
-                lastUniqueDay: 0,
-                recommends: 0,
-                clicks: 0,
-                responses: {},
-                visitTimes: [],
-                processedTags: data.processedTags || []
-            })
+
+            const countRef = db.collection("counts").doc(data.uid)
+            const countSnap = await countRef.get()
+            if (countSnap.exists) {
+                await countRef.set(
+                    {
+                        processedTags: data.processedTags || [],
+                        author: data.author,
+                        enabled: data.enabled,
+                        comment: data.comment || false
+                    },
+                    { merge: true }
+                )
+            } else {
+                await countRef.set({
+                    enabled: data.enabled,
+                    created: Date.now(),
+                    author: data.author,
+                    visits: 0,
+                    comment: data.comment || false,
+                    uniqueVisits: 0,
+                    lastUniqueVisit: 0,
+                    lastUniqueDay: 0,
+                    recommends: 0,
+                    clicks: 0,
+                    processedTags: data.processedTags || []
+                })
+            }
         })
 }
 

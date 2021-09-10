@@ -30,14 +30,14 @@ import { setFromEvent } from "../lib/setFromEvent"
 import { useState } from "react"
 import { useDialog } from "../lib/useDialog"
 import { showNotification } from "../lib/notifications"
-import { FaNewspaper, FaRegLightbulb } from "react-icons/fa"
+import { FaNewspaper } from "react-icons/fa"
 import { MdClear, MdDelete, MdPerson } from "react-icons/md"
 import { confirm } from "../lib/confirm"
 import { VirtualWindow } from "virtual-window"
 import { pick } from "../lib/pick"
 import { navigate } from "../lib/routes"
 import "./admin"
-import { useResponseFor } from "../lib/useResponse"
+import { useCountsFor } from "../lib/useResponse"
 import { IoMdEye } from "react-icons/io"
 import { Odometer } from "../lib/odometer"
 import { PluginTypes } from "../lib/plugins"
@@ -170,7 +170,7 @@ const useStyles = makeStyles({
 function Article({ item: { name, date, uid, image } }) {
     const classes = useStyles()
     const user = useUserContext()
-    const response = useResponseFor(uid)
+    const counts = useCountsFor(uid)
     return (
         <ListItem button onClick={() => navigate(`/admin/article/${uid}`)}>
             <ListItemAvatar>
@@ -189,7 +189,7 @@ function Article({ item: { name, date, uid, image } }) {
                     alignItems="center"
                     lineHeight={0}
                 >
-                    {!!response && (
+                    {!!counts && (
                         <Box display="flex" flexWrap="wrap" alignItems="center">
                             <Box className={classes.result}>
                                 <Box mr={1}>
@@ -201,21 +201,7 @@ function Article({ item: { name, date, uid, image } }) {
                                     textAlign="right"
                                 >
                                     <Odometer>
-                                        {response.responseCount || 0}
-                                    </Odometer>
-                                </Box>
-                            </Box>
-                            <Box className={classes.result}>
-                                <Box mr={1}>
-                                    <FaRegLightbulb />
-                                </Box>
-                                <Box
-                                    aria-label="Number of recommendations"
-                                    minWidth={50}
-                                    textAlign="right"
-                                >
-                                    <Odometer>
-                                        {response.recommends || 0}
+                                        {counts.responseCount || 0}
                                     </Odometer>
                                 </Box>
                             </Box>
@@ -228,7 +214,7 @@ function Article({ item: { name, date, uid, image } }) {
                                     minWidth={45}
                                     textAlign="right"
                                 >
-                                    <Odometer>{response.clicks || 0}</Odometer>
+                                    <Odometer>{counts.clicks || 0}</Odometer>
                                 </Box>
                             </Box>
                             <Box className={classes.result}>
@@ -240,7 +226,7 @@ function Article({ item: { name, date, uid, image } }) {
                                     minWidth={50}
                                     textAlign="right"
                                 >
-                                    <Odometer>{response.visits || 0}</Odometer>
+                                    <Odometer>{counts.visits || 0}</Odometer>
                                 </Box>
                             </Box>
                             <Box className={classes.result}>
@@ -253,7 +239,7 @@ function Article({ item: { name, date, uid, image } }) {
                                     textAlign="right"
                                 >
                                     <Odometer>
-                                        {response.uniqueVisits || 0}
+                                        {counts.uniqueVisits || 0}
                                     </Odometer>
                                 </Box>
                             </Box>

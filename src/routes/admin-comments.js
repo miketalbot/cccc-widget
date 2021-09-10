@@ -38,7 +38,7 @@ import { pick } from "../lib/pick"
 import { navigate } from "../lib/routes"
 import "./admin"
 import { PluginTypes } from "../lib/plugins"
-import { useResponseFor } from "../lib/useResponse"
+import { useCountsFor } from "../lib/useResponse"
 import { IoMdEye } from "react-icons/io"
 import { Odometer } from "../lib/odometer"
 import { AiOutlineInteraction } from "react-icons/ai"
@@ -169,7 +169,7 @@ const useStyles = makeStyles({
 
 function Comment({ item: { name, date, uid } }) {
     const user = useUserContext()
-    const response = useResponseFor(uid)
+    const counts = useCountsFor(uid)
     const classes = useStyles()
     return (
         <ListItem button onClick={() => navigate(`/admin/comment/${uid}`)}>
@@ -189,7 +189,7 @@ function Comment({ item: { name, date, uid } }) {
                     alignItems="center"
                     lineHeight={0}
                 >
-                    {!!response && (
+                    {!!counts && (
                         <Box display="flex" flexWrap="wrap" alignItems="center">
                             <Box className={classes.result}>
                                 <Box mr={1}>
@@ -201,7 +201,7 @@ function Comment({ item: { name, date, uid } }) {
                                     textAlign="right"
                                 >
                                     <Odometer>
-                                        {response.responseCount || 0}
+                                        {counts.responseCount || 0}
                                     </Odometer>
                                 </Box>
                             </Box>
@@ -214,7 +214,7 @@ function Comment({ item: { name, date, uid } }) {
                                     minWidth={50}
                                     textAlign="right"
                                 >
-                                    <Odometer>{response.visits || 0}</Odometer>
+                                    <Odometer>{counts.visits || 0}</Odometer>
                                 </Box>
                             </Box>
                             <Box className={classes.result}>
@@ -227,7 +227,7 @@ function Comment({ item: { name, date, uid } }) {
                                     textAlign="right"
                                 >
                                     <Odometer>
-                                        {response.uniqueVisits || 0}
+                                        {counts.uniqueVisits || 0}
                                     </Odometer>
                                 </Box>
                             </Box>

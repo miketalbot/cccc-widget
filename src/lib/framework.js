@@ -19,8 +19,7 @@ import {
     firebase,
     awardPoints,
     addAchievement,
-    wasClicked,
-    wasRecommended
+    wasClicked
 } from "./firebase"
 import { Loader } from "./Loader"
 import * as pie from "@nivo/pie"
@@ -74,8 +73,7 @@ window.Framework4C = {
         respond,
         respondUnique,
         addAchievement,
-        wasClicked,
-        wasRecommended
+        wasClicked
     },
     FireBase: {
         firebase,

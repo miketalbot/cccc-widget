@@ -74,7 +74,7 @@ function Notifications({ user, article }) {
     const [recommendations, setRecommendations] = useState([])
     useEffect(() => {
         setTimeout(async () => {
-            setRecommendations(await recommend(article.uid, 10))
+            setRecommendations(await recommend(article.uid, 5))
         })
     }, [article])
     const classes = useStyles()
@@ -187,7 +187,6 @@ function seen(seenItems) {
     return (entries) => {
         entries.forEach(({ target }) => {
             if (seenItems.has(target.articleId)) return
-            wasRecommended(target.articleId).catch(console.error)
             seenItems.add(target.articleId)
         })
     }
