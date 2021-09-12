@@ -58,6 +58,7 @@ export default function Quiz({ article, settings, user, response }) {
                 <CssBaseline />
                 <Bound
                     user={user}
+                    article={article}
                     allResponses={allResponses}
                     target={myResponse}
                     refresh={refresh}
@@ -181,7 +182,7 @@ const useStyles = makeStyles({
 
 function AnswerCard({ answer, definition }) {
     const classes = useStyles({ color: answer.color })
-    const { target, refresh } = useBoundContext()
+    const { target, refresh, article } = useBoundContext()
     const correct = useDialog(Correct, {
         classes: { paper: classes.paper },
         minWidth: "xs",
@@ -213,9 +214,11 @@ function AnswerCard({ answer, definition }) {
     async function click() {
         if (definition.answers.some((c) => c.correct)) {
             if (answer.correct) {
-                addAchievement(50, `Got a quiz answer correct`).catch(
-                    console.error
-                )
+                addAchievement(
+                    article.uid,
+                    50,
+                    `Got a quiz answer correct`
+                ).catch(console.error)
                 target.score = target.score + 1
                 await correct()
                 await delay(500)
@@ -385,23 +388,27 @@ function AnswerResult({ answer, definition, answers, total }) {
 
 function QuizEnd() {
     const done = useRef(false)
-    const { settings, refresh, target } = useBoundContext()
+    const { article, settings, refresh, target } = useBoundContext()
     const total = settings.questions.filter((q) =>
         q.answers?.some((a) => a.correct)
     ).length
     useEffect(() => {
         if (done.current) return
         done.current = true
-        awardPoints(10).catch(console.error)
+        awardPoints(article.uid, 10).catch(console.error)
         if (settings.quizName) {
-            addAchievement(50, `Completed Quiz "${settings.quizName}"`).catch(
+            addAchievement(
+                article.uid,
+                50,
+                `Completed Quiz "${settings.quizName}"`
+            ).catch(console.error)
+        }
+        if (target.score === total) {
+            addAchievement(article.uid, 50, `Got 100% in a quiz`).catch(
                 console.error
             )
         }
-        if (target.score === total) {
-            addAchievement(50, `Got 100% in a quiz`).catch(console.error)
-        }
-    }, [settings, target, total])
+    }, [settings, target, total, article])
 
     return (
         <>

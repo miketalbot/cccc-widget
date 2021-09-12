@@ -44,6 +44,7 @@ exports.view = functions.https.onCall(async ({ articleId }, context) => {
         data.uniqueVisits = (data.uniqueVisits || 0) + 1
         data.lastUniqueVisit = Date.now()
         data.lastUniqueDay = day
+        data.firstUniqueDay = data.firstUniqueDay || day
         for (let tag of article.processedTags || []) {
             await incrementTag(tag, "uniqueVisits")
         }
@@ -64,15 +65,48 @@ exports.view = functions.https.onCall(async ({ articleId }, context) => {
     return null
 })
 
-async function incrementTag(tag, value) {
+async function incrementTag(tag, value, amount = 1, options = {}) {
     const tagRef = db.collection("tags").doc(tag)
     const tagDoc = await tagRef.get()
     const tagData = tagDoc.exists
         ? tagDoc.data()
-        : { tag, special: tag.startsWith("__") }
-    tagData[value] = (tagData[value] || 0) + 1
+        : {
+              ...options,
+              tag,
+              special: tag.startsWith("__"),
+              event: tag.startsWith("__event_")
+          }
+    tagData[value] = (tagData[value] || 0) + amount
     await tagRef.set(tagData)
 }
+
+exports.recordEvent = functions.https.onCall(
+    async ({ event, articleId }, context) => {
+        if (context.app === undefined) {
+            throw new functions.https.HttpsError(
+                "failed-precondition",
+                "The function must be called from an App Check verified app."
+            )
+        }
+        if (!context.auth.uid) return null
+        if (
+            await decorateArticle(articleId, async () => {
+                await incrementTag(
+                    `__event_${articleId}_event_${event}`,
+                    "count",
+                    1,
+                    {
+                        articleId,
+                        type: "event",
+                        event
+                    }
+                )
+            })
+        ) {
+            await incrementTag(`__event_${event}`, "count")
+        }
+    }
+)
 
 exports.respond = functions.https.onCall(
     async ({ articleId, type = "general", response }, context) => {
@@ -113,7 +147,7 @@ exports.respond = functions.https.onCall(
 )
 
 exports.addAchievement = functions.https.onCall(
-    async ({ points = 10, achievement }, context) => {
+    async ({ points = 10, achievement, articleId }, context) => {
         if (context.app === undefined) {
             throw new functions.https.HttpsError(
                 "failed-precondition",
@@ -122,15 +156,31 @@ exports.addAchievement = functions.https.onCall(
         }
         points = Math.min(points, 50)
         if (!achievement) return
-        const userUid = context.auth.uid
-        const scoreRef = db.collection("scores").doc(userUid)
-        const snap = await scoreRef.get()
-        const data = snap.exists ? snap.data() : {}
-        data.achievements = data.achievements || {}
-        if (!data.achievements[achievement]) {
-            data.score = (data.score || 0) + points
-            data.achievements[achievement] = Date.now()
-            await scoreRef.set(data)
+        if (
+            await decorateArticle(articleId, () => {
+                incrementTag(
+                    `__event_${articleId}_achievement_${achievement}`,
+                    "count",
+                    1,
+                    {
+                        articleId,
+                        achievement,
+                        type: "achievement"
+                    }
+                )
+            })
+        ) {
+            await incrementTag(`__event_${achievement}`, "count")
+            const userUid = context.auth.uid
+            const scoreRef = db.collection("scores").doc(userUid)
+            const snap = await scoreRef.get()
+            const data = snap.exists ? snap.data() : {}
+            data.achievements = data.achievements || {}
+            if (!data.achievements[achievement]) {
+                data.score = (data.score || 0) + points
+                data.achievements[achievement] = Date.now()
+                await scoreRef.set(data)
+            }
         }
     }
 )
@@ -153,6 +203,7 @@ exports.recommend = functions.https.onCall(
             .where("enabled", "==", true)
             .where("comment", "!=", true)
             .orderBy("comment", "desc")
+            .orderBy("firstUniqueDay", "desc")
             .orderBy("lastUniqueDay", "desc")
             .orderBy("visits", "desc")
             .limit(number * 2)
@@ -207,8 +258,21 @@ exports.respondUnique = functions.https.onCall(
     }
 )
 
+async function decorateArticle(articleId, cb) {
+    if (!articleId) return false
+    const articleRef = db.collection("articles").doc(articleId)
+    const article = (await articleRef.get()).data() || {}
+    if (!article.enabled || article.banned) return false
+    if (cb) {
+        if (await cb(article)) {
+            await articleRef.set(article, { merge: true })
+        }
+    }
+    return true
+}
+
 exports.awardPoints = functions.https.onCall(
-    async ({ points = 1, achievement }, context) => {
+    async ({ points = 1, achievement, articleId }, context) => {
         points = Math.max(0, Math.min(points, 20))
         if (context.app === undefined) {
             throw new functions.https.HttpsError(
@@ -217,7 +281,16 @@ exports.awardPoints = functions.https.onCall(
             )
         }
         if (!context.auth.uid) return
-        await awardPoints(context.auth.uid, points, achievement)
+        if (
+            await decorateArticle(articleId, () => {
+                incrementTag(`__event_${articleId}_points`, "points", points, {
+                    articleId,
+                    type: "points"
+                })
+            })
+        ) {
+            await awardPoints(context.auth.uid, points, achievement)
+        }
         return null
     }
 )
@@ -251,11 +324,37 @@ async function awardPoints(
     const scoreRef = db.collection("scores").doc(userUid)
     const snap = await scoreRef.get()
     const data = snap.exists ? snap.data() : {}
+    if ((data.coolOff || Date.now()) > Date.now()) return
+    const times = (data.eventTimes = data.eventTimes || [])
+    times.push(Date.now())
+    if (times.length > 10) {
+        let total = 0
+        for (let i = 1; i < times.length; i++) {
+            total += times[i] - times[i - 1]
+        }
+        const average = total / times.length
+        if (average < 15000) {
+            data.errorCount = (data.errorCount || 0) + 1
+            if (data.errorCount > 20) {
+                data.coolOff = Date.now() + 1000 * 60 * 60
+            }
+        } else {
+            data.errorCount = Math.max(0, (data.errorCount || 0) - 1)
+        }
+        if (average < 1000) {
+            data.coolOff = Math.max(data.coolOff, Date.now() + 1000 * 60 * 5)
+        }
+        if (average < 5000) {
+            return
+        }
+        data.eventTimes = times.slice(-20)
+    }
     data.achievements = data.achievements || {}
     const [extra = 0, extraAchievement] = bonus(data, points, achievement) || []
     data.score = (data.score || 0) + points + extra
     if (achievement) {
         data.achievements[achievement] = Date.now()
+        await incrementTag(`__event_${achievement}`, "count")
     }
     if (extraAchievement) {
         data.achievements[extraAchievement] = Date.now()

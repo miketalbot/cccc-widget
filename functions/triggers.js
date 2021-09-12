@@ -61,6 +61,7 @@ module.exports = function (exports) {
             const data = change.after.data()
             sanitizeAll(data)
             data.comment = data.comment || false
+            delete data.banned
             await change.after.ref.set(data)
             await db
                 .collection("articles")

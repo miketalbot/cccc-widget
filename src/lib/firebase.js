@@ -38,9 +38,15 @@ const view = define("view", "articleId")
 const respond = define("respond", "articleId", "type", "response")
 const respondUnique = define("respondUnique", "articleId", "type", "response")
 const recommend = define("recommend", "articleId", "number")
-const awardPoints = define("awardPoints", "points", "achievement")
-const addAchievement = define("addAchievement", "points", "achievement")
+const awardPoints = define("awardPoints", "articleId", "points", "achievement")
+const addAchievement = define(
+    "addAchievement",
+    "articleId",
+    "points",
+    "achievement"
+)
 const wasClicked = define("wasClicked", "articleId")
+const recordEvent = define("recordEvent", "articleId", "event")
 
 export {
     firebase,
@@ -52,5 +58,6 @@ export {
     addAchievement,
     wasClicked,
     recommend,
-    awardPoints
+    awardPoints,
+    recordEvent
 }

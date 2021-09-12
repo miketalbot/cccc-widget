@@ -191,32 +191,38 @@ function Article({ item: { name, date, uid, image } }) {
                 >
                     {!!counts && (
                         <Box display="flex" flexWrap="wrap" alignItems="center">
-                            <Box className={classes.result}>
-                                <Box mr={1}>
-                                    <AiOutlineInteraction />
+                            {counts.responseCount && (
+                                <Box className={classes.result}>
+                                    <Box mr={1}>
+                                        <AiOutlineInteraction />
+                                    </Box>
+                                    <Box
+                                        aria-label="Number of interactions"
+                                        minWidth={50}
+                                        textAlign="right"
+                                    >
+                                        <Odometer>
+                                            {counts.responseCount || 0}
+                                        </Odometer>
+                                    </Box>
                                 </Box>
-                                <Box
-                                    aria-label="Number of interactions"
-                                    minWidth={50}
-                                    textAlign="right"
-                                >
-                                    <Odometer>
-                                        {counts.responseCount || 0}
-                                    </Odometer>
+                            )}
+                            {counts.clicks && (
+                                <Box className={classes.result}>
+                                    <Box mr={1}>
+                                        <GiClick />
+                                    </Box>
+                                    <Box
+                                        aria-label="Clicks on recommendations"
+                                        minWidth={45}
+                                        textAlign="right"
+                                    >
+                                        <Odometer>
+                                            {counts.clicks || 0}
+                                        </Odometer>
+                                    </Box>
                                 </Box>
-                            </Box>
-                            <Box className={classes.result}>
-                                <Box mr={1}>
-                                    <GiClick />
-                                </Box>
-                                <Box
-                                    aria-label="Clicks on recommendations"
-                                    minWidth={45}
-                                    textAlign="right"
-                                >
-                                    <Odometer>{counts.clicks || 0}</Odometer>
-                                </Box>
-                            </Box>
+                            )}
                             <Box className={classes.result}>
                                 <Box mr={1}>
                                     <IoMdEye />
