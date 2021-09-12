@@ -18,6 +18,7 @@ import {
     view,
     firebase,
     awardPoints,
+    recordEvent,
     addAchievement,
     wasClicked
 } from "./firebase"
@@ -73,7 +74,8 @@ window.Framework4C = {
         respond,
         respondUnique,
         addAchievement,
-        wasClicked
+        wasClicked,
+        recordEvent
     },
     FireBase: {
         firebase,
