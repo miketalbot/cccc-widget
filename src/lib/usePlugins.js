@@ -64,7 +64,7 @@ export async function loadPlugins(plugins) {
             await loadBabel()
         }
         script.type = type
-        script.src = url
+        script.src = `${url}`
         document.body.appendChild(script)
     }
     return hadBabel
