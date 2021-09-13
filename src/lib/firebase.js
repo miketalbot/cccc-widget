@@ -16,6 +16,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig)
 const db = firebase.firestore()
+db.settings({ ignoreUndefinedProperties: true })
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
 export default app
 
