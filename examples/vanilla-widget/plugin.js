@@ -10,9 +10,11 @@ function editor({ settings, onChange, parent }) {
     label.innerText = "Show Like Button"
     const input = document.createElement("input")
     input.type = "checkbox"
-    input.onchange = () => {
+    input.checked = settings.showLikeButton
+    input.onclick = () => {
         settings.showLikeButton = input.checked
         onChange()
+        console.log("clicked", settings.showLikeButton)
     }
     label.appendChild(input)
     div.appendChild(label)
