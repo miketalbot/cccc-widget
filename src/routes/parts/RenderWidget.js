@@ -1,12 +1,5 @@
-import {
-    Box,
-    FormControlLabel,
-    makeStyles,
-    Switch,
-    Typography
-} from "@material-ui/core"
-import { useEffect, useRef, useState } from "react"
-import { useBoundContext } from "../../lib/Bound"
+import { Box, makeStyles, Typography } from "@material-ui/core"
+import { useEffect, useRef } from "react"
 import { useEvent } from "../../lib/useEvent"
 import { useRefresh } from "../../lib/useRefresh"
 import { useUserContext } from "../../lib/useUser"
@@ -30,12 +23,7 @@ export function RenderWidget({ article, user, useArticle }) {
     user = user || systemUser
     useEvent("refresh-widget", useRefresh())
     const width = Math.min(600, window.innerWidth * 0.75)
-    const [zoom, setZoom] = useState(useArticle?.zoom ?? false)
-    const { onChange } = useBoundContext()
     const eventHandler = useRef(null)
-    if (useArticle) {
-        useArticle.zoom = zoom
-    }
     useEffect(() => {
         return () => {
             if (eventHandler.current) {
@@ -45,7 +33,7 @@ export function RenderWidget({ article, user, useArticle }) {
         }
     }, [])
     const height = (width / 6) * 4
-    const classes = useStyles({ width, height, zoom })
+    const classes = useStyles({ width, height })
     return (
         <>
             <Box mt={2}>
@@ -56,21 +44,6 @@ export function RenderWidget({ article, user, useArticle }) {
             <Box className={classes.frame} width={1} mt={2} display="flex">
                 <div className={classes.widget} ref={attachRenderer} />
                 <Box flex={1} />
-            </Box>
-            <Box mt={2}>
-                <FormControlLabel
-                    control={
-                        <Switch
-                            color="default"
-                            checked={zoom}
-                            onChange={() => {
-                                setZoom((zoom) => !zoom)
-                                onChange()
-                            }}
-                        />
-                    }
-                    label="Small Preview"
-                />
             </Box>
         </>
     )

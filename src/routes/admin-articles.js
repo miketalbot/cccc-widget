@@ -191,7 +191,7 @@ function Article({ item: { name, date, uid, image } }) {
                 >
                     {!!counts && (
                         <Box display="flex" flexWrap="wrap" alignItems="center">
-                            {counts.responseCount && (
+                            {!!counts.responseCount && (
                                 <Box className={classes.result}>
                                     <Box mr={1}>
                                         <AiOutlineInteraction />
@@ -207,7 +207,7 @@ function Article({ item: { name, date, uid, image } }) {
                                     </Box>
                                 </Box>
                             )}
-                            {counts.clicks && (
+                            {!!counts.clicks && (
                                 <Box className={classes.result}>
                                     <Box mr={1}>
                                         <GiClick />
