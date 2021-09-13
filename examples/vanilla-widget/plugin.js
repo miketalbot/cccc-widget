@@ -1,5 +1,6 @@
 const {
-    Plugins: { register, PluginTypes }
+    Plugins: { register, PluginTypes },
+    Interaction: { respondUnique }
 } = window.Framework4C
 
 register(PluginTypes.MAIN, "Article", editor, runtime)
@@ -14,7 +15,6 @@ function editor({ settings, onChange, parent }) {
     input.onclick = () => {
         settings.showLikeButton = input.checked
         onChange()
-        console.log("clicked", settings.showLikeButton)
     }
     label.appendChild(input)
     div.appendChild(label)
@@ -23,17 +23,40 @@ function editor({ settings, onChange, parent }) {
     parent.appendChild(div)
 }
 
-function runtime({ parent, settings, article, user }) {
+function runtime({ parent, settings, article, user, response }) {
     const div = document.createElement("div")
     div.style.padding = "8px"
-    const extra = settings.showLikeButton
-        ? `<button id="button">Like</button>`
-        : ""
     div.innerHTML = `
         <h2>${article.title}</h2>
         <h5>by ${user.displayName}</h5>
-        ${extra}
     `
+    const loading = document.createElement("div")
+    loading.innerHTML = `<strong>Registering your choice</strong>`
+    loading.style.display = "none"
+    div.appendChild(loading)
+    if (settings.showLikeButton) {
+        const button = document.createElement("button")
+        window.addEventListener("response", () => {
+            button.innerText = `${
+                response.responses?.Like?.[user.uid] ? "Unlike" : "Like"
+            } (${countLikes(response)})`
+        })
+        button.innerText = `Like (${countLikes(response)})`
+        button.onclick = () => {
+            loading.style.display = "block"
+            respondUnique(
+                article.uid,
+                "Like",
+                !response.responses?.Like?.[user.uid]
+            ).finally(() => (loading.style.display = "none"))
+        }
+        div.appendChild(button)
+    }
     parent.innerHTML = ""
     parent.appendChild(div)
+}
+
+function countLikes(response) {
+    return Object.values(response.responses?.Like ?? []).filter((v) => !!v)
+        .length
 }
