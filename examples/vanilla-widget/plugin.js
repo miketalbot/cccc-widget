@@ -24,9 +24,13 @@ function editor({ settings, onChange, parent }) {
 function runtime({ parent, settings, article, user }) {
     const div = document.createElement("div")
     div.style.padding = "8px"
+    const extra = settings.showLikeButton
+        ? `<button id="button">Like</button>`
+        : ""
     div.innerHTML = `
         <h2>${article.title}</h2>
         <h5>by ${user.displayName}</h5>
+        ${extra}
     `
     parent.innerHTML = ""
     parent.appendChild(div)

@@ -5,6 +5,7 @@ import { raise } from "../lib/raise"
 import { merge } from "../lib/merge"
 
 let response = { notLoaded: true }
+let lastMain
 export async function renderWidget(
     parent,
     id,
@@ -27,7 +28,12 @@ export async function renderWidget(
     }
     // Get the actual data of the document
     const article = useArticle || definitionDoc.data()
-
+    if (lastMain !== article[PluginTypes.MAIN]) {
+        article.overrideBottomBackground = null
+        article.overrideGradientFrom = null
+        article.overrideGradientTo = null
+    }
+    lastMain = article[PluginTypes.MAIN]
     const removeListener = (parent._removeListener =
         parent._removeListener ||
         db
