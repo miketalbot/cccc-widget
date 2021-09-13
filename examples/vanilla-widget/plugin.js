@@ -4,6 +4,8 @@ const {
 
 register(PluginTypes.MAIN, "Article", editor, runtime)
 
+//Banana
+
 function editor({ settings, onChange, parent }) {
     const div = document.createElement("div")
     const label = document.createElement("label")
