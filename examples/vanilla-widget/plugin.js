@@ -37,5 +37,3 @@ function runtime({ parent, settings, article, user }) {
     parent.innerHTML = ""
     parent.appendChild(div)
 }
-
-// Do this here
