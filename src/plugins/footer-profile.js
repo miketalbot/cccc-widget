@@ -59,7 +59,7 @@ function Runtime({ settings, article }) {
                     width={1}
                     pl={4}
                     pr={4}
-                    color="white"
+                    color="inherit"
                     borderRadius={8}
                     p={1}
                 >

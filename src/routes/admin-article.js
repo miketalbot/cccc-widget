@@ -28,6 +28,7 @@ import { MdClear } from "react-icons/md"
 import { Bound } from "../lib/Bound"
 import { ColorEditor } from "./parts/ColorEditor"
 import { EmbedInfo } from "./parts/EmbedInfo"
+import { raise } from "../lib/raise"
 
 export default function Article({ id }) {
     const user = useUserContext()
@@ -168,6 +169,7 @@ export default function Article({ id }) {
     }
 
     function change() {
+        raise("refresh-widget")
         if (!updated.current) {
             updated.current = true
             refresh()
