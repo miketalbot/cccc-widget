@@ -13,6 +13,7 @@ import { useState } from "react"
 import { respondUnique } from "../lib/firebase"
 import { Loader } from "../lib/Loader"
 import { showNotification } from "../lib/notifications"
+import { Pulsar } from "../lib/pulsar"
 import { reduceMotion } from "../lib/reduce-motion"
 import { theme } from "../lib/theme"
 import { useMeasurement } from "../lib/useMeasurement"
@@ -198,19 +199,21 @@ function AnswerCard({ answer, loader, article }) {
     const classes = useStyles({ color: answer.color })
     return (
         <Box flexGrow={1} m={1} width={1 / 2.5} onClick={click} lineHeight={1}>
-            <Box height={1} clone>
-                <Card elevation={5} className={classes.card}>
-                    <Box height={1} clone>
-                        <CardActionArea>
-                            <Box p={1}>
-                                <Typography variant="body2">
-                                    {answer.answer}
-                                </Typography>
-                            </Box>
-                        </CardActionArea>
-                    </Box>
-                </Card>
-            </Box>
+            <Pulsar>
+                <Box height={1} clone>
+                    <Card elevation={5} className={classes.card}>
+                        <Box height={1} clone>
+                            <CardActionArea>
+                                <Box p={1}>
+                                    <Typography variant="body2">
+                                        {answer.answer}
+                                    </Typography>
+                                </Box>
+                            </CardActionArea>
+                        </Box>
+                    </Card>
+                </Box>
+            </Pulsar>
         </Box>
     )
 
