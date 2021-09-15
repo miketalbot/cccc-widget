@@ -12,7 +12,7 @@ export function AllVisits() {
         !!totalViews && (
             <Box display="flex" flexDirection="column">
                 <Typography variant="overline" gutterBottom>
-                    4C Visits
+                    4C Views
                 </Typography>
                 <Odometer theme="car">{totalViews}</Odometer>
             </Box>

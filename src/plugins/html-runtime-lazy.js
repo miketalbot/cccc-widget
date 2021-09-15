@@ -65,6 +65,7 @@ export default function HTML({ article, settings }) {
                 right={0}
                 zIndex={100}
                 p={3}
+                pt={1}
                 color="white"
                 overflow="auto"
                 alignItems="center"

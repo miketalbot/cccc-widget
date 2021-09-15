@@ -5,7 +5,7 @@ const sanitizeHtml = require("sanitize-html")
 const db = admin.firestore()
 
 module.exports = function (exports) {
-    exports.createUser = functions.auth.user().onCreate(({ user }) => {
+    exports.createUser = functions.auth.user().onCreate((user) => {
         if (!user) return
         db.collection("userprofiles").doc(user.uid).set(
             {
@@ -223,6 +223,7 @@ function sanitizeAll(value) {
                         /^#(0x)?[0-9a-f]+$/i,
                         /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/
                     ],
+                    backgroundSize: [/(cover|contain)/i],
                     "text-align": [/^left$/, /^right$/, /^center$/],
                     // Match any number with px, em, or %
                     "font-size": [/^\d+(?:px|em|%)$/],

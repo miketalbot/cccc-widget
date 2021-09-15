@@ -12,7 +12,7 @@ export function AllUniqueVisits() {
         !!totalViews && (
             <Box display="flex" flexDirection="column">
                 <Typography variant="overline" gutterBottom>
-                    4C Unique Visits
+                    4C Unique Views
                 </Typography>
                 <Box alignSelf="flex-end">
                     <Odometer theme="car">{totalViews}</Odometer>

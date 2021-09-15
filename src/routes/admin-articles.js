@@ -228,7 +228,7 @@ function Article({ item: { name, date, uid, image } }) {
                                     <IoMdEye />
                                 </Box>
                                 <Box
-                                    aria-label="Number of visits"
+                                    aria-label="Number of views"
                                     minWidth={50}
                                     textAlign="right"
                                 >
@@ -240,7 +240,7 @@ function Article({ item: { name, date, uid, image } }) {
                                     <MdPerson />
                                 </Box>
                                 <Box
-                                    aria-label="Unique visits"
+                                    aria-label="Unique views"
                                     minWidth={45}
                                     textAlign="right"
                                 >
