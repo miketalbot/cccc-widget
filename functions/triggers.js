@@ -6,6 +6,7 @@ const db = admin.firestore()
 
 module.exports = function (exports) {
     exports.createUser = functions.auth.user().onCreate(({ user }) => {
+        if (!user) return
         db.collection("userprofiles").doc(user.uid).set(
             {
                 displayName: user.displayName,
@@ -127,6 +128,109 @@ function sanitizeAll(value) {
         (value.includes("</") || value.includes("/>"))
     ) {
         return sanitizeHtml(value, {
+            allowedAttributes: {
+                span: ["style"],
+                div: ["style"],
+                p: ["style"],
+                a: ["style", "href", "target"],
+                img: ["src", "style"]
+            },
+            allowedTags: [
+                "address",
+                "article",
+                "aside",
+                "footer",
+                "header",
+                "h1",
+                "h2",
+                "h3",
+                "h4",
+                "h5",
+                "h6",
+                "hgroup",
+                "main",
+                "nav",
+                "section",
+                "blockquote",
+                "dd",
+                "div",
+                "dl",
+                "dt",
+                "figcaption",
+                "figure",
+                "hr",
+                "li",
+                "main",
+                "ol",
+                "p",
+                "pre",
+                "ul",
+                "a",
+                "abbr",
+                "b",
+                "bdi",
+                "bdo",
+                "br",
+                "cite",
+                "code",
+                "data",
+                "dfn",
+                "em",
+                "i",
+                "img",
+                "kbd",
+                "mark",
+                "q",
+                "rb",
+                "rp",
+                "rt",
+                "rtc",
+                "ruby",
+                "s",
+                "samp",
+                "small",
+                "span",
+                "strong",
+                "sub",
+                "sup",
+                "time",
+                "u",
+                "var",
+                "wbr",
+                "caption",
+                "col",
+                "colgroup",
+                "table",
+                "tbody",
+                "td",
+                "tfoot",
+                "th",
+                "thead",
+                "tr"
+            ],
+            allowedSchemes: ["http", "https", "data"],
+            allowedStyles: {
+                "*": {
+                    // Match HEX and RGB
+                    width: [/^\d+(?:px|em|%)$/],
+                    height: [/^\d+(?:px|em|%)$/],
+                    color: [
+                        /^#(0x)?[0-9a-f]+$/i,
+                        /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/
+                    ],
+                    background: [
+                        /^url\([^)]+\)/i,
+                        /^#(0x)?[0-9a-f]+$/i,
+                        /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/
+                    ],
+                    "text-align": [/^left$/, /^right$/, /^center$/],
+                    // Match any number with px, em, or %
+                    "font-size": [/^\d+(?:px|em|%)$/],
+                    "font-weight": [
+                        /^(bold|bolder|light|regular|medium|[0..9]+)/i
+                    ]
+                }
+            },
             transformTags: {
                 a: (tagName, attribs) => {
                     return {
