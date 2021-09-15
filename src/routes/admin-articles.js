@@ -109,7 +109,7 @@ export default function Articles() {
             const article = {
                 uid: nanoid(),
                 name,
-                enabled: true,
+                enabled: false,
                 [PluginTypes.MAIN]: "4C",
                 [PluginTypes.FOOTER]: "Footer Profile",
                 date: Date.now()
