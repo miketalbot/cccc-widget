@@ -10,7 +10,7 @@ import { useUserContext } from "../../lib/useUser"
 import { UpdateWidget } from "./UpdateWidget"
 
 export function PluginDetails({ article, onChange, type }) {
-    const refresh = useRefresh(onChange)
+    const refresh = useRefresh(onChange, () => raise("refresh-widget"))
     const user = useUserContext()
     const settings = (article.pluginSettings = article.pluginSettings || {})
     const typeSettings = (settings[article[type]] =
