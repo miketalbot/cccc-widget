@@ -12,7 +12,7 @@ export function AdvancedArticleSettings({ onChange, reload, article }) {
                 variant="outlined"
                 multiline
                 fullWidth
-                helperText="Add the url of each plugin on a new line"
+                helperText="Add the url of each custom plugin or bundle on a new line"
                 minRows={3}
                 maxRows={10}
                 onBlur={refresh(() => {

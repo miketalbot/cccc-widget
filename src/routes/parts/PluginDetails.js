@@ -25,6 +25,7 @@ export function PluginDetails({ article, onChange, type }) {
                         <TextField
                             variant="outlined"
                             label="Plugin"
+                            helperText="Change the widget by choosing an option from this list"
                             fullWidth
                             {...p}
                         />
