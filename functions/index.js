@@ -18,8 +18,6 @@ exports.view = functions.https.onCall(async ({ articleId }, context) => {
         return null
     }
     const shard = `__all__${Math.floor(Math.random() * 20)}`
-    const article =
-        (await db.collection("articles").doc(articleId).get()).data() || {}
     const countRef = db.collection("counts").doc(articleId)
     const doc = await countRef.get()
     const data = doc.exists ? doc.data() : {}
@@ -27,8 +25,8 @@ exports.view = functions.https.onCall(async ({ articleId }, context) => {
     const day = Math.floor(Date.now() / (1000 * 60 * 60 * 24))
 
     if (!users[context.auth.uid]) {
-        if (article.author !== context.auth.uid) {
-            await awardPoints(article.author, 20, "New Unique Reader")
+        if (data.author !== context.auth.uid) {
+            await awardPoints(data.author, 20, "New Unique Reader")
         }
         await awardPoints(
             context.auth.uid,
@@ -45,7 +43,7 @@ exports.view = functions.https.onCall(async ({ articleId }, context) => {
         data.lastUniqueVisit = Date.now()
         data.lastUniqueDay = day
         data.firstUniqueDay = data.firstUniqueDay || day
-        for (let tag of article.processedTags || []) {
+        for (let tag of data.processedTags || []) {
             await incrementTag(tag, "uniqueVisits")
         }
         await incrementTag(shard, "uniqueVisits")
@@ -57,7 +55,7 @@ exports.view = functions.https.onCall(async ({ articleId }, context) => {
     data.visits = (data.visits || 0) + 1
     data.responses = data.responses || {}
     await countRef.set(data)
-    for (let tag of article.processedTags || []) {
+    for (let tag of data.processedTags || []) {
         await incrementTag(tag, "visits")
     }
     await incrementTag(shard, "visits")
