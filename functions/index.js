@@ -191,10 +191,19 @@ exports.recommend = functions.https.onCall(
                 "The function must be called from an App Check verified app."
             )
         }
-        const articleSnap = await db.collection("articles").doc(articleId).get()
+        const articleRef = db.collection("articles").doc(articleId)
+        const articleSnap = await articleRef.get()
+        const article = articleSnap.data()
         const tags = articleSnap.exists
-            ? new Set(articleSnap.data().processedTags)
+            ? new Set(article.processedTags)
             : new Set()
+
+        if (
+            Date.now() - article.recommended < 1000 * 60 * 15 &&
+            article.recommendations
+        ) {
+            return article.recommendations
+        }
         const rows = []
         const rowSnap = await db
             .collection("counts")
@@ -216,7 +225,11 @@ exports.recommend = functions.https.onCall(
             rows.push({ id: row.id, score })
         })
         rows.sort((a, b) => b.score - a.score)
-        return rows.slice(0, number).map((r) => r.id)
+        let recommendations = rows.slice(0, number).map((r) => r.id)
+        article.recommended = Date.now()
+        article.recommendations = recommendations
+        articleRef.set(article, { merge: true })
+        return recommendations
     }
 )
 
