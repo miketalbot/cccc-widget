@@ -48,6 +48,7 @@ const addAchievement = define(
 )
 const wasClicked = define("wasClicked", "articleId")
 const recordEvent = define("recordEvent", "articleId", "event")
+const acknowledge = define("acknowledge", "time")
 
 export {
     firebase,
@@ -55,6 +56,7 @@ export {
     db,
     view,
     respond,
+    acknowledge,
     respondUnique,
     addAchievement,
     wasClicked,

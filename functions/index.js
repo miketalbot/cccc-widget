@@ -59,7 +59,7 @@ exports.view = functions.https.onCall(async ({ articleId }, context) => {
         await incrementTag(tag, "visits")
     }
     await incrementTag(shard, "visits")
-    await awardPoints(context.auth.uid, 1, "Viewed an article")
+    await awardPoints(context.auth.uid, 1)
     return null
 })
 
@@ -324,6 +324,17 @@ exports.wasClicked = functions.https.onCall(async ({ articleId }, context) => {
     })
 })
 
+exports.acknowledge = functions.https.onCall(async ({ time }, context) => {
+    if (context.app === undefined) {
+        throw new functions.https.HttpsError(
+            "failed-precondition",
+            "The function must be called from an App Check verified app."
+        )
+    }
+    const scoreRef = db.collection("scores").doc(context.auth.uid)
+    scoreRef.set({ acknowledged: time }, { merge: true })
+})
+
 async function awardPoints(
     userUid,
     points = 1,
@@ -344,7 +355,7 @@ async function awardPoints(
             total += times[i] - times[i - 1]
         }
         const average = total / times.length
-        if (average < 15000) {
+        if (average < 5000) {
             data.errorCount = (data.errorCount || 0) + 1
             if (data.errorCount > 20) {
                 data.coolOff = Date.now() + 1000 * 60 * 60
@@ -352,7 +363,7 @@ async function awardPoints(
         } else {
             data.errorCount = Math.max(0, (data.errorCount || 0) - 1)
         }
-        if (average < 1000) {
+        if (average < 600) {
             data.coolOff = Math.max(data.coolOff, Date.now() + 1000 * 60 * 5)
         }
         if (average < 5000) {

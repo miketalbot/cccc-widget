@@ -3,13 +3,13 @@ import {
     Button,
     Card,
     CardActionArea,
-    CardActions,
     CssBaseline,
     List,
     ListItem,
     ListItemText,
     makeStyles,
-    ThemeProvider
+    ThemeProvider,
+    Fab
 } from "@material-ui/core"
 import { useResponse } from "../lib/useResponse"
 import { useRefresh } from "../lib/useRefresh"
@@ -18,11 +18,13 @@ import { addAchievement, awardPoints, respondUnique } from "../lib/firebase"
 import { Bound, useBoundContext } from "../lib/Bound"
 import { ListItemBox } from "../lib/ListItemBox"
 import { theme } from "../lib/theme"
-import { MdCheck, MdClear } from "react-icons/md"
+import { MdCheck, MdChevronRight, MdClear } from "react-icons/md"
 import { useDialog } from "../lib/useDialog"
 import { delay } from "../lib/delay"
+import reactDom from "react-dom"
+import { Pulsar } from "../lib/pulsar"
 
-export default function Quiz({ article, settings, user, response }) {
+export default function Quiz({ article, parent, settings, user, response }) {
     const userResponse = useResponse(response)
     const [firstResponse] = useState({})
     const currentResponse = useRef()
@@ -57,10 +59,12 @@ export default function Quiz({ article, settings, user, response }) {
             <ThemeProvider theme={theme}>
                 <CssBaseline />
                 <Bound
+                    parent={parent}
                     user={user}
                     article={article}
                     allResponses={allResponses}
                     target={myResponse}
+                    masterRefresh={refresh}
                     refresh={refresh}
                     onChange={onChange}
                     settings={settings}
@@ -80,6 +84,7 @@ export default function Quiz({ article, settings, user, response }) {
                             <QuizResults question={question} />
                         )}
                         {state === "done" && <QuizEnd />}
+                        {state === "browse" && <QuizBrowse />}
                     </Box>
                 </Bound>
             </ThemeProvider>
@@ -100,13 +105,15 @@ function QuizIntro() {
                 minHeight={200}
             />
             <ListItemBox justifyContent="center">
-                <Button
-                    onClick={refresh(() => (target.state = "question"))}
-                    variant="contained"
-                    color="primary"
-                >
-                    Start
-                </Button>
+                <Pulsar>
+                    <Button
+                        onClick={refresh(() => (target.state = "question"))}
+                        variant="contained"
+                        color="primary"
+                    >
+                        Start
+                    </Button>
+                </Pulsar>
             </ListItemBox>
         </>
     )
@@ -124,11 +131,59 @@ const useQuestionStyles = makeStyles({
 
 function QuizQuestion({ question }) {
     const classes = useQuestionStyles()
-    const { settings } = useBoundContext()
+    const { settings, article } = useBoundContext()
     const definition = settings.questions[question]
     return (
         <>
             <Box
+                flex={1}
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+            >
+                <Box mr={2}> </Box>
+
+                <Box
+                    flexGrow={1}
+                    position="relative"
+                    borderRadius={4}
+                    bgcolor={
+                        article.overrideBottomColor ||
+                        article.bottomColor ||
+                        "#0006"
+                    }
+                    height={7}
+                >
+                    <Box
+                        left={0}
+                        position="absolute"
+                        flexGrow={1}
+                        width={(question + 1) / settings.questions.length}
+                        borderRadius={4}
+                        border={`1px solid ${
+                            article.overrideBottomColor ||
+                            article.bottomColor ||
+                            "#0006"
+                        }`}
+                        bgcolor={
+                            article.overrideBottomBackground ||
+                            article.bottomBackground ||
+                            "#fffc"
+                        }
+                        height={7}
+                    />
+                </Box>
+                <Box
+                    mr={1}
+                    ml={1}
+                    fontSize="80%"
+                    color={settings.questionColor}
+                >
+                    {question + 1} of {settings.questions.length}
+                </Box>
+            </Box>
+            <Box
+                mt={-1}
                 pl={2}
                 pr={2}
                 className={classes.question}
@@ -136,8 +191,8 @@ function QuizQuestion({ question }) {
                 dangerouslySetInnerHTML={{
                     __html: definition.question
                 }}
-                mb={3}
-                minHeight={40}
+                mb={2}
+                minHeight={30}
             />
             <Box
                 display="flex"
@@ -182,7 +237,7 @@ const useStyles = makeStyles({
 
 function AnswerCard({ answer, definition }) {
     const classes = useStyles({ color: answer.color })
-    const { target, refresh, article } = useBoundContext()
+    const { target, masterRefresh, article } = useBoundContext()
     const correct = useDialog(Correct, {
         classes: { paper: classes.paper },
         minWidth: "xs",
@@ -221,21 +276,21 @@ function AnswerCard({ answer, definition }) {
                 ).catch(console.error)
                 target.score = target.score + 1
                 await correct()
-                await delay(500)
+                await delay(400)
             } else {
                 await wrong()
-                await delay(500)
+                await delay(400)
             }
         }
         target.state = "results"
         target.answers[definition.id] = answer.id
-        refresh()
+        masterRefresh()
     }
 }
 
 function Correct({ ok }) {
     useEffect(() => {
-        setTimeout(ok, 2000)
+        setTimeout(ok, 1250)
     }, [ok])
     return (
         <Box
@@ -256,7 +311,7 @@ function Correct({ ok }) {
 
 function Wrong({ ok }) {
     useEffect(() => {
-        setTimeout(ok, 2000)
+        setTimeout(ok, 1250)
     }, [ok])
     return (
         <Box
@@ -288,8 +343,16 @@ function count(array) {
     }, {})
 }
 
-function QuizResults({ question }) {
-    const { allResponses, target, settings, refresh, user } = useBoundContext()
+function QuizResults({ question, onNext, html }) {
+    const {
+        allResponses,
+        target,
+        settings,
+        article,
+        masterRefresh,
+        user,
+        parent
+    } = useBoundContext()
     const definition = settings.questions[question]
     const responses = Object.values({
         ...(allResponses || {}),
@@ -299,12 +362,12 @@ function QuizResults({ question }) {
     return (
         <Box p={1} fontSize="90%">
             <Card elevation={3}>
-                {convertToText(definition.explanation).length > 3 ? (
+                {convertToText(html || definition.explanation).length > 3 ? (
                     <Box
                         ml={2}
                         mr={2}
                         dangerouslySetInnerHTML={{
-                            __html: definition.explanation
+                            __html: html || definition.explanation
                         }}
                     />
                 ) : null}
@@ -319,12 +382,45 @@ function QuizResults({ question }) {
                         />
                     ))}
                 </List>
-                <CardActions>
-                    <Button onClick={next} color="primary">
-                        Next
-                    </Button>
-                </CardActions>
+                {reactDom.createPortal(
+                    <Box
+                        bottom="1em"
+                        right="1em"
+                        position="absolute"
+                        zIndex={10000}
+                    >
+                        <Fab
+                            color={
+                                article.overrideBottomColor ||
+                                article.bottomColor ||
+                                "#0006"
+                            }
+                            size="small"
+                            onClick={onNext || next}
+                        >
+                            <Box
+                                color={
+                                    article.overrideBottomBackground ||
+                                    article.bottomBackground ||
+                                    "#fffc"
+                                }
+                            >
+                                <MdChevronRight />
+                            </Box>
+                        </Fab>
+                    </Box>,
+                    parent
+                )}
             </Card>
+            {html && definition.explanation && (
+                <Box
+                    ml={2}
+                    mr={2}
+                    dangerouslySetInnerHTML={{
+                        __html: definition.explanation
+                    }}
+                />
+            )}
         </Box>
     )
 
@@ -335,11 +431,12 @@ function QuizResults({ question }) {
         } else {
             target.state = "question"
         }
-        refresh()
+        masterRefresh()
     }
 }
 
 function AnswerResult({ answer, definition, answers, total }) {
+    const { answerPadding = 4 } = useBoundContext()
     const denominator = definition.answers.reduce(
         (c, a) => c + (answers[a.id] || 0),
         0
@@ -348,41 +445,44 @@ function AnswerResult({ answer, definition, answers, total }) {
     const hasCorrect = definition.answers.some((c) => c.correct)
 
     return (
-        <ListItem dense divider>
-            {hasCorrect && (
-                <Box
-                    mr={1}
-                    fontSize={"150%"}
-                    style={{ opacity: answer.correct ? 1 : 0 }}
-                >
-                    <MdCheck color="green" />
-                </Box>
-            )}
-            <ListItemText
-                primary={
-                    <ListItemBox>
-                        <Box flex={1}>
-                            <span>{convertToText(answer.answer)}</span>{" "}
-                        </Box>
-                        {!isNaN(perc) && (
-                            <Box>
-                                <small>({Math.floor(perc * 100)}%)</small>
-                            </Box>
-                        )}
-                    </ListItemBox>
-                }
-                secondary={
-                    <Box flex={1}>
-                        <Box
-                            width={(answers[answer.id] || 0) / denominator}
-                            borderRadius={4}
-                            bgcolor={answer.color}
-                            height={8}
-                        />
+        <Box pr={answerPadding}>
+            <ListItem dense>
+                {hasCorrect && (
+                    <Box
+                        mr={1}
+                        fontSize={"150%"}
+                        style={{ opacity: answer.correct ? 1 : 0 }}
+                    >
+                        <MdCheck color="green" />
                     </Box>
-                }
-            />
-        </ListItem>
+                )}
+                <ListItemText
+                    disableTypography
+                    primary={
+                        <ListItemBox>
+                            <Box flex={1}>
+                                <span>{convertToText(answer.answer)}</span>{" "}
+                            </Box>
+                            {!isNaN(perc) && (
+                                <Box>
+                                    <small>({Math.floor(perc * 100)}%)</small>
+                                </Box>
+                            )}
+                        </ListItemBox>
+                    }
+                    secondary={
+                        <Box flex={1}>
+                            <Box
+                                width={(answers[answer.id] || 0) / denominator}
+                                borderRadius={4}
+                                bgcolor={answer.color}
+                                height={8}
+                            />
+                        </Box>
+                    }
+                />
+            </ListItem>
+        </Box>
     )
 }
 
@@ -432,7 +532,7 @@ function QuizEnd() {
                         Your Score
                     </ListItemBox>
                     <ListItemBox
-                        mb={5}
+                        mb={3}
                         justifyContent="center"
                         fontSize="150%"
                         fontWeight="Bold"
@@ -454,6 +554,39 @@ function QuizEnd() {
                     Try Again
                 </Button>
             </ListItemBox>
+            <ListItemBox justifyContent="center" mt={1}>
+                <Button
+                    onClick={refresh(() => {
+                        target.state = "browse"
+                    })}
+                    color="default"
+                    variant="contained"
+                >
+                    See The Results
+                </Button>
+            </ListItemBox>
         </>
     )
+}
+
+function QuizBrowse() {
+    const [question, setQuestion] = useState(0)
+    const { settings, target, refresh } = useBoundContext()
+    const definition = settings.questions[question]
+    return (
+        <QuizResults
+            html={definition.question}
+            question={question}
+            onNext={next}
+        />
+    )
+
+    function next() {
+        if (question >= settings.questions.length - 1) {
+            target.state = "done"
+            refresh()
+        } else {
+            setQuestion((q) => q + 1)
+        }
+    }
 }

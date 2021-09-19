@@ -161,7 +161,7 @@ function QuizConfig() {
     }
 
     function addAnswer() {
-        questions.push({ id: nanoid(), question: "New question" })
+        questions.push({ id: nanoid(), question: "<p>New question</p>" })
         refresh()
     }
 }

@@ -22,7 +22,7 @@ export function RenderWidget({ article, user, useArticle }) {
     const systemUser = useUserContext()
     user = user || systemUser
     useEvent("refresh-widget", useRefresh())
-    console.log("draw widget")
+
     const width = Math.min(600, window.innerWidth * 0.75)
     const eventHandler = useRef(null)
     useEffect(() => {

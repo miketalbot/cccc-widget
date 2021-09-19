@@ -10,7 +10,7 @@ import {
 } from "@material-ui/core"
 import { ResponsivePie } from "@nivo/pie"
 import { useState } from "react"
-import { respondUnique } from "../lib/firebase"
+import { addAchievement, respondUnique } from "../lib/firebase"
 import { Loader } from "../lib/Loader"
 import { showNotification } from "../lib/notifications"
 import { Pulsar } from "../lib/pulsar"
@@ -46,10 +46,11 @@ export default function Runtime({
                 id: answer?.legend || answer?.answer,
                 label: answer?.answer,
                 color: answer?.color,
-                value
+                value,
+                visible: answer?.legend !== "HIDE"
             }
         })
-        .filter((a) => !!a.id)
+        .filter((a) => !!a.id && a.visible)
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
@@ -153,14 +154,17 @@ export default function Runtime({
                                     justifyContent="stretch"
                                     mt={2}
                                 >
-                                    {settings.answers.map((answer) => (
-                                        <AnswerCard
-                                            article={article}
-                                            loader={setShowLoader}
-                                            key={answer.id}
-                                            answer={answer}
-                                        />
-                                    ))}
+                                    {settings.answers
+                                        .filter((c) => c.legend !== "HIDE")
+                                        .map((answer) => (
+                                            <AnswerCard
+                                                article={article}
+                                                loader={setShowLoader}
+                                                key={answer.id}
+                                                answer={answer}
+                                                settings={settings}
+                                            />
+                                        ))}
                                 </Box>
                             </>
                         )}
@@ -195,7 +199,7 @@ const useStyles = makeStyles({
     }
 })
 
-function AnswerCard({ answer, loader, article }) {
+function AnswerCard({ answer, loader, article, settings }) {
     const classes = useStyles({ color: answer.color })
     return (
         <Box flexGrow={1} m={1} width={1 / 2.5} onClick={click} lineHeight={1}>
@@ -221,6 +225,11 @@ function AnswerCard({ answer, loader, article }) {
         loader("Registering your choice")
         try {
             await respondUnique(article.uid, "Poll", answer.id)
+            await addAchievement(
+                article.uid,
+                20,
+                `Voted in the "${settings.question}" poll`
+            )
         } catch (e) {
             showNotification(e.message, { severity: "error" })
         } finally {

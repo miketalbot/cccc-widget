@@ -9,7 +9,7 @@ register(PluginTypes.MAIN, "Quiz", undefined, runtime)
 function runtime({ parent, ...props }) {
     reactDom.render(
         <Suspense fallback={<div />}>
-            <Runtime {...props} />
+            <Runtime parent={parent} {...props} />
         </Suspense>,
         parent
     )

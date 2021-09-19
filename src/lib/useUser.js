@@ -97,6 +97,7 @@ export function useUser({ shouldBeCreator } = {}) {
                   },
                   score: score?.score,
                   achievements: score?.achievements,
+                  acknowledged: score?.acknowledged,
                   email: myUser.email,
                   uid: myUser.uid,
                   displayName: myUser.displayName,

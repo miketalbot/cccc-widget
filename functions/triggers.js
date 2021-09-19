@@ -6,7 +6,7 @@ const db = admin.firestore()
 
 module.exports = function (exports) {
     exports.createUser = functions.auth.user().onCreate((user) => {
-        if (!user) return
+        if (!user || user.isAnonymous) return
         db.collection("userprofiles").doc(user.uid).set(
             {
                 displayName: user.displayName,

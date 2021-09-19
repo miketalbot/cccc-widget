@@ -20,9 +20,10 @@ import reactDom from "react-dom"
 import { FaCircle } from "react-icons/fa"
 import { GiTwoCoins } from "react-icons/gi"
 
-import { addAchievement, wasClicked, wasRecommended } from "../lib/firebase"
+import { acknowledge, addAchievement, wasClicked } from "../lib/firebase"
 import { db, recommend } from "../lib/firebase"
 import { ListItemBox } from "../lib/ListItemBox"
+import { showNotification } from "../lib/notifications"
 import { Odometer } from "../lib/odometer"
 import { PluginTypes, register } from "../lib/plugins"
 import { sortBy } from "../lib/sortBy"
@@ -59,6 +60,9 @@ const useStyles = makeStyles({
     }
 })
 
+let acknowledged
+let displayed = new Set()
+
 function Notifications({ user, article }) {
     const observer = useMemo(() => {
         let observer = new IntersectionObserver(seen(new Set()), {
@@ -78,6 +82,57 @@ function Notifications({ user, article }) {
         })
     }, [article])
     const classes = useStyles()
+
+    useEffect(() => {
+        if (!user.achievements || !Object.keys(user.achievements).length) return
+
+        acknowledged = Math.max(
+            user?.acknowledged || Date.now() - 100000,
+            acknowledged || 0
+        )
+        const activeAchievements = Object.entries(user.achievements)
+            .filter(([achievement, time]) => {
+                if (displayed.has(achievement)) return false
+                displayed.add(achievement)
+                return Date.now() - time < 1000 * 60 * 5 && time > acknowledged
+            })
+            .map(([achievement, time]) => ({ achievement, time }))
+            .sort((a, b) => a.time - b.time)
+
+        let time = 0
+        if (activeAchievements.length) {
+            acknowledge(Date.now())
+            acknowledged = Date.now()
+        }
+        if (user?.score < 152) return
+        for (let { achievement } of activeAchievements) {
+            setTimeout(() => {
+                showNotification(
+                    <Box
+                        key={achievement}
+                        display="flex"
+                        alignItems="center"
+                        mb={0.5}
+                    >
+                        <Box
+                            className={classes.achievement}
+                            display="flex"
+                            alignItems="center"
+                        >
+                            <Box mr={1} fontSize="145%" lineHeight={0}>
+                                <FaCircle color="gold" />
+                            </Box>
+                            <Box>{achievement}</Box>
+                        </Box>
+                    </Box>,
+                    { severity: "success", title: "Earned Badge" }
+                )
+            }, time)
+            time += 8000
+        }
+
+        //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [JSON.stringify(user?.achievements)])
     return (
         <InteractionContext.Provider value={observer}>
             <Box

@@ -20,7 +20,8 @@ import {
     awardPoints,
     recordEvent,
     addAchievement,
-    wasClicked
+    wasClicked,
+    acknowledge
 } from "./firebase"
 import { Loader } from "./Loader"
 import * as pie from "@nivo/pie"
@@ -32,6 +33,7 @@ import { Sortable, SortableItem } from "../lib/Sortable"
 import { useResponse } from "./useResponse"
 import { reduceMotion } from "./reduce-motion"
 import { handle } from "./handle"
+import { showNotification } from "./notifications"
 
 window.Framework4C = {
     HTMLEditor,
@@ -54,6 +56,7 @@ window.Framework4C = {
     ImageUploadButton,
     Material,
     Loader,
+    showNotification: showNotification,
     theme,
     setFromEvent,
     setFromValueParam,
@@ -75,7 +78,8 @@ window.Framework4C = {
         respondUnique,
         addAchievement,
         wasClicked,
-        recordEvent
+        recordEvent,
+        acknowledge: acknowledge
     },
     FireBase: {
         firebase,

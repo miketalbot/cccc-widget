@@ -10,7 +10,7 @@ const usePulsar = makeStyles({
         //     transform: "rotate(-0deg) scale(1.03)"
         // },
         "50%": {
-            transform: "rotate(-0deg) scale(1.03)"
+            transform: "rotate(-0deg) scale(1.05)"
         },
         // "70%": {
         //     transform: "rotate(0deg) scale(1.03)"
