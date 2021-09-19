@@ -363,10 +363,10 @@ async function awardPoints(
         } else {
             data.errorCount = Math.max(0, (data.errorCount || 0) - 1)
         }
-        if (average < 600) {
+        if (average < 500) {
             data.coolOff = Math.max(data.coolOff, Date.now() + 1000 * 60 * 5)
         }
-        if (average < 5000) {
+        if (average < 1000) {
             return
         }
         data.eventTimes = times.slice(-20)
