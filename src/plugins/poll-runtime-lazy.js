@@ -11,6 +11,7 @@ import {
 import { ResponsivePie } from "@nivo/pie"
 import { useState } from "react"
 import { addAchievement, respondUnique } from "../lib/firebase"
+import { htmlToText } from "../lib/html-to-text"
 import { Loader } from "../lib/Loader"
 import { showNotification } from "../lib/notifications"
 import { Pulsar } from "../lib/pulsar"
@@ -142,17 +143,22 @@ export default function Runtime({
                                         {settings.question}
                                     </Typography>
                                 </Box>
-                                <Box className={classes.subtitle}>
-                                    <Typography variant="body1" gutterBottom>
-                                        {settings.description}
-                                    </Typography>
-                                </Box>
+                                {htmlToText(settings.description) !== "" && (
+                                    <Box className={classes.subtitle}>
+                                        <Typography
+                                            variant="body1"
+                                            gutterBottom
+                                        >
+                                            {settings.description}
+                                        </Typography>
+                                    </Box>
+                                )}
                                 <Box
                                     display="flex"
                                     flexWrap="wrap"
                                     alignItems="stretch"
                                     justifyContent="stretch"
-                                    mt={2}
+                                    mt={1}
                                 >
                                     {settings.answers
                                         .filter((c) => c.legend !== "HIDE")
@@ -201,16 +207,35 @@ const useStyles = makeStyles({
 
 function AnswerCard({ answer, loader, article, settings }) {
     const classes = useStyles({ color: answer.color })
+    const fontSize =
+        answer.answer.length > 50
+            ? "75%"
+            : answer.answer.length > 40
+            ? "85%"
+            : answer.answer.length > 30
+            ? "90%"
+            : answer.answer.length > 20
+            ? "95%"
+            : "100%"
     return (
         <Box flexGrow={1} m={1} width={1 / 2.5} onClick={click} lineHeight={1}>
-            <Pulsar>
+            <Pulsar
+                height={1}
+                flexGrow={1}
+                display="flex"
+                justifyContent="stretch"
+                alignItems="stretch"
+                flexDirection="column"
+            >
                 <Box height={1} clone>
                     <Card elevation={5} className={classes.card}>
                         <Box height={1} clone>
                             <CardActionArea>
                                 <Box p={1}>
                                     <Typography variant="body2">
-                                        {answer.answer}
+                                        <Box fontSize={fontSize}>
+                                            {answer.answer}
+                                        </Box>
                                     </Typography>
                                 </Box>
                             </CardActionArea>

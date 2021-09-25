@@ -1,4 +1,4 @@
-import { makeStyles } from "@material-ui/core"
+import { Box, makeStyles } from "@material-ui/core"
 import { useCallback } from "react"
 import { reduceMotion } from "./reduce-motion"
 const usePulsar = makeStyles({
@@ -10,7 +10,7 @@ const usePulsar = makeStyles({
         //     transform: "rotate(-0deg) scale(1.03)"
         // },
         "50%": {
-            transform: "rotate(-0deg) scale(1.05)"
+            transform: "rotate(-0.8deg) scale(1.05)"
         },
         // "70%": {
         //     transform: "rotate(0deg) scale(1.03)"
@@ -24,16 +24,21 @@ const usePulsar = makeStyles({
     }
 })
 
-export function Pulsar({ children }) {
+export function Pulsar({ children, ...props }) {
     const classes = usePulsar()
     const animate = useCallback(
         function animate(target) {
             if (!target) return
             if (reduceMotion()) return
             setTimeout(() => {
-                target.className = classes.pulse
+                target.className = target.className.replace(
+                    " " + classes.pulse,
+                    ""
+                )
                 setTimeout(() => {
-                    target.className = ""
+                    target.className = target.className + " " + classes.pulse
+                })
+                setTimeout(() => {
                     if (document.body.contains(target)) {
                         animate(target)
                     }
@@ -42,5 +47,9 @@ export function Pulsar({ children }) {
         },
         [classes]
     )
-    return <div ref={animate}>{children}</div>
+    return (
+        <Box {...props} ref={animate}>
+            {children}
+        </Box>
+    )
 }
