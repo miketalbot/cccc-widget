@@ -344,15 +344,8 @@ function count(array) {
 }
 
 function QuizResults({ question, onNext, html }) {
-    const {
-        allResponses,
-        target,
-        settings,
-        article,
-        masterRefresh,
-        user,
-        parent
-    } = useBoundContext()
+    const { allResponses, target, settings, masterRefresh, user, parent } =
+        useBoundContext()
     const definition = settings.questions[question]
     const responses = Object.values({
         ...(allResponses || {}),
@@ -384,29 +377,18 @@ function QuizResults({ question, onNext, html }) {
                 </List>
                 {reactDom.createPortal(
                     <Box
-                        bottom="1em"
-                        right="1em"
+                        top="50%"
+                        style={{ transform: "translate3d(0%, -50%, 0)" }}
+                        right=".5em"
                         position="absolute"
                         zIndex={10000}
                     >
                         <Fab
-                            color={
-                                article.overrideBottomColor ||
-                                article.bottomColor ||
-                                "#0006"
-                            }
+                            color={"secondary"}
                             size="small"
                             onClick={onNext || next}
                         >
-                            <Box
-                                color={
-                                    article.overrideBottomBackground ||
-                                    article.bottomBackground ||
-                                    "#fffc"
-                                }
-                            >
-                                <MdChevronRight />
-                            </Box>
+                            <MdChevronRight />
                         </Fab>
                     </Box>,
                     parent

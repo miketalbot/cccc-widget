@@ -163,12 +163,13 @@ const useStyles = makeStyles({
         alignItems: "center",
         padding: 4,
         marginRight: 8,
+        marginTop: 1,
+        marginBottom: 1,
         color: "#222"
     }
 })
 
 function Article({ item: { name, date, uid, image } }) {
-    const classes = useStyles()
     const user = useUserContext()
     const counts = useCountsFor(uid)
     return (
@@ -180,7 +181,16 @@ function Article({ item: { name, date, uid, image } }) {
             </ListItemAvatar>
             <ListItemText
                 primary={name}
-                secondary={dayjs(date).format("D MMMM YYYY [ at ] HH:mm")}
+                secondary={
+                    <>
+                        <Box display={{ xs: "none", lg: "block" }}>
+                            {dayjs(date).format("D MMMM YYYY [ at ] HH:mm")}
+                        </Box>
+                        <Box display={{ xs: "block", lg: "none" }}>
+                            <Counts counts={counts} />
+                        </Box>
+                    </>
+                }
             />
             <ListItemSecondaryAction>
                 <Box
@@ -189,68 +199,9 @@ function Article({ item: { name, date, uid, image } }) {
                     alignItems="center"
                     lineHeight={0}
                 >
-                    {!!counts && (
-                        <Box display="flex" flexWrap="wrap" alignItems="center">
-                            {!!counts.responseCount && (
-                                <Box className={classes.result}>
-                                    <Box mr={1}>
-                                        <AiOutlineInteraction />
-                                    </Box>
-                                    <Box
-                                        aria-label="Number of interactions"
-                                        minWidth={50}
-                                        textAlign="right"
-                                    >
-                                        <Odometer>
-                                            {counts.responseCount || 0}
-                                        </Odometer>
-                                    </Box>
-                                </Box>
-                            )}
-                            {!!counts.clicks && (
-                                <Box className={classes.result}>
-                                    <Box mr={1}>
-                                        <GiClick />
-                                    </Box>
-                                    <Box
-                                        aria-label="Clicks on recommendations"
-                                        minWidth={45}
-                                        textAlign="right"
-                                    >
-                                        <Odometer>
-                                            {counts.clicks || 0}
-                                        </Odometer>
-                                    </Box>
-                                </Box>
-                            )}
-                            <Box className={classes.result}>
-                                <Box mr={1}>
-                                    <IoMdEye />
-                                </Box>
-                                <Box
-                                    aria-label="Number of views"
-                                    minWidth={50}
-                                    textAlign="right"
-                                >
-                                    <Odometer>{counts.visits || 0}</Odometer>
-                                </Box>
-                            </Box>
-                            <Box className={classes.result}>
-                                <Box mr={1}>
-                                    <MdPerson />
-                                </Box>
-                                <Box
-                                    aria-label="Unique views"
-                                    minWidth={45}
-                                    textAlign="right"
-                                >
-                                    <Odometer>
-                                        {counts.uniqueVisits || 0}
-                                    </Odometer>
-                                </Box>
-                            </Box>
-                        </Box>
-                    )}
+                    <Box display={{ xs: "none", lg: "block" }}>
+                        <Counts counts={counts} />
+                    </Box>
                     <IconButton
                         color="secondary"
                         onClick={remove}
@@ -282,4 +233,66 @@ function Article({ item: { name, date, uid, image } }) {
             showNotification(e.message, { severity: "error" })
         }
     }
+}
+
+function Counts({ counts }) {
+    const classes = useStyles()
+    if (!counts) return null
+    return (
+        <Box
+            display="flex"
+            flexWrap="wrap"
+            alignItems="center"
+            justifyContent="stretch"
+        >
+            {!!counts.responseCount && (
+                <Box className={classes.result}>
+                    <Box mr={1}>
+                        <AiOutlineInteraction />
+                    </Box>
+                    <Box
+                        aria-label="Number of interactions"
+                        minWidth={50}
+                        textAlign="right"
+                    >
+                        <Odometer>{counts.responseCount || 0}</Odometer>
+                    </Box>
+                </Box>
+            )}
+            {!!counts.clicks && (
+                <Box className={classes.result}>
+                    <Box mr={1}>
+                        <GiClick />
+                    </Box>
+                    <Box
+                        aria-label="Clicks on recommendations"
+                        minWidth={45}
+                        textAlign="right"
+                    >
+                        <Odometer>{counts.clicks || 0}</Odometer>
+                    </Box>
+                </Box>
+            )}
+            <Box className={classes.result}>
+                <Box mr={1}>
+                    <IoMdEye />
+                </Box>
+                <Box
+                    aria-label="Number of views"
+                    minWidth={50}
+                    textAlign="right"
+                >
+                    <Odometer>{counts.visits || 0}</Odometer>
+                </Box>
+            </Box>
+            <Box className={classes.result}>
+                <Box mr={1}>
+                    <MdPerson />
+                </Box>
+                <Box aria-label="Unique views" minWidth={45} textAlign="right">
+                    <Odometer>{counts.uniqueVisits || 0}</Odometer>
+                </Box>
+            </Box>
+        </Box>
+    )
 }
