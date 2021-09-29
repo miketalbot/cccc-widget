@@ -77,6 +77,7 @@ export default function Article({ id }) {
                                 <CardContent>
                                     <TabContext value={tab}>
                                         <TabList
+                                            scrollButtons="auto"
                                             aria-label="Article configuration tabs"
                                             onChange={(_, tab) => setTab(tab)}
                                         >

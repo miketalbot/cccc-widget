@@ -17,38 +17,43 @@ export function PluginDetails({ article, onChange, type }) {
         settings[article[type]] || {})
     return (
         <Bound target={article} onChange={onChange} refresh={refresh}>
-            <CardContent>
-                <Autocomplete
-                    onChange={refresh((_, v) => (article[type] = v))}
-                    value={article[type] ?? ""}
-                    renderInput={(p) => (
-                        <TextField
-                            variant="outlined"
-                            label="Plugin"
-                            helperText="Change the widget by choosing an option from this list"
-                            fullWidth
-                            {...p}
+            <Box display={{ xs: "none", lg: "block" }}>
+                <CardContent>
+                    <Autocomplete
+                        onChange={refresh((_, v) => (article[type] = v))}
+                        value={article[type] ?? ""}
+                        renderInput={(p) => (
+                            <TextField
+                                variant="outlined"
+                                label="Plugin"
+                                helperText="Change the widget by choosing an option from this list"
+                                fullWidth
+                                {...p}
+                            />
+                        )}
+                        options={Object.keys(Plugins[type]).sort()}
+                    />
+                    {article[type] && (
+                        <Editor
+                            plugin={Plugins[type][article[type]]}
+                            article={article}
+                            onChange={(...params) => {
+                                onChange(...params)
+                                raise("refresh-widget")
+                            }}
+                            settings={typeSettings}
                         />
                     )}
-                    options={Object.keys(Plugins[type]).sort()}
-                />
-                {article[type] && (
-                    <Editor
-                        plugin={Plugins[type][article[type]]}
-                        article={article}
-                        onChange={(...params) => {
-                            onChange(...params)
-                            raise("refresh-widget")
-                        }}
-                        settings={typeSettings}
+                    <UpdateWidget
+                        article={article.uid}
+                        user={user}
+                        useArticle={article}
                     />
-                )}
-                <UpdateWidget
-                    article={article.uid}
-                    user={user}
-                    useArticle={article}
-                />
-            </CardContent>
+                </CardContent>
+            </Box>
+            <Box display={{ xs: "block", lg: "none" }}>
+                Please make the display wider to view
+            </Box>
         </Bound>
     )
 }
