@@ -235,7 +235,7 @@ function Article({ item: { name, date, uid, image } }) {
     }
 }
 
-function Counts({ counts }) {
+export function Counts({ counts }) {
     const classes = useStyles()
     if (!counts) return null
     return (

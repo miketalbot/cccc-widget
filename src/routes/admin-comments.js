@@ -42,6 +42,7 @@ import { useCountsFor } from "../lib/useResponse"
 import { IoMdEye } from "react-icons/io"
 import { Odometer } from "../lib/odometer"
 import { AiOutlineInteraction } from "react-icons/ai"
+import { Counts } from "./admin-articles"
 
 export const articles = db.collection("userarticles")
 
@@ -180,7 +181,16 @@ function Comment({ item: { name, date, uid } }) {
             </ListItemAvatar>
             <ListItemText
                 primary={name}
-                secondary={dayjs(date).format("D MMMM YYYY [ at ] HH:mm")}
+                secondary={
+                    <>
+                        <Box display={{ xs: "none", lg: "block" }}>
+                            {dayjs(date).format("D MMMM YYYY [ at ] HH:mm")}
+                        </Box>
+                        <Box display={{ xs: "block", lg: "none" }}>
+                            <Counts counts={counts} />
+                        </Box>
+                    </>
+                }
             />
             <ListItemSecondaryAction>
                 <Box
@@ -189,52 +199,9 @@ function Comment({ item: { name, date, uid } }) {
                     alignItems="center"
                     lineHeight={0}
                 >
-                    {!!counts && (
-                        <Box display="flex" flexWrap="wrap" alignItems="center">
-                            {counts.responseCount && (
-                                <Box className={classes.result}>
-                                    <Box mr={1}>
-                                        <AiOutlineInteraction />
-                                    </Box>
-                                    <Box
-                                        aria-label="Number of interactions"
-                                        minWidth={50}
-                                        textAlign="right"
-                                    >
-                                        <Odometer>
-                                            {counts.responseCount || 0}
-                                        </Odometer>
-                                    </Box>
-                                </Box>
-                            )}
-                            <Box className={classes.result}>
-                                <Box mr={1}>
-                                    <IoMdEye />
-                                </Box>
-                                <Box
-                                    aria-label="Number of visits"
-                                    minWidth={50}
-                                    textAlign="right"
-                                >
-                                    <Odometer>{counts.visits || 0}</Odometer>
-                                </Box>
-                            </Box>
-                            <Box className={classes.result}>
-                                <Box mr={1}>
-                                    <MdPerson />
-                                </Box>
-                                <Box
-                                    aria-label="Unique visits"
-                                    minWidth={45}
-                                    textAlign="right"
-                                >
-                                    <Odometer>
-                                        {counts.uniqueVisits || 0}
-                                    </Odometer>
-                                </Box>
-                            </Box>
-                        </Box>
-                    )}
+                    <Box display={{ xs: "none", lg: "block" }}>
+                        <Counts counts={counts} />
+                    </Box>
                     <IconButton
                         color="secondary"
                         onClick={remove}
