@@ -19,8 +19,8 @@ export function ArticleDetails({ article, onChange = noop }) {
         <>
             <BoundStandardSwitch field="enabled" default={true} />
 
-            <Box mt={2} display="flex">
-                <Grid container spacing={1.5}>
+            <Box mt={2} width={1}>
+                <Grid container spacing={2}>
                     <Grid item md={6}>
                         <TextField
                             variant="outlined"
