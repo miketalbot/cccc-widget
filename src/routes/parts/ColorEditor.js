@@ -16,7 +16,7 @@ export function ColorEditor() {
                 effect.
             </Typography>
             <CardContent>
-                <Grid container spacing={1.5}>
+                <Grid container spacing={2}>
                     <Grid item md={6}>
                         <BoundColorField
                             sideEffects

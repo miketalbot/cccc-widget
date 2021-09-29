@@ -10,7 +10,7 @@ export function CommentDetails({ article, onChange = noop }) {
     return (
         <>
             <Box mt={2} display="flex">
-                <Grid container spacing={1.5}>
+                <Grid container spacing={2}>
                     <Grid item md={6}>
                         <TextField
                             variant="outlined"
