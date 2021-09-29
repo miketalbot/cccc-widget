@@ -60,7 +60,7 @@ export default function Article({ id }) {
                     refresh={changeRefresh}
                     onChange={change}
                 >
-                    <Container>
+                    <Container disableGutters={true}>
                         <Box mt={2} width={1} clone>
                             <Card elevation={3}>
                                 <CardHeader
@@ -77,6 +77,7 @@ export default function Article({ id }) {
                                 <CardContent>
                                     <TabContext value={tab}>
                                         <TabList
+                                            variant="scrollable"
                                             scrollButtons="auto"
                                             aria-label="Article configuration tabs"
                                             onChange={(_, tab) => setTab(tab)}

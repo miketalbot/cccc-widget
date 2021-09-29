@@ -1,4 +1,4 @@
-import { Box, makeStyles, TextField } from "@material-ui/core"
+import { Box, Grid, makeStyles, TextField } from "@material-ui/core"
 import HTMLEditor from "../../lib/HtmlEditor"
 import noop from "../../lib/noop"
 import { showNotification } from "../../lib/notifications"
@@ -20,27 +20,29 @@ export function ArticleDetails({ article, onChange = noop }) {
             <BoundStandardSwitch field="enabled" default={true} />
 
             <Box mt={2} display="flex">
-                <Box mr={1} flex={1}>
-                    <TextField
-                        variant="outlined"
-                        fullWidth
-                        label="Name"
-                        value={article.name ?? ""}
-                        onChange={refresh(
-                            setFromEvent((v) => (article.name = v))
-                        )}
-                    />
-                </Box>
-                <Box>
-                    <TextField
-                        variant="outlined"
-                        fullWidth
-                        helperText="Separate tags with a comma.  Tags help us to recommend your article."
-                        label="Tags"
-                        value={article.tags ?? ""}
-                        onChange={refresh(setFromEvent(updateTags))}
-                    />
-                </Box>
+                <Grid container spacing={1.5}>
+                    <Grid item md={6}>
+                        <TextField
+                            variant="outlined"
+                            fullWidth
+                            label="Name"
+                            value={article.name ?? ""}
+                            onChange={refresh(
+                                setFromEvent((v) => (article.name = v))
+                            )}
+                        />
+                    </Grid>
+                    <Grid item md={6}>
+                        <TextField
+                            variant="outlined"
+                            fullWidth
+                            helperText="Separate tags with a comma.  Tags help us to recommend your article."
+                            label="Tags"
+                            value={article.tags ?? ""}
+                            onChange={refresh(setFromEvent(updateTags))}
+                        />
+                    </Grid>
+                </Grid>
             </Box>
             <Box mt={2}>
                 <TextField
@@ -74,7 +76,7 @@ export function ArticleDetails({ article, onChange = noop }) {
                             <Box m={1} mr={-0.5} borderRadius={4} clone>
                                 <img
                                     alt="Preview"
-                                    width={150}
+                                    width={Math.min(window.innerWidth / 5, 150)}
                                     src={article.image}
                                 />
                             </Box>

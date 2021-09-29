@@ -78,7 +78,7 @@ export function Administration({ children }) {
                     </Box>
                 </Toolbar>
             </AppBar>
-            <Box width={1} p={4} mt={6}>
+            <Box width={1} p={{ xs: 1, lg: 4 }} mt={7.5}>
                 {children}
             </Box>
         </User>

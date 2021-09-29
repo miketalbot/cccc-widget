@@ -38,7 +38,7 @@ export function Interface() {
 
 export function SignInScreen() {
     return (
-        <Container>
+        <Container disableGutters={true}>
             <Box mt={6}>
                 <Card elevation={10}>
                     <CardHeader

@@ -22,7 +22,6 @@ import {
     ListItemAvatar,
     ListItemSecondaryAction,
     ListItemText,
-    makeStyles,
     TextField
 } from "@material-ui/core"
 import { sortBy } from "../lib/sortBy"
@@ -31,7 +30,7 @@ import { useState } from "react"
 import { useDialog } from "../lib/useDialog"
 import { showNotification } from "../lib/notifications"
 import { FaComment } from "react-icons/fa"
-import { MdClear, MdDelete, MdPerson } from "react-icons/md"
+import { MdClear, MdDelete } from "react-icons/md"
 import { confirm } from "../lib/confirm"
 import { VirtualWindow } from "virtual-window"
 import { pick } from "../lib/pick"
@@ -39,9 +38,6 @@ import { navigate } from "../lib/routes"
 import "./admin"
 import { PluginTypes } from "../lib/plugins"
 import { useCountsFor } from "../lib/useResponse"
-import { IoMdEye } from "react-icons/io"
-import { Odometer } from "../lib/odometer"
-import { AiOutlineInteraction } from "react-icons/ai"
 import { Counts } from "./admin-articles"
 
 export const articles = db.collection("userarticles")
@@ -60,7 +56,7 @@ export default function Articles() {
     )
     return (
         <Administration>
-            <Container>
+            <Container disableGutters={true}>
                 <Box width={1} clone>
                     <Card elevation={3}>
                         <CardHeader
@@ -156,22 +152,9 @@ function GetCommentName({ ok, cancel }) {
     )
 }
 
-const useStyles = makeStyles({
-    result: {
-        borderRadius: 8,
-        background: "#eee",
-        display: "flex",
-        alignItems: "center",
-        padding: 4,
-        marginRight: 8,
-        color: "#222"
-    }
-})
-
 function Comment({ item: { name, date, uid } }) {
     const user = useUserContext()
     const counts = useCountsFor(uid)
-    const classes = useStyles()
     return (
         <ListItem button onClick={() => navigate(`/admin/comment/${uid}`)}>
             <ListItemAvatar>

@@ -60,7 +60,7 @@ export default function Articles() {
     )
     return (
         <Administration>
-            <Container>
+            <Container disableGutters={true}>
                 <Box width={1} clone>
                     <Card elevation={3}>
                         <CardHeader

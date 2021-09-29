@@ -17,7 +17,7 @@ export function PluginDetails({ article, onChange, type }) {
         settings[article[type]] || {})
     return (
         <Bound target={article} onChange={onChange} refresh={refresh}>
-            <Box display={{ xs: "none", lg: "block" }}>
+            <Box display={{ xs: "none", sm: "block" }}>
                 <CardContent>
                     <Autocomplete
                         onChange={refresh((_, v) => (article[type] = v))}
@@ -51,7 +51,7 @@ export function PluginDetails({ article, onChange, type }) {
                     />
                 </CardContent>
             </Box>
-            <Box display={{ xs: "block", lg: "none" }}>
+            <Box display={{ xs: "block", sm: "none" }}>
                 Please make the display wider to view
             </Box>
         </Bound>

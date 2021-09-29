@@ -1,8 +1,7 @@
-import { Box, CardContent, Typography } from "@material-ui/core"
+import { CardContent, Grid, Typography } from "@material-ui/core"
 import { BoundColorField } from "../../lib/ColorField"
 import { UpdateWidget } from "./UpdateWidget"
 import { useBoundContext } from "../../lib/Bound"
-import { ListItemBox } from "../../lib/ListItemBox"
 
 export function ColorEditor() {
     const { target: article } = useBoundContext()
@@ -17,40 +16,36 @@ export function ColorEditor() {
                 effect.
             </Typography>
             <CardContent>
-                <ListItemBox width={1}>
-                    <Box mr={1} flex={1}>
+                <Grid container spacing={1.5}>
+                    <Grid item md={6}>
                         <BoundColorField
                             sideEffects
                             field="gradientFrom"
                             default="#fe6b8b"
                         />
-                    </Box>
-                    <Box flex={1}>
+                    </Grid>
+                    <Grid item md={6}>
                         <BoundColorField
                             sideEffects
                             field="gradientTo"
                             default="#ff8e53"
                         />
-                    </Box>
-                </ListItemBox>
-            </CardContent>
-            <CardContent>
-                <ListItemBox>
-                    <Box mr={1} flex={1}>
+                    </Grid>
+                    <Grid item md={6}>
                         <BoundColorField
                             sideEffects
                             field="bottomBackground"
                             default="#333333"
                         />
-                    </Box>
-                    <Box flex={1}>
+                    </Grid>
+                    <Grid item md={6}>
                         <BoundColorField
                             sideEffects
                             field="bottomColor"
                             default="#ffffff"
                         />
-                    </Box>
-                </ListItemBox>
+                    </Grid>
+                </Grid>
             </CardContent>
             <UpdateWidget
                 accessibility={console.warn}

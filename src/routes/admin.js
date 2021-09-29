@@ -23,13 +23,12 @@ import "../plugins/editor"
 export default function AdminPage() {
     return (
         <Administration>
-            <Container>
+            <Container disableGutters={true}>
                 <Box
                     mb={5}
                     height={100}
-                    fontSize={32}
+                    fontSize={window.innerWidth < 1280 ? 24 : 32}
                     display="flex"
-                    flexWrap="wrap"
                     alignItems="center"
                     justifyContent="space-between"
                 >

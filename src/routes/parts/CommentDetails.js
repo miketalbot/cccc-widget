@@ -1,4 +1,4 @@
-import { Box } from "@material-ui/core"
+import { Box, Grid } from "@material-ui/core"
 import { useRefresh } from "../../lib/useRefresh"
 import { TextField } from "@material-ui/core"
 import noop from "../../lib/noop"
@@ -10,27 +10,29 @@ export function CommentDetails({ article, onChange = noop }) {
     return (
         <>
             <Box mt={2} display="flex">
-                <Box mr={1} flex={1}>
-                    <TextField
-                        variant="outlined"
-                        fullWidth
-                        label="Name"
-                        value={article.name ?? ""}
-                        onChange={refresh(
-                            setFromEvent((v) => (article.name = v))
-                        )}
-                    />
-                </Box>
-                <Box>
-                    <TextField
-                        variant="outlined"
-                        fullWidth
-                        helperText="Separate tags with a comma.  Tags help us to recommend related articles."
-                        label="Tags"
-                        value={article.tags ?? ""}
-                        onChange={refresh(setFromEvent(updateTags))}
-                    />
-                </Box>
+                <Grid container spacing={1.5}>
+                    <Grid item md={6}>
+                        <TextField
+                            variant="outlined"
+                            fullWidth
+                            label="Name"
+                            value={article.name ?? ""}
+                            onChange={refresh(
+                                setFromEvent((v) => (article.name = v))
+                            )}
+                        />
+                    </Grid>
+                    <Grid item md={6}>
+                        <TextField
+                            variant="outlined"
+                            fullWidth
+                            helperText="Separate tags with a comma.  Tags help us to recommend your article."
+                            label="Tags"
+                            value={article.tags ?? ""}
+                            onChange={refresh(setFromEvent(updateTags))}
+                        />
+                    </Grid>
+                </Grid>
             </Box>
         </>
     )
